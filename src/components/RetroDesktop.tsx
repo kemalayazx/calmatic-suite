@@ -790,6 +790,50 @@ export default function RetroDesktop() {
         {showRadio && (
           <RetroRadio onClose={() => setShowRadio(false)} initialZ={maxZ + 1} />
         )}
+
+        {/* ── "Activate Windows" watermark ────────────────────────── */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: "12px",
+            right: "16px",
+            textAlign: "right",
+            pointerEvents: "none",
+            userSelect: "none",
+          }}
+        >
+          <div style={{ color: "rgba(255,255,255,0.55)", fontSize: "13px", fontFamily: "'Segoe UI', Tahoma, sans-serif", marginBottom: "2px" }}>
+            Windows&apos;u Etkinleştirin
+          </div>
+          <div style={{ color: "rgba(255,255,255,0.4)", fontSize: "11px", fontFamily: "'Segoe UI', Tahoma, sans-serif", marginBottom: "6px" }}>
+            Windows&apos;u etkinleştirmek için Ayarlar&apos;a gidin.
+          </div>
+          <a
+            href="https://www.youtube.com/@ZipTravel"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "5px",
+              color: "rgba(255,255,255,0.7)",
+              fontSize: "12px",
+              fontFamily: "'Segoe UI', Tahoma, sans-serif",
+              textDecoration: "none",
+              pointerEvents: "all",
+              padding: "3px 7px",
+              borderRadius: "2px",
+              transition: "background 0.15s",
+            }}
+            onMouseOver={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "rgba(255,255,255,0.15)"; }}
+            onMouseOut={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="rgba(255,215,0,0.85)" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <span style={{ color: "rgba(255,255,255,0.7)" }}>Kemal&apos;den sevgilerle</span>
+          </a>
+        </div>
       </div>
 
       {/* ── Taskbar ─────────────────────────────────────────────── */}
