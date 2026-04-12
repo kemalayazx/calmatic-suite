@@ -19,6 +19,7 @@ export function ohmFromVI(voltage: number, current: number): OhmResult {
 }
 
 export function ohmFromVR(voltage: number, resistance: number): OhmResult {
+  if (resistance === 0) return { voltage, current: Infinity, resistance: 0, power: Infinity };
   const current = voltage / resistance;
   return { voltage, current, resistance, power: voltage * current };
 }
@@ -84,8 +85,9 @@ export function seriesResistance(values: number[]): number {
 }
 
 export function parallelResistance(values: number[]): number {
+  if (values.some((r) => r === 0)) return 0;
   const sum = values.reduce((acc, r) => acc + 1 / r, 0);
-  return 1 / sum;
+  return sum === 0 ? Infinity : 1 / sum;
 }
 
 // ─── LED Calculator ───────────────────────────────────────────────────────────
