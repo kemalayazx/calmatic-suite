@@ -302,14 +302,55 @@ function IEBrowserWindow({
         </div>
       </div>
 
-      {/* Browser content — iframe */}
-      <div style={{ flex: 1, border: "2px inset #808080", margin: "2px 4px 4px", overflow: "hidden" }}>
-        <iframe
-          src="https://archive.org/details/@rohankar"
-          title="Internet Explorer"
-          style={{ width: "100%", height: "100%", border: "none", background: "#fff" }}
-          sandbox="allow-scripts allow-same-origin allow-popups"
-        />
+      {/* Browser content — fake retro page */}
+      <div style={{
+        flex: 1, border: "2px inset #808080", margin: "2px 4px 4px",
+        overflow: "auto", background: "#fff", padding: "20px",
+        fontSize: "13px", color: "#000", fontFamily: "'Segoe UI', Tahoma, sans-serif",
+      }}>
+        {/* IE error style page */}
+        <div style={{ maxWidth: "500px", margin: "0 auto" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: "12px", marginBottom: "16px" }}>
+            <div style={{ fontSize: "32px", flexShrink: 0 }}>⚠️</div>
+            <div>
+              <h2 style={{ margin: "0 0 8px", fontSize: "16px", color: "#000080" }}>
+                Internet Explorer cannot display the webpage
+              </h2>
+              <p style={{ margin: "0 0 12px", color: "#444", fontSize: "12px", lineHeight: "1.6" }}>
+                Most likely causes:
+              </p>
+              <ul style={{ margin: "0 0 16px", paddingLeft: "20px", fontSize: "12px", lineHeight: "2", color: "#333" }}>
+                <li>You are not connected to the Internet.</li>
+                <li>The website is encountering problems.</li>
+                <li>There might be a typing error in the address.</li>
+                <li>This browser was manufactured in 1998.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div style={{ border: "1px solid #ccc", padding: "12px", background: "#f5f5f0", marginBottom: "16px" }}>
+            <p style={{ margin: "0 0 8px", fontSize: "12px", fontWeight: "bold" }}>What you can try:</p>
+            <p style={{ margin: "0", fontSize: "12px", lineHeight: "1.8" }}>
+              <a
+                href="https://archive.org/details/@rohankar"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#0000ff", textDecoration: "underline", cursor: "pointer" }}
+              >
+                🔗 Open this page in a modern browser
+              </a>
+              <br />
+              <span style={{ color: "#888" }}>
+                (archive.org/details/@rohankar)
+              </span>
+            </p>
+          </div>
+
+          <div style={{ borderTop: "1px solid #ccc", paddingTop: "12px", fontSize: "11px", color: "#888", textAlign: "center" }}>
+            <p style={{ margin: 0 }}>Internet Explorer 5.0 · Windows 95 · 16 MB RAM</p>
+            <p style={{ margin: "4px 0 0", fontSize: "10px" }}>© 1998 Microsoft Corporation. All rights reserved.</p>
+          </div>
+        </div>
       </div>
 
       {/* Status bar */}
