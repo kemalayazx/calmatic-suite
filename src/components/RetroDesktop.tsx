@@ -6,6 +6,9 @@ import { useLanguage, type Locale } from "@/context/LanguageContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import RetroRadio from "@/components/RetroRadio";
+import RetroMinesweeper from "@/components/RetroMinesweeper";
+import RetroNotepad from "@/components/RetroNotepad";
+import RetroPaint from "@/components/RetroPaint";
 import {
   Calculator, TrendingUp, Receipt, Hash, BarChart2, DollarSign,
   Ruler, Calendar, Tag, Zap, Users, FileText, Atom, Palette,
@@ -533,6 +536,12 @@ export default function RetroDesktop() {
   const [showRadio, setShowRadio] = useState(false);
   const [showBrowser, setShowBrowser] = useState(false);
   const [browserZ, setBrowserZ] = useState(11);
+  const [showMinesweeper, setShowMinesweeper] = useState(false);
+  const [minesweeperZ, setMinesweeperZ] = useState(11);
+  const [showNotepad, setShowNotepad] = useState(false);
+  const [notepadZ, setNotepadZ] = useState(11);
+  const [showPaint, setShowPaint] = useState(false);
+  const [paintZ, setPaintZ] = useState(11);
   const startRef = useRef<HTMLDivElement>(null);
   const nextOffset = useRef(0);
 
@@ -917,6 +926,27 @@ export default function RetroDesktop() {
             </div>
           </Link>
 
+          {/* Minesweeper icon */}
+          <div
+            className="retro-desktop-icon"
+            onDoubleClick={(e) => {
+              e.stopPropagation();
+              if (!showMinesweeper) {
+                const newZ = maxZ + 1;
+                setMaxZ(newZ);
+                setMinesweeperZ(newZ);
+              }
+              setShowMinesweeper(true);
+            }}
+            onClick={(e) => e.stopPropagation()}
+            style={{ cursor: "pointer" }}
+          >
+            <div className="retro-icon-box" style={{ background: "#c0c0c0", border: "1px solid #808080", fontSize: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              💣
+            </div>
+            <span style={{ wordBreak: "break-word" }}>Minesweeper</span>
+          </div>
+
           {/* Internet Explorer icon */}
           <div
             className="retro-desktop-icon"
@@ -947,6 +977,46 @@ export default function RetroDesktop() {
               <Radio size={28} color="#000080" />
             </div>
             <span style={{ wordBreak: "break-word" }}>Radio</span>
+          </div>
+
+          {/* Notepad icon */}
+          <div
+            className="retro-desktop-icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!showNotepad) {
+                const newZ = maxZ + 1;
+                setMaxZ(newZ);
+                setNotepadZ(newZ);
+              }
+              setShowNotepad(true);
+            }}
+            style={{ cursor: "pointer" }}
+          >
+            <div className="retro-icon-box" style={{ background: "#c0c0c0", border: "1px solid #808080", fontSize: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              📝
+            </div>
+            <span style={{ wordBreak: "break-word" }}>Notepad</span>
+          </div>
+
+          {/* Paint icon */}
+          <div
+            className="retro-desktop-icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!showPaint) {
+                const newZ = maxZ + 1;
+                setMaxZ(newZ);
+                setPaintZ(newZ);
+              }
+              setShowPaint(true);
+            }}
+            style={{ cursor: "pointer" }}
+          >
+            <div className="retro-icon-box" style={{ background: "#c0c0c0", border: "1px solid #808080", fontSize: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              🎨
+            </div>
+            <span style={{ wordBreak: "break-word" }}>Paint</span>
           </div>
 
           {/* Recycle Bin — last icon */}
@@ -996,6 +1066,45 @@ export default function RetroDesktop() {
               const newZ = maxZ + 1;
               setMaxZ(newZ);
               setBrowserZ(newZ);
+            }}
+          />
+        )}
+
+        {/* Minesweeper window */}
+        {showMinesweeper && (
+          <RetroMinesweeper
+            zIndex={minesweeperZ}
+            onClose={() => setShowMinesweeper(false)}
+            onFocus={() => {
+              const newZ = maxZ + 1;
+              setMaxZ(newZ);
+              setMinesweeperZ(newZ);
+            }}
+          />
+        )}
+
+        {/* Notepad window */}
+        {showNotepad && (
+          <RetroNotepad
+            zIndex={notepadZ}
+            onClose={() => setShowNotepad(false)}
+            onFocus={() => {
+              const newZ = maxZ + 1;
+              setMaxZ(newZ);
+              setNotepadZ(newZ);
+            }}
+          />
+        )}
+
+        {/* Paint window */}
+        {showPaint && (
+          <RetroPaint
+            zIndex={paintZ}
+            onClose={() => setShowPaint(false)}
+            onFocus={() => {
+              const newZ = maxZ + 1;
+              setMaxZ(newZ);
+              setPaintZ(newZ);
             }}
           />
         )}
@@ -1085,6 +1194,48 @@ export default function RetroDesktop() {
             }}
           >
             🌐 Internet Explorer
+          </button>
+        )}
+
+        {/* Minesweeper taskbar button */}
+        {showMinesweeper && (
+          <button
+            className="retro-taskbar-window-btn"
+            onClick={() => {
+              const newZ = maxZ + 1;
+              setMaxZ(newZ);
+              setMinesweeperZ(newZ);
+            }}
+          >
+            💣 Minesweeper
+          </button>
+        )}
+
+        {/* Notepad taskbar button */}
+        {showNotepad && (
+          <button
+            className="retro-taskbar-window-btn"
+            onClick={() => {
+              const newZ = maxZ + 1;
+              setMaxZ(newZ);
+              setNotepadZ(newZ);
+            }}
+          >
+            📝 Notepad
+          </button>
+        )}
+
+        {/* Paint taskbar button */}
+        {showPaint && (
+          <button
+            className="retro-taskbar-window-btn"
+            onClick={() => {
+              const newZ = maxZ + 1;
+              setMaxZ(newZ);
+              setPaintZ(newZ);
+            }}
+          >
+            🎨 Paint
           </button>
         )}
 
