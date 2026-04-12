@@ -16,24 +16,30 @@ import {
 } from "lucide-react";
 
 // ── Win95 Folder SVG icon ─────────────────────────────────────────────────────
-function Win95Folder({ size = 40 }: { size?: number }) {
+function Win95Folder({ size = 48 }: { size?: number }) {
+  const h = Math.round(size * 0.8);
   return (
-    <svg width={size} height={Math.round(size * 0.82)} viewBox="0 0 40 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width={size} height={h} viewBox="0 0 48 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Drop shadow */}
+      <rect x="3" y="13" width="44" height="24" fill="#808000" opacity="0.3"/>
       {/* Tab */}
-      <path d="M1 10 L1 12 L13 12 L16 10 Z" fill="#FFDF5B" stroke="#808000" strokeWidth="1" strokeLinejoin="round"/>
+      <path d="M1 11 L1 14 L16 14 L20 11 Z" fill="#FFD700" stroke="#8B6914" strokeWidth="1" strokeLinejoin="round"/>
+      {/* Tab highlight */}
+      <line x1="2" y1="12" x2="14" y2="12" stroke="#FFFF80" strokeWidth="1"/>
       {/* Folder body */}
-      <rect x="1" y="11" width="38" height="21" fill="#FFDF5B" stroke="#808000" strokeWidth="1"/>
+      <rect x="1" y="13" width="44" height="23" fill="#FFD700" stroke="#8B6914" strokeWidth="1"/>
       {/* Top highlight */}
-      <line x1="2" y1="12" x2="37" y2="12" stroke="#FFFF99" strokeWidth="1"/>
+      <line x1="2" y1="14" x2="43" y2="14" stroke="#FFFF99" strokeWidth="1.5"/>
       {/* Left highlight */}
-      <line x1="2" y1="12" x2="2" y2="31" stroke="#FFFF99" strokeWidth="1"/>
+      <line x1="2" y1="14" x2="2" y2="34" stroke="#FFFF99" strokeWidth="1.5"/>
       {/* Bottom shadow */}
-      <line x1="2" y1="32" x2="39" y2="32" stroke="#807000" strokeWidth="1"/>
+      <line x1="2" y1="35" x2="44" y2="35" stroke="#806000" strokeWidth="1.5"/>
       {/* Right shadow */}
-      <line x1="39" y1="12" x2="39" y2="32" stroke="#807000" strokeWidth="1"/>
-      {/* Inner paper lines */}
-      <line x1="8" y1="18" x2="32" y2="18" stroke="#C8A800" strokeWidth="1" opacity="0.6"/>
-      <line x1="8" y1="22" x2="28" y2="22" stroke="#C8A800" strokeWidth="1" opacity="0.6"/>
+      <line x1="44" y1="14" x2="44" y2="35" stroke="#806000" strokeWidth="1.5"/>
+      {/* Inner document lines */}
+      <line x1="9" y1="21" x2="39" y2="21" stroke="#C8A000" strokeWidth="1" opacity="0.7"/>
+      <line x1="9" y1="26" x2="34" y2="26" stroke="#C8A000" strokeWidth="1" opacity="0.7"/>
+      <line x1="9" y1="31" x2="30" y2="31" stroke="#C8A000" strokeWidth="1" opacity="0.5"/>
     </svg>
   );
 }
@@ -625,7 +631,7 @@ export default function RetroDesktop() {
             style={{ cursor: "pointer" }}
           >
             <div className="retro-icon-box">
-              <Win95Folder size={38} />
+              <Win95Folder size={46} />
             </div>
             <span style={{ wordBreak: "break-word" }}>{t("nav.finance")}</span>
           </div>
@@ -637,7 +643,7 @@ export default function RetroDesktop() {
             style={{ cursor: "pointer" }}
           >
             <div className="retro-icon-box">
-              <Win95Folder size={38} />
+              <Win95Folder size={46} />
             </div>
             <span style={{ wordBreak: "break-word" }}>{t("retro.engineering")}</span>
           </div>
@@ -649,7 +655,7 @@ export default function RetroDesktop() {
             style={{ cursor: "pointer" }}
           >
             <div className="retro-icon-box">
-              <Win95Folder size={38} />
+              <Win95Folder size={46} />
             </div>
             <span style={{ wordBreak: "break-word" }}>{t("nav.taxPayroll")}</span>
           </div>
@@ -661,7 +667,7 @@ export default function RetroDesktop() {
             style={{ cursor: "pointer" }}
           >
             <div className="retro-icon-box">
-              <Win95Folder size={38} />
+              <Win95Folder size={46} />
             </div>
             <span style={{ wordBreak: "break-word" }}>{t("nav.converters")}</span>
           </div>
@@ -673,7 +679,7 @@ export default function RetroDesktop() {
             style={{ cursor: "pointer" }}
           >
             <div className="retro-icon-box">
-              <Win95Folder size={38} />
+              <Win95Folder size={46} />
             </div>
             <span style={{ wordBreak: "break-word" }}>{t("nav.lifestyle")}</span>
           </div>
@@ -685,7 +691,7 @@ export default function RetroDesktop() {
             style={{ cursor: "pointer" }}
           >
             <div className="retro-icon-box">
-              <Win95Folder size={38} />
+              <Win95Folder size={46} />
             </div>
             <span style={{ wordBreak: "break-word" }}>{t("retro.gamesTools")}</span>
           </div>
