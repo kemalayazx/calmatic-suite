@@ -5,11 +5,13 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { Sun, Moon, Home } from "lucide-react";
 import { ThemeProvider, useTheme } from "@/context/ThemeContext";
-import RetroDesktop from "@/components/RetroDesktop";
-import RetroBoot from "@/components/RetroBoot";
+import dynamic from "next/dynamic";
 import { LanguageProvider, useLanguage, type Locale } from "@/context/LanguageContext";
 import { LOCALE_NAMES, LOCALE_FLAGS } from "@/i18n/translations";
 import WelcomeModal from "@/components/WelcomeModal";
+
+const RetroDesktop = dynamic(() => import("@/components/RetroDesktop"), { ssr: false });
+const RetroBoot = dynamic(() => import("@/components/RetroBoot"), { ssr: false });
 
 const navCategories = [
   {
@@ -330,19 +332,21 @@ function Navbar() {
             {open && (
               <div
                 style={{
-                  position: "absolute",
-                  top: "calc(100% + 8px)",
-                  right: 0,
+                  position: "fixed",
+                  top: "60px",
+                  right: "1rem",
+                  left: "1rem",
                   background: "var(--bg-secondary)",
                   border: "1px solid var(--border-color)",
                   borderRadius: "0.75rem",
                   boxShadow: "0 16px 48px rgba(0,0,0,0.3)",
                   padding: "1.25rem",
                   display: "grid",
-                  gridTemplateColumns: "repeat(3, 200px)",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
                   gap: "1.5rem",
                   zIndex: 100,
-                  minWidth: "640px",
+                  maxHeight: "calc(100vh - 80px)",
+                  overflowY: "auto",
                 }}
               >
                 {navCategories.map((cat) => (
@@ -481,8 +485,8 @@ function RetroCalcWindow({ children }: { children: React.ReactNode }) {
     const onMove = (e: MouseEvent) => {
       if (!dragging.current) return;
       setPos({
-        x: Math.max(0, e.clientX - dragOffset.current.x),
-        y: Math.max(0, e.clientY - dragOffset.current.y),
+        x: Math.min(Math.max(0, e.clientX - dragOffset.current.x), window.innerWidth - 120),
+        y: Math.min(Math.max(0, e.clientY - dragOffset.current.y), window.innerHeight - 60),
       });
     };
     const onUp = () => { dragging.current = false; };

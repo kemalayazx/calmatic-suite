@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useTheme } from "@/context/ThemeContext";
 
 type BootPhase = "boot" | "login" | "startup" | "dialog" | "ready";
@@ -49,9 +49,15 @@ export default function RetroBoot() {
   const [loginError, setLoginError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const loginTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const focusTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     setMounted(true);
+    return () => {
+      if (loginTimerRef.current) clearTimeout(loginTimerRef.current);
+      if (focusTimerRef.current) clearTimeout(focusTimerRef.current);
+    };
   }, []);
 
   useEffect(() => {
@@ -68,18 +74,18 @@ export default function RetroBoot() {
     }
   }, [theme, mounted]);
 
-  function handleLogin() {
+  const handleLogin = useCallback(() => {
     if (username.toLowerCase() === "kemal" && password === "kemal") {
       setLoginError(false);
       setBootPhase("startup");
       playWin95Startup();
-      setTimeout(() => setBootPhase("dialog"), 2200);
+      loginTimerRef.current = setTimeout(() => setBootPhase("dialog"), 2200);
     } else {
       setLoginError(true);
       setPassword("");
-      setTimeout(() => passwordRef.current?.focus(), 100);
+      focusTimerRef.current = setTimeout(() => passwordRef.current?.focus(), 100);
     }
-  }
+  }, [username, password]);
 
   function handleDialogOk() {
     localStorage.setItem("calmatic-retro-welcomed", "1");
