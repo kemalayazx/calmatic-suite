@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Temp translation files
+translate_keys.py
+translations_cache.json
+src/i18n/translations.ts.backup
+src/i18n/keys-group*.json

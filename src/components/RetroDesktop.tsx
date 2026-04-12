@@ -1134,7 +1134,7 @@ export default function RetroDesktop() {
             Windows&apos;u etkinleştirmek için Ayarlar&apos;a gidin.
           </div>
           <a
-            href="https://www.youtube.com/@ZipTravel"
+            href="https://www.youtube.com/@Dailytooshorts"
             target="_blank"
             rel="noopener noreferrer"
             style={{

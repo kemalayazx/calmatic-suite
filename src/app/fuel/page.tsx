@@ -12,6 +12,15 @@ import {
 } from "@/lib/calculations/fuel";
 import { useLanguage } from "@/context/LanguageContext";
 
+function ToggleBtn({ value, current, set, label }: { value: string; current: string; set: (v: string) => void; label: string }) {
+  return (
+    <button onClick={() => set(value)}
+      style={{ padding: "0.3rem 0.6rem", borderRadius: "0.375rem", border: "none", fontSize: "0.75rem", cursor: "pointer", background: current === value ? "#7c3aed" : "#27272a", color: current === value ? "white" : "#a1a1aa", fontWeight: current === value ? 700 : 400 }}>
+      {label}
+    </button>
+  );
+}
+
 export default function FuelPage() {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState(0);
@@ -57,13 +66,6 @@ export default function FuelPage() {
   const priceLabel = gasPriceUnit === "per_gallon" ? "$/gal" : "$/L";
   const effLabel = fuelEffUnit === "mpg" ? "MPG" : "L/100km";
   const distLabel = distanceUnit === "miles" ? t("fuel.unit.miles") : "km";
-
-  const ToggleBtn = ({ value, current, set, label }: { value: string; current: string; set: (v: string) => void; label: string }) => (
-    <button onClick={() => set(value)}
-      style={{ padding: "0.3rem 0.6rem", borderRadius: "0.375rem", border: "none", fontSize: "0.75rem", cursor: "pointer", background: current === value ? "#7c3aed" : "#27272a", color: current === value ? "white" : "#a1a1aa", fontWeight: current === value ? 700 : 400 }}>
-      {label}
-    </button>
-  );
 
   return (
     <div style={{ maxWidth: "800px", margin: "0 auto" }}>
