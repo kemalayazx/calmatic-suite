@@ -5,6 +5,9 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { Sun, Moon } from "lucide-react";
 import { ThemeProvider, useTheme } from "@/context/ThemeContext";
+import { LanguageProvider, useLanguage, type Locale } from "@/context/LanguageContext";
+import { LOCALE_NAMES, LOCALE_FLAGS } from "@/i18n/translations";
+import WelcomeModal from "@/components/WelcomeModal";
 
 const navCategories = [
   {
@@ -112,8 +115,105 @@ function ThemeToggle() {
   );
 }
 
+function LanguageSelector() {
+  const { locale, setLocale } = useLanguage();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const locales = Object.keys(LOCALE_NAMES) as Locale[];
+
+  return (
+    <div ref={ref} style={{ position: "relative" }}>
+      <button
+        onClick={() => setOpen(!open)}
+        aria-label="Select language"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.35rem",
+          padding: "0.375rem 0.625rem",
+          borderRadius: "0.5rem",
+          border: "1px solid var(--border-color)",
+          background: open ? "var(--bg-tertiary)" : "transparent",
+          color: "var(--text-secondary)",
+          cursor: "pointer",
+          fontSize: "0.8rem",
+          fontWeight: 600,
+          transition: "all 0.15s",
+          flexShrink: 0,
+        }}
+        onMouseOver={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "var(--bg-tertiary)"; }}
+        onMouseOut={(e) => { if (!open) (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+      >
+        <span style={{ fontSize: "1rem" }}>{LOCALE_FLAGS[locale]}</span>
+        <span style={{ textTransform: "uppercase" }}>{locale}</span>
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ transform: open ? "rotate(180deg)" : "rotate(0)", transition: "transform 0.2s" }}>
+          <path d="M2 4l3 3 3-3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
+      {open && (
+        <div
+          style={{
+            position: "absolute",
+            top: "calc(100% + 8px)",
+            right: 0,
+            background: "var(--bg-secondary)",
+            border: "1px solid var(--border-color)",
+            borderRadius: "0.75rem",
+            boxShadow: "0 16px 48px rgba(0,0,0,0.3)",
+            padding: "0.5rem",
+            zIndex: 200,
+            minWidth: "160px",
+            maxHeight: "380px",
+            overflowY: "auto",
+          }}
+        >
+          {locales.map((l) => (
+            <button
+              key={l}
+              onClick={() => { setLocale(l); setOpen(false); }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                width: "100%",
+                padding: "0.45rem 0.625rem",
+                borderRadius: "0.375rem",
+                border: "none",
+                background: l === locale ? "var(--bg-tertiary)" : "transparent",
+                color: l === locale ? "var(--text-primary)" : "var(--text-secondary)",
+                cursor: "pointer",
+                fontSize: "0.85rem",
+                textAlign: "left",
+                transition: "all 0.1s",
+              }}
+              onMouseOver={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "var(--bg-tertiary)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-primary)"; }}
+              onMouseOut={(e) => { (e.currentTarget as HTMLButtonElement).style.background = l === locale ? "var(--bg-tertiary)" : "transparent"; (e.currentTarget as HTMLButtonElement).style.color = l === locale ? "var(--text-primary)" : "var(--text-secondary)"; }}
+            >
+              <span style={{ fontSize: "1.1rem" }}>{LOCALE_FLAGS[l]}</span>
+              <span>{LOCALE_NAMES[l]}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Navbar() {
   const [open, setOpen] = useState(false);
+  const { t } = useLanguage();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -164,8 +264,9 @@ function Navbar() {
           </span>
         </Link>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <ThemeToggle />
+          <LanguageSelector />
 
           <div ref={dropdownRef} style={{ position: "relative" }}>
             <button
@@ -184,7 +285,7 @@ function Navbar() {
                 fontWeight: 600,
               }}
             >
-              All Calculators
+              {t("nav.allCalculators")}
               <svg
                 width="14"
                 height="14"
@@ -265,6 +366,34 @@ function Navbar() {
   );
 }
 
+function AppFooter() {
+  const { t } = useLanguage();
+  return (
+    <footer
+      style={{
+        borderTop: "1px solid var(--border-color)",
+        textAlign: "center",
+        padding: "1.5rem",
+        color: "var(--text-dim)",
+        fontSize: "0.875rem",
+      }}
+    >
+      <div style={{ marginBottom: "0.5rem" }}>
+        {t("footer.opensource")}
+      </div>
+      <div style={{ display: "flex", justifyContent: "center", gap: "1.25rem", flexWrap: "wrap" }}>
+        <Link href="/disclaimer" style={{ color: "var(--text-dim)", textDecoration: "underline", fontSize: "0.8rem" }}>
+          {t("footer.disclaimer")}
+        </Link>
+        <span style={{ color: "var(--border-color)" }}>·</span>
+        <span style={{ color: "var(--border-color)", fontSize: "0.8rem" }}>
+          {t("footer.info")}
+        </span>
+      </div>
+    </footer>
+  );
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -299,6 +428,13 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="canonical" href="https://calmatic.vercel.app" />
+        {/* Google Fonts — multi-script support */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+KR:wght@400;700&family=Noto+Sans+SC:wght@400;700&family=Noto+Sans+Arabic:wght@400;700&family=Noto+Sans+Devanagari:wght@400;700&display=swap"
+          rel="stylesheet"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -323,36 +459,25 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+      <body
+        className="min-h-screen"
+        style={{
+          background: "var(--bg-primary)",
+          color: "var(--text-primary)",
+          fontFamily: "'Inter', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans SC', 'Noto Sans Arabic', 'Noto Sans Devanagari', system-ui, sans-serif",
+        }}
+      >
         <ThemeProvider>
-          <Navbar />
+          <LanguageProvider>
+            <WelcomeModal />
+            <Navbar />
 
-          <main style={{ maxWidth: "1280px", margin: "0 auto", padding: "2rem 1.5rem" }}>
-            {children}
-          </main>
+            <main style={{ maxWidth: "1280px", margin: "0 auto", padding: "2rem 1.5rem" }}>
+              {children}
+            </main>
 
-          <footer
-            style={{
-              borderTop: "1px solid var(--border-color)",
-              textAlign: "center",
-              padding: "1.5rem",
-              color: "var(--text-dim)",
-              fontSize: "0.875rem",
-            }}
-          >
-            <div style={{ marginBottom: "0.5rem" }}>
-              Open Source · Free Forever · No Ads · No Data Collection
-            </div>
-            <div style={{ display: "flex", justifyContent: "center", gap: "1.25rem", flexWrap: "wrap" }}>
-              <Link href="/disclaimer" style={{ color: "var(--text-dim)", textDecoration: "underline", fontSize: "0.8rem" }}>
-                Disclaimer
-              </Link>
-              <span style={{ color: "var(--border-color)" }}>·</span>
-              <span style={{ color: "var(--border-color)", fontSize: "0.8rem" }}>
-                For informational use only — not professional advice
-              </span>
-            </div>
-          </footer>
+            <AppFooter />
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

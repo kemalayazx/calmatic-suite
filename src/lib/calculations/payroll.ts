@@ -1,15 +1,49 @@
 // Payroll calculations — Turkey 2025 parameters
 
+// ─── Types ─────────────────────────────────────────────────────────────────────
+
+export interface TaxBracket {
+  min: number;
+  max: number; // Infinity for last bracket
+  rate: number;
+}
+
+export interface PayrollParams {
+  sgkEmployee: number;           // 0.14
+  unemploymentEmployee: number;  // 0.01
+  stampTax: number;              // 0.00759
+  agi: number;                   // 2006
+  sgkEmployer: number;           // 0.205
+  unemploymentEmployer: number;  // 0.02
+  taxBrackets: TaxBracket[];
+}
+
 // ─── Constants (2025) ─────────────────────────────────────────────────────────
 
+export const DEFAULT_2025_PARAMS: PayrollParams = {
+  sgkEmployee: 0.14,
+  unemploymentEmployee: 0.01,
+  stampTax: 0.00759,
+  agi: 2006,
+  sgkEmployer: 0.205,
+  unemploymentEmployer: 0.02,
+  taxBrackets: [
+    { min: 0,         max: 158_000,   rate: 0.15 },
+    { min: 158_001,   max: 330_000,   rate: 0.20 },
+    { min: 330_001,   max: 800_000,   rate: 0.27 },
+    { min: 800_001,   max: 4_300_000, rate: 0.35 },
+    { min: 4_300_001, max: Infinity,  rate: 0.40 },
+  ],
+};
+
+// Legacy constant for backwards compatibility
 export const PAYROLL_2025 = {
-  SGK_WORKER_RATE: 0.14,       // %14 (health + retirement)
-  UNEMPLOYMENT_WORKER_RATE: 0.01, // %1
-  STAMP_TAX_RATE: 0.00759,     // %0.759
-  AGI_SINGLE_MONTHLY: 2006,    // Asgari Geçim İndirimi (bekar)
-  SGK_EMPLOYER_RATE: 0.205,    // %20.5
-  UNEMPLOYMENT_EMPLOYER_RATE: 0.02, // %2
-  // Annual income tax brackets (yearly cumulative)
+  SGK_WORKER_RATE: DEFAULT_2025_PARAMS.sgkEmployee,
+  UNEMPLOYMENT_WORKER_RATE: DEFAULT_2025_PARAMS.unemploymentEmployee,
+  STAMP_TAX_RATE: DEFAULT_2025_PARAMS.stampTax,
+  AGI_SINGLE_MONTHLY: DEFAULT_2025_PARAMS.agi,
+  SGK_EMPLOYER_RATE: DEFAULT_2025_PARAMS.sgkEmployer,
+  UNEMPLOYMENT_EMPLOYER_RATE: DEFAULT_2025_PARAMS.unemploymentEmployer,
   TAX_BRACKETS: [
     { upTo: 158_000,   rate: 0.15 },
     { upTo: 330_000,   rate: 0.20 },
@@ -21,34 +55,38 @@ export const PAYROLL_2025 = {
 
 // ─── Income Tax Calculation (annual basis, return annual) ─────────────────────
 
-export function calculateAnnualIncomeTax(annualIncome: number): {
+export function calculateAnnualIncomeTax(
+  annualIncome: number,
+  params: PayrollParams = DEFAULT_2025_PARAMS
+): {
   tax: number;
   breakdown: { bracket: string; taxableAmount: number; rate: number; tax: number }[];
 } {
-  const brackets = PAYROLL_2025.TAX_BRACKETS;
   let remaining = annualIncome;
-  let previousUpTo = 0;
   let totalTax = 0;
   const breakdown: { bracket: string; taxableAmount: number; rate: number; tax: number }[] = [];
 
-  for (const bracket of brackets) {
+  for (const bracket of params.taxBrackets) {
     if (remaining <= 0) break;
-    const bracketSize = bracket.upTo - previousUpTo;
-    const taxableInBracket = Math.min(remaining, bracketSize);
+    const bracketSize = bracket.max === Infinity
+      ? Infinity
+      : bracket.max - bracket.min + 1;
+    const taxableInBracket = bracketSize === Infinity
+      ? remaining
+      : Math.min(remaining, bracketSize);
     const taxInBracket = taxableInBracket * bracket.rate;
     totalTax += taxInBracket;
     if (taxableInBracket > 0) {
       breakdown.push({
-        bracket: bracket.upTo === Infinity
-          ? `${previousUpTo.toLocaleString("tr-TR")} TL +`
-          : `${previousUpTo.toLocaleString("tr-TR")} – ${bracket.upTo.toLocaleString("tr-TR")} TL`,
+        bracket: bracket.max === Infinity
+          ? `${bracket.min.toLocaleString("tr-TR")} TL +`
+          : `${bracket.min.toLocaleString("tr-TR")} – ${bracket.max.toLocaleString("tr-TR")} TL`,
         taxableAmount: taxableInBracket,
         rate: bracket.rate,
         tax: taxInBracket,
       });
     }
     remaining -= taxableInBracket;
-    previousUpTo = bracket.upTo;
   }
 
   return { tax: totalTax, breakdown };
@@ -69,21 +107,24 @@ export interface GrossToNetResult {
   taxBreakdown: { bracket: string; taxableAmount: number; rate: number; tax: number }[];
 }
 
-export function grossToNet(grossMonthly: number): GrossToNetResult {
-  const sgkWorker = grossMonthly * PAYROLL_2025.SGK_WORKER_RATE;
-  const unemployment = grossMonthly * PAYROLL_2025.UNEMPLOYMENT_WORKER_RATE;
+export function grossToNet(
+  grossMonthly: number,
+  params: PayrollParams = DEFAULT_2025_PARAMS
+): GrossToNetResult {
+  const sgkWorker = grossMonthly * params.sgkEmployee;
+  const unemployment = grossMonthly * params.unemploymentEmployee;
   const taxBase = grossMonthly - sgkWorker - unemployment;
 
   // Annual basis for progressive tax
   const annualTaxBase = taxBase * 12;
-  const { tax: annualTax, breakdown } = calculateAnnualIncomeTax(annualTaxBase);
+  const { tax: annualTax, breakdown } = calculateAnnualIncomeTax(annualTaxBase, params);
   const monthlyIncomeTax = annualTax / 12;
 
-  const stampTax = grossMonthly * PAYROLL_2025.STAMP_TAX_RATE;
-  const agi = PAYROLL_2025.AGI_SINGLE_MONTHLY;
+  const stampTaxAmount = grossMonthly * params.stampTax;
+  const agiAmount = params.agi;
 
-  const net = grossMonthly - sgkWorker - unemployment - monthlyIncomeTax - stampTax + agi;
-  const totalDeductions = sgkWorker + unemployment + monthlyIncomeTax + stampTax - agi;
+  const net = grossMonthly - sgkWorker - unemployment - monthlyIncomeTax - stampTaxAmount + agiAmount;
+  const totalDeductions = sgkWorker + unemployment + monthlyIncomeTax + stampTaxAmount - agiAmount;
   const effectiveRate = (totalDeductions / grossMonthly) * 100;
 
   return {
@@ -92,8 +133,8 @@ export function grossToNet(grossMonthly: number): GrossToNetResult {
     unemployment,
     taxBase,
     monthlyIncomeTax,
-    stampTax,
-    agi,
+    stampTax: stampTaxAmount,
+    agi: agiAmount,
     net,
     effectiveRate,
     taxBreakdown: breakdown,
@@ -102,12 +143,15 @@ export function grossToNet(grossMonthly: number): GrossToNetResult {
 
 // ─── Net → Gross (binary search) ─────────────────────────────────────────────
 
-export function netToGross(targetNet: number): { gross: number; details: GrossToNetResult } {
+export function netToGross(
+  targetNet: number,
+  params: PayrollParams = DEFAULT_2025_PARAMS
+): { gross: number; details: GrossToNetResult } {
   let lo = targetNet;
   let hi = targetNet * 3;
   for (let i = 0; i < 100; i++) {
     const mid = (lo + hi) / 2;
-    const result = grossToNet(mid);
+    const result = grossToNet(mid, params);
     if (Math.abs(result.net - targetNet) < 0.01) {
       return { gross: mid, details: result };
     }
@@ -117,7 +161,7 @@ export function netToGross(targetNet: number): { gross: number; details: GrossTo
       hi = mid;
     }
   }
-  const finalResult = grossToNet((lo + hi) / 2);
+  const finalResult = grossToNet((lo + hi) / 2, params);
   return { gross: (lo + hi) / 2, details: finalResult };
 }
 
@@ -170,9 +214,12 @@ export interface EmployerCostResult {
   totalOverGross: number; // percentage over gross
 }
 
-export function employerCost(grossMonthly: number): EmployerCostResult {
-  const sgkEmployer = grossMonthly * PAYROLL_2025.SGK_EMPLOYER_RATE;
-  const unemploymentEmployer = grossMonthly * PAYROLL_2025.UNEMPLOYMENT_EMPLOYER_RATE;
+export function employerCost(
+  grossMonthly: number,
+  params: PayrollParams = DEFAULT_2025_PARAMS
+): EmployerCostResult {
+  const sgkEmployer = grossMonthly * params.sgkEmployer;
+  const unemploymentEmployer = grossMonthly * params.unemploymentEmployer;
   const totalEmployerCost = grossMonthly + sgkEmployer + unemploymentEmployer;
   const totalOverGross = ((totalEmployerCost - grossMonthly) / grossMonthly) * 100;
 

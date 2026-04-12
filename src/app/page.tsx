@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   Calculator,
   TrendingUp,
@@ -50,35 +51,35 @@ import {
 const userPaths = [
   {
     icon: GraduationCap,
-    label: "Student",
+    labelKey: "path.student",
     description: "Math, statistics, number systems",
     links: ["/math", "/gpa", "/statistics", "/converter", "/percentage", "/scientific", "/geometry", "/probability"],
     color: "#7c3aed",
   },
   {
     icon: Briefcase,
-    label: "Business / Accounting",
+    labelKey: "path.business",
     description: "VAT, depreciation, payroll, financial planning",
     links: ["/accounting", "/financial", "/us-payroll", "/payroll", "/taxes", "/mortgage"],
     color: "#0891b2",
   },
   {
     icon: Code2,
-    label: "Developer",
+    labelKey: "path.developer",
     description: "Binary, hex, octal, ASCII",
     links: ["/converter", "/colors", "/math", "/electronics", "/password", "/random", "/text"],
     color: "#059669",
   },
   {
     icon: Wallet,
-    label: "Personal Finance",
+    labelKey: "path.finance",
     description: "Loans, interest, mortgage, investments",
     links: ["/financial", "/currency", "/mortgage", "/investment", "/loans", "/fuel", "/savings", "/auto-loan", "/credit-card", "/rent-buy", "/electricity"],
     color: "#d97706",
   },
   {
     icon: ShoppingCart,
-    label: "Everyday Use",
+    labelKey: "path.everyday",
     description: "Quick calculations, discounts, cooking, tips",
     links: ["/basic", "/discount", "/tip", "/health", "/calories", "/cooking", "/percentage", "/dates", "/age", "/timezone", "/random", "/text", "/speed"],
     color: "#db2777",
@@ -401,6 +402,8 @@ const modules = [
 ];
 
 export default function HomePage() {
+  const { t } = useLanguage();
+
   return (
     <div>
       {/* Hero */}
@@ -417,17 +420,17 @@ export default function HomePage() {
             backgroundClip: "text",
           }}
         >
-          Calmatic Suite
+          {t("hero.title")}
         </h1>
         <p style={{ fontSize: "1.125rem", color: "var(--text-muted)", maxWidth: "480px", margin: "0 auto" }}>
-          Thirty-nine powerful calculator modules in one place. Free, open-source, no ads.
+          {t("hero.subtitle")}
         </p>
       </div>
 
       {/* User Path Section */}
       <div style={{ marginBottom: "3.5rem" }}>
         <p style={{ textAlign: "center", color: "var(--text-dim)", fontSize: "0.8rem", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "1rem" }}>
-          Jump to what you need
+          {t("hero.jumpTo")}
         </p>
         <div
           style={{
@@ -437,9 +440,9 @@ export default function HomePage() {
             justifyContent: "center",
           }}
         >
-          {userPaths.map(({ icon: Icon, label, description, links, color }) => (
+          {userPaths.map(({ icon: Icon, labelKey, description, links, color }) => (
             <Link
-              key={label}
+              key={labelKey}
               href={links[0]}
               style={{ textDecoration: "none" }}
               title={description}
@@ -469,7 +472,7 @@ export default function HomePage() {
                 }}
               >
                 <Icon size={15} color={color} />
-                {label}
+                {t(labelKey)}
               </div>
             </Link>
           ))}

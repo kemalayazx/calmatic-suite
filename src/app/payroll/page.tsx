@@ -7,7 +7,9 @@ import {
   calculateOvertime,
   hourlyRateFromMonthly,
   employerCost,
-  PAYROLL_2025,
+  DEFAULT_2025_PARAMS,
+  type PayrollParams,
+  type TaxBracket,
   type OvertimeType,
 } from "@/lib/calculations/payroll";
 
@@ -74,13 +76,220 @@ function ResultRow({ name, amount, rate, highlight }: { name: string; amount: st
   );
 }
 
+// ─── Parameter Panel ─────────────────────────────────────────────────────────
+
+function ParamsPanel({
+  params,
+  onChange,
+  isCustom,
+}: {
+  params: PayrollParams;
+  onChange: (p: PayrollParams) => void;
+  isCustom: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+
+  const setField = (key: keyof Omit<PayrollParams, "taxBrackets">, value: number) => {
+    onChange({ ...params, [key]: value });
+  };
+
+  const setBracketRate = (index: number, rate: number) => {
+    const updated = params.taxBrackets.map((b, i) =>
+      i === index ? { ...b, rate } : b
+    );
+    onChange({ ...params, taxBrackets: updated });
+  };
+
+  const setBracketMax = (index: number, max: number) => {
+    const updated = params.taxBrackets.map((b, i) => {
+      if (i === index) return { ...b, max };
+      // Update next bracket's min
+      if (i === index + 1) return { ...b, min: max + 1 };
+      return b;
+    });
+    onChange({ ...params, taxBrackets: updated });
+  };
+
+  const reset = () => onChange(DEFAULT_2025_PARAMS);
+
+  const paramInputStyle: React.CSSProperties = {
+    ...inputStyle,
+    padding: "0.4rem 0.6rem",
+    fontSize: "0.85rem",
+    width: "110px",
+  };
+
+  return (
+    <div style={{ ...card, marginBottom: "1.75rem" }}>
+      <button
+        onClick={() => setOpen(!open)}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          background: "transparent",
+          border: "none",
+          cursor: "pointer",
+          padding: 0,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+          <span style={{ color: "#fafafa", fontWeight: 600, fontSize: "0.95rem" }}>
+            Customize Parameters
+          </span>
+          <span style={{
+            fontSize: "0.7rem",
+            padding: "0.2rem 0.5rem",
+            borderRadius: "1rem",
+            background: isCustom ? "rgba(234,179,8,0.15)" : "rgba(124,58,237,0.15)",
+            color: isCustom ? "#eab308" : "#a78bfa",
+            fontWeight: 600,
+          }}>
+            {isCustom ? "(custom)" : "(2025 defaults)"}
+          </span>
+        </div>
+        <svg
+          width="16" height="16" viewBox="0 0 16 16" fill="none"
+          style={{ transform: open ? "rotate(180deg)" : "rotate(0)", transition: "transform 0.2s", flexShrink: 0 }}
+        >
+          <path d="M3 6l5 5 5-5" stroke="#71717a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
+      {open && (
+        <div style={{ marginTop: "1.25rem" }}>
+          {/* Basic params */}
+          <div style={{ marginBottom: "1.25rem" }}>
+            <p style={{ color: "#71717a", fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.75rem" }}>
+              SGK &amp; Stopajlar
+            </p>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "0.75rem" }}>
+              {[
+                { key: "sgkEmployee" as const, label: "SGK İşçi Primi (%)", multiplier: 100 },
+                { key: "unemploymentEmployee" as const, label: "İşsizlik İşçi (%)", multiplier: 100 },
+                { key: "stampTax" as const, label: "Damga Vergisi (%)", multiplier: 100 },
+                { key: "agi" as const, label: "AGİ (TL)", multiplier: 1 },
+                { key: "sgkEmployer" as const, label: "SGK İşveren (%)", multiplier: 100 },
+                { key: "unemploymentEmployer" as const, label: "İşsizlik İşveren (%)", multiplier: 100 },
+              ].map(({ key, label, multiplier }) => (
+                <div key={key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem" }}>
+                  <span style={{ color: "#a1a1aa", fontSize: "0.85rem", flexGrow: 1 }}>{label}</span>
+                  <input
+                    type="number"
+                    step={key === "agi" ? "1" : "0.001"}
+                    min={0}
+                    style={paramInputStyle}
+                    value={multiplier === 1 ? params[key] : +(params[key] as number * 100).toFixed(4)}
+                    onChange={(e) => {
+                      const v = parseFloat(e.target.value);
+                      if (!isNaN(v)) setField(key, multiplier === 1 ? v : v / 100);
+                    }}
+                    placeholder={
+                      multiplier === 1
+                        ? String(DEFAULT_2025_PARAMS[key])
+                        : String(+(DEFAULT_2025_PARAMS[key] as number * 100).toFixed(4))
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Tax brackets */}
+          <div style={{ marginBottom: "1rem" }}>
+            <p style={{ color: "#71717a", fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.75rem" }}>
+              Gelir Vergisi Dilimleri
+            </p>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
+                <thead>
+                  <tr>
+                    <th style={{ color: "#52525b", textAlign: "left", padding: "0.35rem 0.5rem", fontWeight: 500 }}>Dilim</th>
+                    <th style={{ color: "#52525b", textAlign: "left", padding: "0.35rem 0.5rem", fontWeight: 500 }}>Alt Limit (TL)</th>
+                    <th style={{ color: "#52525b", textAlign: "left", padding: "0.35rem 0.5rem", fontWeight: 500 }}>Üst Limit (TL)</th>
+                    <th style={{ color: "#52525b", textAlign: "left", padding: "0.35rem 0.5rem", fontWeight: 500 }}>Oran (%)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {params.taxBrackets.map((bracket, i) => (
+                    <tr key={i} style={{ borderTop: "1px solid #27272a" }}>
+                      <td style={{ color: "#71717a", padding: "0.5rem" }}>Dilim {i + 1}</td>
+                      <td style={{ padding: "0.4rem 0.5rem" }}>
+                        <input
+                          type="number"
+                          disabled
+                          value={bracket.min}
+                          style={{ ...paramInputStyle, width: "120px", opacity: 0.5, cursor: "not-allowed" }}
+                        />
+                      </td>
+                      <td style={{ padding: "0.4rem 0.5rem" }}>
+                        {bracket.max === Infinity ? (
+                          <span style={{ color: "#52525b", fontSize: "0.85rem", padding: "0.4rem 0.6rem" }}>∞</span>
+                        ) : (
+                          <input
+                            type="number"
+                            min={bracket.min + 1}
+                            style={{ ...paramInputStyle, width: "120px" }}
+                            value={bracket.max}
+                            onChange={(e) => {
+                              const v = parseInt(e.target.value);
+                              if (!isNaN(v) && v > bracket.min) setBracketMax(i, v);
+                            }}
+                          />
+                        )}
+                      </td>
+                      <td style={{ padding: "0.4rem 0.5rem" }}>
+                        <input
+                          type="number"
+                          step="0.1"
+                          min={0}
+                          max={100}
+                          style={{ ...paramInputStyle, width: "80px" }}
+                          value={+(bracket.rate * 100).toFixed(1)}
+                          onChange={(e) => {
+                            const v = parseFloat(e.target.value);
+                            if (!isNaN(v) && v >= 0 && v <= 100) setBracketRate(i, v / 100);
+                          }}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <button
+            onClick={reset}
+            style={{
+              padding: "0.5rem 1.125rem",
+              borderRadius: "0.5rem",
+              border: "1px solid #3f3f46",
+              background: "transparent",
+              color: "#a1a1aa",
+              cursor: "pointer",
+              fontSize: "0.85rem",
+              transition: "all 0.15s",
+            }}
+            onMouseOver={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#27272a"; }}
+            onMouseOut={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+          >
+            Reset to 2025 Defaults
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Tab 1: Gross → Net ───────────────────────────────────────────────────────
 
-function GrossToNetTab() {
+function GrossToNetTab({ params }: { params: PayrollParams }) {
   const [gross, setGross] = useState("30000");
   const val = parseFloat(gross);
   const valid = val > 0 && val <= 10_000_000;
-  const result = valid ? grossToNet(val) : null;
+  const result = valid ? grossToNet(val, params) : null;
 
   return (
     <div>
@@ -98,12 +307,12 @@ function GrossToNetTab() {
         <div style={card}>
           <h3 style={{ color: "#fafafa", fontWeight: 700, marginBottom: "1rem" }}>Hesaplama Detayı</h3>
           <ResultRow name="Brüt Maaş" amount={fmtTL(result.gross)} />
-          <ResultRow name="SGK İşçi Primi (%14)" amount={`− ${fmtTL(result.sgkWorker)}`} rate={fmtPct(PAYROLL_2025.SGK_WORKER_RATE * 100)} />
-          <ResultRow name="İşsizlik Sigortası İşçi (%1)" amount={`− ${fmtTL(result.unemployment)}`} rate={fmtPct(PAYROLL_2025.UNEMPLOYMENT_WORKER_RATE * 100)} />
+          <ResultRow name={`SGK İşçi Primi (%${(params.sgkEmployee * 100).toFixed(1)})`} amount={`− ${fmtTL(result.sgkWorker)}`} rate={fmtPct(params.sgkEmployee * 100)} />
+          <ResultRow name={`İşsizlik Sigortası İşçi (%${(params.unemploymentEmployee * 100).toFixed(1)})`} amount={`− ${fmtTL(result.unemployment)}`} rate={fmtPct(params.unemploymentEmployee * 100)} />
           <ResultRow name="Gelir Vergisi Matrahı" amount={fmtTL(result.taxBase)} />
           <ResultRow name="Gelir Vergisi" amount={`− ${fmtTL(result.monthlyIncomeTax)}`} />
-          <ResultRow name="Damga Vergisi (%0.759)" amount={`− ${fmtTL(result.stampTax)}`} rate="0.759%" />
-          <ResultRow name="AGİ (Bekar)" amount={`+ ${fmtTL(result.agi)}`} />
+          <ResultRow name={`Damga Vergisi (%${(params.stampTax * 100).toFixed(3)})`} amount={`− ${fmtTL(result.stampTax)}`} rate={`${(params.stampTax * 100).toFixed(3)}%`} />
+          <ResultRow name={`AGİ (Bekar)`} amount={`+ ${fmtTL(result.agi)}`} />
           <ResultRow name="Net Maaş" amount={fmtTL(result.net)} highlight />
           <ResultRow name="Efektif Kesinti Oranı" amount={fmtPct(result.effectiveRate)} />
 
@@ -126,11 +335,11 @@ function GrossToNetTab() {
 
 // ─── Tab 2: Net → Gross ───────────────────────────────────────────────────────
 
-function NetToGrossTab() {
+function NetToGrossTab({ params }: { params: PayrollParams }) {
   const [net, setNet] = useState("20000");
   const val = parseFloat(net);
   const valid = val > 0 && val <= 8_000_000;
-  const result = valid ? netToGross(val) : null;
+  const result = valid ? netToGross(val, params) : null;
 
   return (
     <div>
@@ -228,11 +437,11 @@ function OvertimeTab() {
 
 // ─── Tab 4: Employer Cost ─────────────────────────────────────────────────────
 
-function EmployerCostTab() {
+function EmployerCostTab({ params }: { params: PayrollParams }) {
   const [gross, setGross] = useState("30000");
   const val = parseFloat(gross);
   const valid = val > 0 && val <= 10_000_000;
-  const result = valid ? employerCost(val) : null;
+  const result = valid ? employerCost(val, params) : null;
 
   return (
     <div style={card}>
@@ -243,8 +452,8 @@ function EmployerCostTab() {
       {result && (
         <div style={{ marginTop: "1.25rem" }}>
           <ResultRow name="Brüt Maaş" amount={fmtTL(result.grossSalary)} />
-          <ResultRow name="SGK İşveren (%20.5)" amount={fmtTL(result.sgkEmployer)} rate="20.5%" />
-          <ResultRow name="İşsizlik İşveren (%2)" amount={fmtTL(result.unemploymentEmployer)} rate="2%" />
+          <ResultRow name={`SGK İşveren (%${(params.sgkEmployer * 100).toFixed(1)})`} amount={fmtTL(result.sgkEmployer)} rate={`${(params.sgkEmployer * 100).toFixed(1)}%`} />
+          <ResultRow name={`İşsizlik İşveren (%${(params.unemploymentEmployer * 100).toFixed(1)})`} amount={fmtTL(result.unemploymentEmployer)} rate={`${(params.unemploymentEmployer * 100).toFixed(1)}%`} />
           <ResultRow name="Toplam İşveren Maliyeti" amount={fmtTL(result.totalEmployerCost)} highlight />
           <ResultRow name="Brüt Üzeri Ek Yük" amount={fmtPct(result.totalOverGross)} />
         </div>
@@ -253,10 +462,34 @@ function EmployerCostTab() {
   );
 }
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function paramsAreDefault(params: PayrollParams): boolean {
+  const d = DEFAULT_2025_PARAMS;
+  if (
+    params.sgkEmployee !== d.sgkEmployee ||
+    params.unemploymentEmployee !== d.unemploymentEmployee ||
+    params.stampTax !== d.stampTax ||
+    params.agi !== d.agi ||
+    params.sgkEmployer !== d.sgkEmployer ||
+    params.unemploymentEmployer !== d.unemploymentEmployer
+  ) return false;
+  if (params.taxBrackets.length !== d.taxBrackets.length) return false;
+  for (let i = 0; i < params.taxBrackets.length; i++) {
+    if (
+      params.taxBrackets[i].rate !== d.taxBrackets[i].rate ||
+      params.taxBrackets[i].max !== d.taxBrackets[i].max
+    ) return false;
+  }
+  return true;
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function PayrollPage() {
   const [activeTab, setActiveTab] = useState(0);
+  const [params, setParams] = useState<PayrollParams>(DEFAULT_2025_PARAMS);
+  const isCustom = !paramsAreDefault(params);
 
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto" }}>
@@ -264,6 +497,9 @@ export default function PayrollPage() {
         <h1 style={{ fontWeight: 800, fontSize: "1.75rem", color: "#fafafa", marginBottom: "0.5rem" }}>Maaş &amp; SGK Hesaplayıcı</h1>
         <p style={{ color: "#71717a", fontSize: "0.9rem" }}>Türkiye 2025 parametreleri — brüt/net, mesai, işveren maliyeti</p>
       </div>
+
+      {/* Collapsible params panel */}
+      <ParamsPanel params={params} onChange={setParams} isCustom={isCustom} />
 
       <div style={{ display: "flex", gap: "0.375rem", flexWrap: "wrap", marginBottom: "2rem", borderBottom: "1px solid #27272a" }}>
         {TABS.map((tab, i) => (
@@ -287,10 +523,10 @@ export default function PayrollPage() {
         ))}
       </div>
 
-      {activeTab === 0 && <GrossToNetTab />}
-      {activeTab === 1 && <NetToGrossTab />}
+      {activeTab === 0 && <GrossToNetTab params={params} />}
+      {activeTab === 1 && <NetToGrossTab params={params} />}
       {activeTab === 2 && <OvertimeTab />}
-      {activeTab === 3 && <EmployerCostTab />}
+      {activeTab === 3 && <EmployerCostTab params={params} />}
 
       <p style={{ textAlign: "center", color: "#52525b", fontSize: "0.75rem", marginTop: "2rem" }}>
         Results are for informational purposes only. Consult a professional for official calculations. (2025 parametreleri)
