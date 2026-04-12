@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { useTheme } from "@/context/ThemeContext";
 import { useLanguage, type Locale } from "@/context/LanguageContext";
 import { useRouter } from "next/navigation";
@@ -47,127 +47,7 @@ const LOCALE_NAMES: Record<Locale, string> = {
 };
 
 // ── Folder / desktop data ─────────────────────────────────────────────────────
-
-const FOLDERS: Array<{ id: string; label: string; items: AppItem[] }> = [
-  {
-    id: "finance",
-    label: "Finance",
-    items: [
-      { label: "Mortgage", href: "/mortgage", icon: Home },
-      { label: "Investment", href: "/investment", icon: LineChart },
-      { label: "Savings", href: "/savings", icon: PiggyBank },
-      { label: "Auto Loan", href: "/auto-loan", icon: Car },
-      { label: "Credit Card", href: "/credit-card", icon: CreditCard },
-      { label: "Loan Compare", href: "/loans", icon: Scale },
-      { label: "Currency", href: "/currency", icon: DollarSign },
-      { label: "Rent/Buy", href: "/rent-buy", icon: Building },
-    ],
-  },
-  {
-    id: "engineering",
-    label: "Engineering",
-    items: [
-      { label: "Electronics", href: "/electronics", icon: Zap },
-      { label: "Geometry", href: "/geometry", icon: Ruler },
-      { label: "Advanced Math", href: "/math", icon: Calculator },
-      { label: "Probability", href: "/probability", icon: Dice5 },
-      { label: "Statistics", href: "/statistics", icon: BarChart2 },
-    ],
-  },
-  {
-    id: "tax",
-    label: "Tax & Payroll",
-    items: [
-      { label: "US Payroll", href: "/us-payroll", icon: Users },
-      { label: "TR Payroll", href: "/payroll", icon: FileText },
-      { label: "Tax Calculator", href: "/taxes", icon: Receipt },
-      { label: "Accounting", href: "/accounting", icon: Receipt },
-    ],
-  },
-  {
-    id: "converters",
-    label: "Converters",
-    items: [
-      { label: "Unit Converter", href: "/units", icon: Ruler },
-      { label: "Number Base", href: "/converter", icon: Hash },
-      { label: "Color Converter", href: "/colors", icon: Palette },
-      { label: "Time Zone", href: "/timezone", icon: Globe },
-      { label: "Speed", href: "/speed", icon: Timer },
-      { label: "Fuel", href: "/fuel", icon: Fuel },
-    ],
-  },
-  {
-    id: "lifestyle",
-    label: "Lifestyle",
-    items: [
-      { label: "Health & BMI", href: "/health", icon: Heart },
-      { label: "Food Calories", href: "/calories", icon: Apple },
-      { label: "Cooking", href: "/cooking", icon: ChefHat },
-      { label: "GPA", href: "/gpa", icon: GraduationCap },
-      { label: "Age", href: "/age", icon: Cake },
-      { label: "Tip", href: "/tip", icon: Coffee },
-      { label: "Discount", href: "/discount", icon: Tag },
-    ],
-  },
-  {
-    id: "games",
-    label: "Games & Tools",
-    items: [
-      { label: "Random", href: "/random", icon: Shuffle },
-      { label: "Password", href: "/password", icon: Shield },
-      { label: "Text Counter", href: "/text", icon: Type },
-    ],
-  },
-];
-
-const DIRECT_ICONS: AppItem[] = [
-  { label: "Calculator", href: "/basic", icon: Calculator },
-  { label: "Scientific", href: "/scientific", icon: Atom },
-  { label: "Date Calc", href: "/dates", icon: Calendar },
-  { label: "Electricity", href: "/electricity", icon: Lightbulb },
-];
-
-// My Computer — shows all apps from all folders + direct icons
-const MY_COMPUTER_ITEMS: AppItem[] = [
-  ...FOLDERS.flatMap(f => f.items),
-  ...DIRECT_ICONS,
-];
-
-// Start menu categories (flat representation for menu)
-const START_MENU_CATEGORIES = [
-  {
-    title: "Calculators",
-    items: [
-      { label: "Basic Calculator", href: "/basic" },
-      { label: "Scientific", href: "/scientific" },
-      { label: "Percentage", href: "/percentage" },
-    ],
-  },
-  {
-    title: "Finance",
-    items: FOLDERS[0].items.map((i) => ({ label: i.label, href: i.href })),
-  },
-  {
-    title: "Tax & Payroll",
-    items: FOLDERS[2].items.map((i) => ({ label: i.label, href: i.href })),
-  },
-  {
-    title: "Science",
-    items: FOLDERS[1].items.map((i) => ({ label: i.label, href: i.href })),
-  },
-  {
-    title: "Converters",
-    items: FOLDERS[3].items.map((i) => ({ label: i.label, href: i.href })),
-  },
-  {
-    title: "Lifestyle",
-    items: FOLDERS[4].items.map((i) => ({ label: i.label, href: i.href })),
-  },
-  {
-    title: "Games & Tools",
-    items: FOLDERS[5].items.map((i) => ({ label: i.label, href: i.href })),
-  },
-];
+// (FOLDERS and START_MENU_CATEGORIES are built inside the component via useMemo so labels can use t())
 
 // ── useDrag hook ──────────────────────────────────────────────────────────────
 
@@ -433,6 +313,7 @@ function TaskbarLanguageSelector() {
 
 export default function RetroDesktop() {
   const { theme, setTheme } = useTheme();
+  const { t } = useLanguage();
   const [startOpen, setStartOpen] = useState(false);
   const [openStartSub, setOpenStartSub] = useState<string | null>(null);
   const [openFolders, setOpenFolders] = useState<FolderWindow[]>([]);
@@ -444,6 +325,126 @@ export default function RetroDesktop() {
   const [showRadio, setShowRadio] = useState(false);
   const startRef = useRef<HTMLDivElement>(null);
   const nextOffset = useRef(0);
+
+  // ── Translatable folder/menu data
+  const FOLDERS = useMemo(() => [
+    {
+      id: "finance",
+      label: t("nav.finance"),
+      items: [
+        { label: "Mortgage", href: "/mortgage", icon: Home },
+        { label: "Investment", href: "/investment", icon: LineChart },
+        { label: "Savings", href: "/savings", icon: PiggyBank },
+        { label: "Auto Loan", href: "/auto-loan", icon: Car },
+        { label: "Credit Card", href: "/credit-card", icon: CreditCard },
+        { label: "Loan Compare", href: "/loans", icon: Scale },
+        { label: "Currency", href: "/currency", icon: DollarSign },
+        { label: "Rent/Buy", href: "/rent-buy", icon: Building },
+      ],
+    },
+    {
+      id: "engineering",
+      label: t("retro.engineering"),
+      items: [
+        { label: "Electronics", href: "/electronics", icon: Zap },
+        { label: "Geometry", href: "/geometry", icon: Ruler },
+        { label: "Advanced Math", href: "/math", icon: Calculator },
+        { label: "Probability", href: "/probability", icon: Dice5 },
+        { label: "Statistics", href: "/statistics", icon: BarChart2 },
+      ],
+    },
+    {
+      id: "tax",
+      label: t("nav.taxPayroll"),
+      items: [
+        { label: "US Payroll", href: "/us-payroll", icon: Users },
+        { label: "TR Payroll", href: "/payroll", icon: FileText },
+        { label: "Tax Calculator", href: "/taxes", icon: Receipt },
+        { label: "Accounting", href: "/accounting", icon: Receipt },
+      ],
+    },
+    {
+      id: "converters",
+      label: t("nav.converters"),
+      items: [
+        { label: "Unit Converter", href: "/units", icon: Ruler },
+        { label: "Number Base", href: "/converter", icon: Hash },
+        { label: "Color Converter", href: "/colors", icon: Palette },
+        { label: "Time Zone", href: "/timezone", icon: Globe },
+        { label: "Speed", href: "/speed", icon: Timer },
+        { label: "Fuel", href: "/fuel", icon: Fuel },
+      ],
+    },
+    {
+      id: "lifestyle",
+      label: t("nav.lifestyle"),
+      items: [
+        { label: "Health & BMI", href: "/health", icon: Heart },
+        { label: "Food Calories", href: "/calories", icon: Apple },
+        { label: "Cooking", href: "/cooking", icon: ChefHat },
+        { label: "GPA", href: "/gpa", icon: GraduationCap },
+        { label: "Age", href: "/age", icon: Cake },
+        { label: "Tip", href: "/tip", icon: Coffee },
+        { label: "Discount", href: "/discount", icon: Tag },
+      ],
+    },
+    {
+      id: "games",
+      label: t("retro.gamesTools"),
+      items: [
+        { label: "Random", href: "/random", icon: Shuffle },
+        { label: "Password", href: "/password", icon: Shield },
+        { label: "Text Counter", href: "/text", icon: Type },
+      ],
+    },
+  ], [t]);
+
+  const DIRECT_ICONS: AppItem[] = useMemo(() => [
+    { label: "Calculator", href: "/basic", icon: Calculator },
+    { label: "Scientific", href: "/scientific", icon: Atom },
+    { label: "Date Calc", href: "/dates", icon: Calendar },
+    { label: "Electricity", href: "/electricity", icon: Lightbulb },
+  ], []);
+
+  const MY_COMPUTER_ITEMS: AppItem[] = useMemo(() => [
+    ...FOLDERS.flatMap(f => f.items),
+    ...DIRECT_ICONS,
+  ], [FOLDERS, DIRECT_ICONS]);
+
+  const START_MENU_CATEGORIES = useMemo(() => [
+    {
+      title: "Calculators",
+      items: [
+        { label: "Basic Calculator", href: "/basic" },
+        { label: "Scientific", href: "/scientific" },
+        { label: "Percentage", href: "/percentage" },
+      ],
+    },
+    {
+      title: t("nav.finance"),
+      items: FOLDERS[0].items.map((i) => ({ label: i.label, href: i.href })),
+    },
+    {
+      title: t("nav.taxPayroll"),
+      items: FOLDERS[2].items.map((i) => ({ label: i.label, href: i.href })),
+    },
+    {
+      title: t("retro.engineering"),
+      items: FOLDERS[1].items.map((i) => ({ label: i.label, href: i.href })),
+    },
+    {
+      title: t("nav.converters"),
+      items: FOLDERS[3].items.map((i) => ({ label: i.label, href: i.href })),
+    },
+    {
+      title: t("nav.lifestyle"),
+      items: FOLDERS[4].items.map((i) => ({ label: i.label, href: i.href })),
+    },
+    {
+      title: t("retro.gamesTools"),
+      items: FOLDERS[5].items.map((i) => ({ label: i.label, href: i.href })),
+    },
+  ], [t, FOLDERS]);
 
   // Clock — update every second
   useEffect(() => {
@@ -529,7 +530,7 @@ export default function RetroDesktop() {
       ...prev,
       {
         id: "__mycomputer__",
-        title: "My Computer",
+        title: t("retro.myComputer"),
         items: MY_COMPUTER_ITEMS,
         x: offset,
         y: offset,
@@ -591,7 +592,7 @@ export default function RetroDesktop() {
             <div className="retro-icon-box" style={{ background: "#c0c0c0", border: "1px solid #808080" }}>
               <Monitor size={36} color="#c0c0c0" strokeWidth={1.5} />
             </div>
-            <span style={{ wordBreak: "break-word" }}>My Computer</span>
+            <span style={{ wordBreak: "break-word" }}>{t("retro.myComputer")}</span>
           </div>
 
           {/* Finance folder */}
@@ -603,7 +604,7 @@ export default function RetroDesktop() {
             <div className="retro-icon-box">
               <Folder size={36} color="#ffcc00" strokeWidth={1.5} />
             </div>
-            <span style={{ wordBreak: "break-word" }}>Finance</span>
+            <span style={{ wordBreak: "break-word" }}>{t("nav.finance")}</span>
           </div>
 
           {/* Engineering folder */}
@@ -615,7 +616,7 @@ export default function RetroDesktop() {
             <div className="retro-icon-box">
               <Folder size={36} color="#ffcc00" strokeWidth={1.5} />
             </div>
-            <span style={{ wordBreak: "break-word" }}>Engineering</span>
+            <span style={{ wordBreak: "break-word" }}>{t("retro.engineering")}</span>
           </div>
 
           {/* Tax & Payroll folder */}
@@ -627,7 +628,7 @@ export default function RetroDesktop() {
             <div className="retro-icon-box">
               <Folder size={36} color="#ffcc00" strokeWidth={1.5} />
             </div>
-            <span style={{ wordBreak: "break-word" }}>Tax & Payroll</span>
+            <span style={{ wordBreak: "break-word" }}>{t("nav.taxPayroll")}</span>
           </div>
 
           {/* Converters folder */}
@@ -639,7 +640,7 @@ export default function RetroDesktop() {
             <div className="retro-icon-box">
               <Folder size={36} color="#ffcc00" strokeWidth={1.5} />
             </div>
-            <span style={{ wordBreak: "break-word" }}>Converters</span>
+            <span style={{ wordBreak: "break-word" }}>{t("nav.converters")}</span>
           </div>
 
           {/* Lifestyle folder */}
@@ -651,7 +652,7 @@ export default function RetroDesktop() {
             <div className="retro-icon-box">
               <Folder size={36} color="#ffcc00" strokeWidth={1.5} />
             </div>
-            <span style={{ wordBreak: "break-word" }}>Lifestyle</span>
+            <span style={{ wordBreak: "break-word" }}>{t("nav.lifestyle")}</span>
           </div>
 
           {/* Games & Tools folder */}
@@ -663,7 +664,7 @@ export default function RetroDesktop() {
             <div className="retro-icon-box">
               <Folder size={36} color="#ffcc00" strokeWidth={1.5} />
             </div>
-            <span style={{ wordBreak: "break-word" }}>Games &amp; Tools</span>
+            <span style={{ wordBreak: "break-word" }}>{t("retro.gamesTools")}</span>
           </div>
 
           {/* Calculator direct icon */}
@@ -727,7 +728,7 @@ export default function RetroDesktop() {
             <div className="retro-icon-box" style={{ background: "#c0c0c0", border: "1px solid #808080" }}>
               <Trash2 size={32} color="#555" strokeWidth={1.5} />
             </div>
-            <span style={{ wordBreak: "break-word" }}>Recycle Bin</span>
+            <span style={{ wordBreak: "break-word" }}>{t("retro.recycleBin")}</span>
           </div>
         </div>
 
@@ -912,7 +913,7 @@ export default function RetroDesktop() {
                 className="retro-menu-item"
                 onClick={() => { setTheme("dark"); setStartOpen(false); }}
               >
-                <Settings size={14} /> Switch to Modern Theme
+                <Settings size={14} /> {t("retro.switchTheme")}
               </div>
 
               {/* Shut Down */}
@@ -920,7 +921,7 @@ export default function RetroDesktop() {
                 className="retro-menu-item"
                 onClick={() => { setStartOpen(false); setShutDown(true); }}
               >
-                <LogOut size={14} /> Shut Down...
+                <LogOut size={14} /> {t("retro.shutDown")}
               </div>
             </div>
           </div>
