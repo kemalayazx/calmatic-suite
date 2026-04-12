@@ -27,16 +27,20 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     setMounted(true);
-    // Check saved preference
+    // Check saved preference first
     const saved = localStorage.getItem("calmatic-lang") as Locale | null;
     if (saved && translations[saved]) {
       setLocaleState(saved);
       return;
     }
-    // Auto-detect from browser
-    const browserLang = navigator.language.split("-")[0] as Locale;
-    if (translations[browserLang]) {
-      setLocaleState(browserLang);
+    // Auto-detect from browser language list (covers most country/language combos)
+    const langs = navigator.languages?.length ? navigator.languages : [navigator.language];
+    for (const lang of langs) {
+      const code = lang.split("-")[0] as Locale;
+      if (translations[code]) {
+        setLocaleState(code);
+        return;
+      }
     }
   }, []);
 
