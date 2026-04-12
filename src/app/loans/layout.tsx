@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Loan Comparison Calculator — Compare Up to 3 Loans | Calmatic Suite",
     description: "Compare up to 3 loans side by side to find the best deal. Free loan comparison calculator.",
-    url: "https://calmatic.vercel.app/loans",
+    url: "https://calmatic.webzip.studio/loans",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Compare up to 3 loans side by side to find the best deal. Free loan comparison calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/loans",
+    canonical: "https://calmatic.webzip.studio/loans",
   },
 };
 

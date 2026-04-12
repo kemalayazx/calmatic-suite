@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Age Calculator — Exact Age & Birthday | Calmatic Suite",
     description: "Calculate your exact age, days until your next birthday, and zodiac sign. Free age calculator.",
-    url: "https://calmatic.vercel.app/age",
+    url: "https://calmatic.webzip.studio/age",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Calculate your exact age, days until your next birthday, and zodiac sign. Free age calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/age",
+    canonical: "https://calmatic.webzip.studio/age",
   },
 };
 

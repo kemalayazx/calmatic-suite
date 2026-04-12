@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Health Calculator — BMI & Calorie Calculator | Calmatic Suite",
     description: "Calculate BMI, daily calorie needs, and ideal weight. Free online health calculator.",
-    url: "https://calmatic.vercel.app/health",
+    url: "https://calmatic.webzip.studio/health",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Calculate BMI, daily calorie needs, and ideal weight. Free online health calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/health",
+    canonical: "https://calmatic.webzip.studio/health",
   },
 };
 

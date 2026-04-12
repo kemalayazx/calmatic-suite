@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Statistics Calculator — Mean, Median & Standard Deviation | Calmatic Suite",
     description: "Calculate mean, median, mode, standard deviation, variance, and view histogram. Free statistics calculator.",
-    url: "https://calmatic.vercel.app/statistics",
+    url: "https://calmatic.webzip.studio/statistics",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Calculate mean, median, mode, standard deviation, variance, and view histogram. Free statistics calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/statistics",
+    canonical: "https://calmatic.webzip.studio/statistics",
   },
 };
 

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Color Converter — HEX, RGB & HSL | Calmatic Suite",
     description: "Convert between HEX, RGB, and HSL color formats with color palette suggestions. Free color converter tool.",
-    url: "https://calmatic.vercel.app/colors",
+    url: "https://calmatic.webzip.studio/colors",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Convert between HEX, RGB, and HSL color formats with color palette suggestions. Free color converter tool.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/colors",
+    canonical: "https://calmatic.webzip.studio/colors",
   },
 };
 

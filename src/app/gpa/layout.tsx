@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "GPA Calculator — US, UK & International Grading | Calmatic Suite",
     description: "Calculate GPA with US, UK, and international grading scales. Free GPA calculator for students.",
-    url: "https://calmatic.vercel.app/gpa",
+    url: "https://calmatic.webzip.studio/gpa",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Calculate GPA with US, UK, and international grading scales. Free GPA calculator for students.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/gpa",
+    canonical: "https://calmatic.webzip.studio/gpa",
   },
 };
 

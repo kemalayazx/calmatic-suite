@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "US Payroll Calculator — Federal & State Taxes | Calmatic Suite",
     description: "Calculate federal and state taxes, FICA, and net pay for all 50 US states. Free US payroll calculator.",
-    url: "https://calmatic.vercel.app/us-payroll",
+    url: "https://calmatic.webzip.studio/us-payroll",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Calculate federal and state taxes, FICA, and net pay for all 50 US states. Free US payroll calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/us-payroll",
+    canonical: "https://calmatic.webzip.studio/us-payroll",
   },
 };
 

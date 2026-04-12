@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Discount Calculator — Sale Price & Savings | Calmatic Suite",
     description: "Calculate discount price, find original price, and compare bulk savings. Free online discount calculator.",
-    url: "https://calmatic.vercel.app/discount",
+    url: "https://calmatic.webzip.studio/discount",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Calculate discount price, find original price, and compare bulk savings. Free online discount calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/discount",
+    canonical: "https://calmatic.webzip.studio/discount",
   },
 };
 

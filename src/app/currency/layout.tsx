@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Currency Converter — Live Exchange Rates | Calmatic Suite",
     description: "Live exchange rates for 12+ currencies. Convert USD, EUR, GBP, JPY, and more. Free currency converter.",
-    url: "https://calmatic.vercel.app/currency",
+    url: "https://calmatic.webzip.studio/currency",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Live exchange rates for 12+ currencies. Convert USD, EUR, GBP, JPY, and more. Free currency converter.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/currency",
+    canonical: "https://calmatic.webzip.studio/currency",
   },
 };
 

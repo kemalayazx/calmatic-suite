@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Percentage Calculator — X% of Y & Percentage Change | Calmatic Suite",
     description: "Calculate what is X% of Y, percentage change, margin vs markup. Free online percentage calculator.",
-    url: "https://calmatic.vercel.app/percentage",
+    url: "https://calmatic.webzip.studio/percentage",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Calculate what is X% of Y, percentage change, margin vs markup. Free online percentage calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/percentage",
+    canonical: "https://calmatic.webzip.studio/percentage",
   },
 };
 

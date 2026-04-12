@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Disclaimer — Legal Information | Calmatic Suite",
     description: "Legal disclaimer and volunteer project information for Calmatic Suite calculator tools.",
-    url: "https://calmatic.vercel.app/disclaimer",
+    url: "https://calmatic.webzip.studio/disclaimer",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Legal disclaimer and volunteer project information for Calmatic Suite calculator tools.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/disclaimer",
+    canonical: "https://calmatic.webzip.studio/disclaimer",
   },
 };
 

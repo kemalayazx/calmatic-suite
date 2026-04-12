@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Mortgage Calculator — Monthly Payment & Amortization | Calmatic Suite",
     description: "Calculate monthly mortgage payments, view amortization schedule, and check affordability. Free online mortgage calculator.",
-    url: "https://calmatic.vercel.app/mortgage",
+    url: "https://calmatic.webzip.studio/mortgage",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Calculate monthly mortgage payments, view amortization schedule, and check affordability. Free online mortgage calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/mortgage",
+    canonical: "https://calmatic.webzip.studio/mortgage",
   },
 };
 

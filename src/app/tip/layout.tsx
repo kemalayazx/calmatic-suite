@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Tip Calculator — Bill Splitter & Gratuity | Calmatic Suite",
     description: "Calculate tip amount and split the bill among friends. Free online tip calculator with bill splitter.",
-    url: "https://calmatic.vercel.app/tip",
+    url: "https://calmatic.webzip.studio/tip",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Calculate tip amount and split the bill among friends. Free online tip calculator with bill splitter.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/tip",
+    canonical: "https://calmatic.webzip.studio/tip",
   },
 };
 

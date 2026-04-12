@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "TR Payroll Calculator — SGK & Net Salary | Calmatic Suite",
     description: "Calculate Turkish payroll taxes, SGK deductions, and net salary. Free Turkey payroll calculator.",
-    url: "https://calmatic.vercel.app/payroll",
+    url: "https://calmatic.webzip.studio/payroll",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Calculate Turkish payroll taxes, SGK deductions, and net salary. Free Turkey payroll calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/payroll",
+    canonical: "https://calmatic.webzip.studio/payroll",
   },
 };
 

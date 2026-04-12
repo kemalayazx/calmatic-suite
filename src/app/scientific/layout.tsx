@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Scientific Calculator — Trigonometry & Logarithms | Calmatic Suite",
     description: "Free online scientific calculator with trigonometry, logarithms, and mathematical constants. Sin, cos, tan, log, ln, and more.",
-    url: "https://calmatic.vercel.app/scientific",
+    url: "https://calmatic.webzip.studio/scientific",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Free online scientific calculator with trigonometry, logarithms, and mathematical constants. Sin, cos, tan, log, ln, and more.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/scientific",
+    canonical: "https://calmatic.webzip.studio/scientific",
   },
 };
 

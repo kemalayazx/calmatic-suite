@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Auto Loan Calculator — Monthly Payment & Lease vs Buy | Calmatic Suite",
     description: "Calculate monthly car payment, check affordability, and compare lease vs buy options. Free auto loan calculator.",
-    url: "https://calmatic.vercel.app/auto-loan",
+    url: "https://calmatic.webzip.studio/auto-loan",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Calculate monthly car payment, check affordability, and compare lease vs buy options. Free auto loan calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/auto-loan",
+    canonical: "https://calmatic.webzip.studio/auto-loan",
   },
 };
 

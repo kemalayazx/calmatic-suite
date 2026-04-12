@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Credit Card Payoff Calculator — Debt Payoff Timeline | Calmatic Suite",
     description: "Calculate credit card payoff timeline, minimum payment analysis, and balance transfer savings. Free debt calculator.",
-    url: "https://calmatic.vercel.app/credit-card",
+    url: "https://calmatic.webzip.studio/credit-card",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Calculate credit card payoff timeline, minimum payment analysis, and balance transfer savings. Free debt calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/credit-card",
+    canonical: "https://calmatic.webzip.studio/credit-card",
   },
 };
 

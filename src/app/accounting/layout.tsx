@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Accounting Tools — VAT & Depreciation | Calmatic Suite",
     description: "VAT calculator, depreciation calculator, and profit-loss analysis. Free online accounting tools.",
-    url: "https://calmatic.vercel.app/accounting",
+    url: "https://calmatic.webzip.studio/accounting",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "VAT calculator, depreciation calculator, and profit-loss analysis. Free online accounting tools.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/accounting",
+    canonical: "https://calmatic.webzip.studio/accounting",
   },
 };
 

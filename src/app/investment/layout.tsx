@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Investment Calculator — Compound Growth & ROI | Calmatic Suite",
     description: "Calculate compound investment growth, ROI, retirement planning, and dollar cost averaging. Free investment calculator.",
-    url: "https://calmatic.vercel.app/investment",
+    url: "https://calmatic.webzip.studio/investment",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Calculate compound investment growth, ROI, retirement planning, and dollar cost averaging. Free investment calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/investment",
+    canonical: "https://calmatic.webzip.studio/investment",
   },
 };
 

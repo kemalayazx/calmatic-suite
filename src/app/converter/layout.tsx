@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Number Base Converter — Binary, Hex & Octal | Calmatic Suite",
     description: "Convert between decimal, binary, hexadecimal, octal, and ASCII. Free number system converter.",
-    url: "https://calmatic.vercel.app/converter",
+    url: "https://calmatic.webzip.studio/converter",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Convert between decimal, binary, hexadecimal, octal, and ASCII. Free number system converter.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/converter",
+    canonical: "https://calmatic.webzip.studio/converter",
   },
 };
 

@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://calmatic.vercel.app";
+  const baseUrl = "https://calmatic.webzip.studio";
 
   const routes = [
     "", "/basic", "/scientific", "/financial", "/mortgage", "/investment",

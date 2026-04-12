@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Financial Calculator — Interest & Loans | Calmatic Suite",
     description: "Calculate simple interest, compound interest, and loan payments online. Free financial calculator for all your money math.",
-    url: "https://calmatic.vercel.app/financial",
+    url: "https://calmatic.webzip.studio/financial",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Calculate simple interest, compound interest, and loan payments online. Free financial calculator for all your money math.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/financial",
+    canonical: "https://calmatic.webzip.studio/financial",
   },
 };
 

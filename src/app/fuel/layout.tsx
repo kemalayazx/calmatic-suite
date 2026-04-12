@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Fuel Calculator — Trip Cost & MPG Converter | Calmatic Suite",
     description: "Calculate trip fuel cost, split costs among travelers, and convert MPG to L/100km. Free fuel calculator.",
-    url: "https://calmatic.vercel.app/fuel",
+    url: "https://calmatic.webzip.studio/fuel",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Calculate trip fuel cost, split costs among travelers, and convert MPG to L/100km. Free fuel calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/fuel",
+    canonical: "https://calmatic.webzip.studio/fuel",
   },
 };
 

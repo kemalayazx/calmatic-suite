@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Probability Calculator — Dice, Coins & Binomial | Calmatic Suite",
     description: "Basic probability calculator, dice and coin simulations, binomial distribution. Free probability tools.",
-    url: "https://calmatic.vercel.app/probability",
+    url: "https://calmatic.webzip.studio/probability",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Basic probability calculator, dice and coin simulations, binomial distribution. Free probability tools.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/probability",
+    canonical: "https://calmatic.webzip.studio/probability",
   },
 };
 

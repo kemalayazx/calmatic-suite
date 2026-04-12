@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Unit Converter — Length, Weight & Temperature | Calmatic Suite",
     description: "Convert length, weight, temperature, area, and speed units. Free comprehensive unit converter.",
-    url: "https://calmatic.vercel.app/units",
+    url: "https://calmatic.webzip.studio/units",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Convert length, weight, temperature, area, and speed units. Free comprehensive unit converter.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/units",
+    canonical: "https://calmatic.webzip.studio/units",
   },
 };
 

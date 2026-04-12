@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Date Calculator — Date Difference & Countdown | Calmatic Suite",
     description: "Calculate date difference, add or subtract days, and view live countdown timer. Free date calculator.",
-    url: "https://calmatic.vercel.app/dates",
+    url: "https://calmatic.webzip.studio/dates",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Calculate date difference, add or subtract days, and view live countdown timer. Free date calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/dates",
+    canonical: "https://calmatic.webzip.studio/dates",
   },
 };
 

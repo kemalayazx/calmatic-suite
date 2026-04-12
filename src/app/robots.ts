@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://calmatic.vercel.app/sitemap.xml",
+    sitemap: "https://calmatic.webzip.studio/sitemap.xml",
   };
 }

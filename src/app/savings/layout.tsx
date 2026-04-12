@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Savings Calculator — Savings Goal & Emergency Fund | Calmatic Suite",
     description: "Calculate savings goals, emergency fund needs, and CD deposit returns. Free savings calculator.",
-    url: "https://calmatic.vercel.app/savings",
+    url: "https://calmatic.webzip.studio/savings",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Calculate savings goals, emergency fund needs, and CD deposit returns. Free savings calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/savings",
+    canonical: "https://calmatic.webzip.studio/savings",
   },
 };
 

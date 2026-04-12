@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Tax Calculator — Income Tax & Invoice Breakdown | Calmatic Suite",
     description: "Invoice tax breakdown, income tax brackets, and withholding calculator. Free online tax calculator.",
-    url: "https://calmatic.vercel.app/taxes",
+    url: "https://calmatic.webzip.studio/taxes",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Invoice tax breakdown, income tax brackets, and withholding calculator. Free online tax calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/taxes",
+    canonical: "https://calmatic.webzip.studio/taxes",
   },
 };
 

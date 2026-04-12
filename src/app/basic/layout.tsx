@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Basic Calculator — Free Online Calculator | Calmatic Suite",
     description: "Free online basic calculator with keyboard support. Addition, subtraction, multiplication, division, square root, and percentage.",
-    url: "https://calmatic.vercel.app/basic",
+    url: "https://calmatic.webzip.studio/basic",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Free online basic calculator with keyboard support. Addition, subtraction, multiplication, division, square root, and percentage.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/basic",
+    canonical: "https://calmatic.webzip.studio/basic",
   },
 };
 

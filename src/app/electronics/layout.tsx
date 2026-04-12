@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Electronics Calculator — Ohm's Law & LED Calculator | Calmatic Suite",
     description: "Ohm's law calculator, resistor color codes, LED forward voltage, RC circuits. Free electronics calculator.",
-    url: "https://calmatic.vercel.app/electronics",
+    url: "https://calmatic.webzip.studio/electronics",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Ohm's law calculator, resistor color codes, LED forward voltage, RC circuits. Free electronics calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/electronics",
+    canonical: "https://calmatic.webzip.studio/electronics",
   },
 };
 

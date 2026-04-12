@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Geometry Calculator — Area, Volume & Perimeter | Calmatic Suite",
     description: "Calculate area, perimeter, volume, and surface area for 2D and 3D shapes. Free geometry calculator.",
-    url: "https://calmatic.vercel.app/geometry",
+    url: "https://calmatic.webzip.studio/geometry",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Calculate area, perimeter, volume, and surface area for 2D and 3D shapes. Free geometry calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/geometry",
+    canonical: "https://calmatic.webzip.studio/geometry",
   },
 };
 

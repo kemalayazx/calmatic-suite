@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Advanced Math — Matrix, Equations & Calculus | Calmatic Suite",
     description: "Matrix operations, equation solver, derivatives, integrals, and complex numbers. Free advanced math calculator.",
-    url: "https://calmatic.vercel.app/math",
+    url: "https://calmatic.webzip.studio/math",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Matrix operations, equation solver, derivatives, integrals, and complex numbers. Free advanced math calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/math",
+    canonical: "https://calmatic.webzip.studio/math",
   },
 };
 

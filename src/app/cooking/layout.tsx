@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Cooking Calculator — Recipe Scaler & Unit Converter | Calmatic Suite",
     description: "Scale recipes, convert cooking units, and calculate baking ratios. Free cooking calculator.",
-    url: "https://calmatic.vercel.app/cooking",
+    url: "https://calmatic.webzip.studio/cooking",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Scale recipes, convert cooking units, and calculate baking ratios. Free cooking calculator.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/cooking",
+    canonical: "https://calmatic.webzip.studio/cooking",
   },
 };
 

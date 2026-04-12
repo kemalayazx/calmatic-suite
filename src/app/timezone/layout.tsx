@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Time Zone Converter — 30+ World Time Zones | Calmatic Suite",
     description: "Convert times between 30+ time zones worldwide. Free online time zone converter.",
-    url: "https://calmatic.vercel.app/timezone",
+    url: "https://calmatic.webzip.studio/timezone",
     siteName: "Calmatic Suite",
     type: "website",
   },
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description: "Convert times between 30+ time zones worldwide. Free online time zone converter.",
   },
   alternates: {
-    canonical: "https://calmatic.vercel.app/timezone",
+    canonical: "https://calmatic.webzip.studio/timezone",
   },
 };
 
