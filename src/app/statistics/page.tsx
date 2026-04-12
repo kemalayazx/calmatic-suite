@@ -4,6 +4,8 @@ import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { parseNumbers, calcStats, buildHistogram } from "@/lib/calculations/statistics";
+import ExportButton from "@/components/ui/ExportButton";
+import PrintButton from "@/components/ui/PrintButton";
 
 function fmt(n: number) {
   if (Number.isInteger(n)) return n.toLocaleString("en-US");
@@ -44,14 +46,36 @@ export default function StatisticsPage() {
       ]
     : [];
 
+  function getExportData() {
+    if (!stats) return [];
+    return [
+      { Statistic: "Count", Value: stats.count },
+      { Statistic: "Sum", Value: stats.sum },
+      { Statistic: "Mean", Value: stats.mean },
+      { Statistic: "Median", Value: stats.median },
+      { Statistic: "Mode", Value: stats.mode.map(fmt).join(", ") },
+      { Statistic: "Range", Value: stats.range },
+      { Statistic: "Min", Value: stats.min },
+      { Statistic: "Max", Value: stats.max },
+      { Statistic: "Std Dev", Value: stats.stdDev },
+      { Statistic: "Variance", Value: stats.variance },
+    ];
+  }
+
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto" }}>
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.75rem" }}>
-        <Link href="/" style={{ color: "#71717a", display: "flex", alignItems: "center" }}>
-          <ArrowLeft size={18} />
-        </Link>
-        <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>Statistics Calculator</h1>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem", marginBottom: "1.75rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <Link href="/" style={{ color: "#71717a", display: "flex", alignItems: "center" }}>
+            <ArrowLeft size={18} />
+          </Link>
+          <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>Statistics Calculator</h1>
+        </div>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <ExportButton getData={getExportData} filename="calmatic-statistics" sheetName="Statistics" />
+          <PrintButton />
+        </div>
       </div>
 
       {/* Input */}

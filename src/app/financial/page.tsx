@@ -4,6 +4,9 @@ import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { simpleInterest, compoundInterest, loanPayment } from "@/lib/calculations/financial";
+import ExportButton from "@/components/ui/ExportButton";
+import PrintButton from "@/components/ui/PrintButton";
+import type { ExportRow } from "@/lib/export";
 
 function fmt(n: number, digits = 2) {
   return n.toLocaleString("en-US", { maximumFractionDigits: digits });
@@ -97,7 +100,7 @@ function BarChart({ data }: { data: { year: number; balance: number }[]; }) {
 }
 
 // --- Simple Interest Tab ---
-function SimpleTab() {
+function SimpleTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
   const [principal, setPrincipal] = useState("");
   const [rate, setRate] = useState("");
   const [time, setTime] = useState("");
@@ -110,6 +113,16 @@ function SimpleTab() {
 
   const valid = !isNaN(p) && !isNaN(r) && !isNaN(t) && p > 0 && r > 0 && t > 0;
   const result = valid ? simpleInterest(p, r, years) : null;
+
+  if (result) {
+    onResults([
+      { Field: "Principal", Value: p },
+      { Field: "Annual Rate (%)", Value: r },
+      { Field: "Duration (years)", Value: years },
+      { Field: "Interest", Value: result.interest },
+      { Field: "Total Amount", Value: result.total },
+    ]);
+  }
 
   return (
     <div>
@@ -167,7 +180,7 @@ const PERIODS = [
   { label: "Daily", value: 365 },
 ];
 
-function CompoundTab() {
+function CompoundTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
   const [principal, setPrincipal] = useState("");
   const [rate, setRate] = useState("");
   const [years, setYears] = useState("");
@@ -179,6 +192,13 @@ function CompoundTab() {
 
   const valid = !isNaN(p) && !isNaN(r) && !isNaN(y) && p > 0 && r > 0 && y > 0;
   const result = valid ? compoundInterest(p, r, y, periods) : null;
+
+  if (result) {
+    onResults(result.yearlyData.map((row) => ({
+      Year: row.year,
+      Balance: row.balance,
+    })));
+  }
 
   return (
     <div>
@@ -227,7 +247,7 @@ function CompoundTab() {
 }
 
 // --- Loan Tab ---
-function LoanTab() {
+function LoanTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
   const [principal, setPrincipal] = useState("");
   const [rate, setRate] = useState("");
   const [months, setMonths] = useState("");
@@ -239,6 +259,16 @@ function LoanTab() {
 
   const valid = !isNaN(p) && !isNaN(r) && !isNaN(m) && p > 0 && r >= 0 && m > 0;
   const result = valid ? loanPayment(p, r, m) : null;
+
+  if (result) {
+    onResults(result.schedule.map((row) => ({
+      Month: row.month,
+      Payment: row.payment,
+      Principal: row.principal,
+      Interest: row.interest,
+      Balance: row.balance,
+    })));
+  }
 
   const displayRows = result ? (showFull ? result.schedule : result.schedule.slice(0, 12)) : [];
 
@@ -339,14 +369,21 @@ function LoanTab() {
 // --- Main Page ---
 export default function FinancialPage() {
   const [activeTab, setActiveTab] = useState(0);
+  const [exportData, setExportData] = useState<ExportRow[]>([]);
 
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.75rem" }}>
-        <Link href="/" style={{ color: "#71717a", display: "flex", alignItems: "center" }}>
-          <ArrowLeft size={18} />
-        </Link>
-        <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>Financial Calculator</h1>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem", marginBottom: "1.75rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <Link href="/" style={{ color: "#71717a", display: "flex", alignItems: "center" }}>
+            <ArrowLeft size={18} />
+          </Link>
+          <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>Financial Calculator</h1>
+        </div>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <ExportButton getData={() => exportData} filename="calmatic-financial" sheetName="Financial" />
+          <PrintButton />
+        </div>
       </div>
 
       {/* Tabs */}
@@ -354,7 +391,7 @@ export default function FinancialPage() {
         {TABS.map((tab, i) => (
           <button
             key={tab}
-            onClick={() => setActiveTab(i)}
+            onClick={() => { setActiveTab(i); setExportData([]); }}
             style={{
               padding: "0.5rem 1.125rem",
               borderRadius: "0.625rem",
@@ -378,9 +415,9 @@ export default function FinancialPage() {
         border: "1px solid #27272a",
         padding: "1.75rem",
       }}>
-        {activeTab === 0 && <SimpleTab />}
-        {activeTab === 1 && <CompoundTab />}
-        {activeTab === 2 && <LoanTab />}
+        {activeTab === 0 && <SimpleTab onResults={setExportData} />}
+        {activeTab === 1 && <CompoundTab onResults={setExportData} />}
+        {activeTab === 2 && <LoanTab onResults={setExportData} />}
       </div>
 
       <p style={{ textAlign: "center", color: "#3f3f46", fontSize: "0.75rem", marginTop: "1.25rem" }}>

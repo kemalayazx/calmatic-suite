@@ -9,6 +9,9 @@ import {
   straightLineDepreciation,
   decliningBalanceDepreciation,
 } from "@/lib/calculations/accounting";
+import ExportButton from "@/components/ui/ExportButton";
+import PrintButton from "@/components/ui/PrintButton";
+import type { ExportRow } from "@/lib/export";
 
 function fmtCurrency(n: number) {
   return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -76,7 +79,7 @@ function CopyBtn({ text }: { text: string }) {
 }
 
 // --- VAT Tab ---
-function VatTab() {
+function VatTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
   const [mode, setMode] = useState<"from-net" | "from-gross">("from-net");
   const [amount, setAmount] = useState("");
   const [vatRate, setVatRate] = useState(18);
@@ -88,6 +91,14 @@ function VatTab() {
       ? vatFromNet(n, vatRate)
       : vatFromGross(n, vatRate)
     : null;
+
+  if (result) {
+    onResults([
+      { Alan: "Net Tutar", Değer: result.net },
+      { Alan: `KDV (%${vatRate})`, Değer: result.vat },
+      { Alan: "Brüt Tutar", Değer: result.gross },
+    ]);
+  }
 
   return (
     <div>
@@ -184,7 +195,7 @@ function VatTab() {
 }
 
 // --- Depreciation Tab ---
-function DepreciationTab() {
+function DepreciationTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
   const [assetValue, setAssetValue] = useState("");
   const [salvageValue, setSalvageValue] = useState("");
   const [lifeYears, setLifeYears] = useState("");
@@ -200,6 +211,15 @@ function DepreciationTab() {
       ? straightLineDepreciation(a, s, l)
       : decliningBalanceDepreciation(a, s, l)
     : [];
+
+  if (rows.length > 0) {
+    onResults(rows.map((row) => ({
+      Yıl: row.year,
+      "Amortisman Tutarı": row.depreciation,
+      "Birikmiş Amortisman": row.accumulatedDepreciation,
+      "Net Defter Değeri": row.bookValue,
+    })));
+  }
 
   return (
     <div>
@@ -414,14 +434,21 @@ function ProfitLossTab() {
 // --- Main Page ---
 export default function AccountingPage() {
   const [activeTab, setActiveTab] = useState(0);
+  const [exportData, setExportData] = useState<ExportRow[]>([]);
 
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.75rem" }}>
-        <Link href="/" style={{ color: "#71717a", display: "flex", alignItems: "center" }}>
-          <ArrowLeft size={18} />
-        </Link>
-        <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>Muhasebe Araçları</h1>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem", marginBottom: "1.75rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <Link href="/" style={{ color: "#71717a", display: "flex", alignItems: "center" }}>
+            <ArrowLeft size={18} />
+          </Link>
+          <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>Muhasebe Araçları</h1>
+        </div>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <ExportButton getData={() => exportData} filename="calmatic-accounting" sheetName="Accounting" />
+          <PrintButton />
+        </div>
       </div>
 
       {/* Tabs */}
@@ -429,7 +456,7 @@ export default function AccountingPage() {
         {TABS.map((tab, i) => (
           <button
             key={tab}
-            onClick={() => setActiveTab(i)}
+            onClick={() => { setActiveTab(i); setExportData([]); }}
             style={{
               padding: "0.5rem 1.125rem",
               borderRadius: "0.625rem",
@@ -453,8 +480,8 @@ export default function AccountingPage() {
         border: "1px solid #27272a",
         padding: "1.75rem",
       }}>
-        {activeTab === 0 && <VatTab />}
-        {activeTab === 1 && <DepreciationTab />}
+        {activeTab === 0 && <VatTab onResults={setExportData} />}
+        {activeTab === 1 && <DepreciationTab onResults={setExportData} />}
         {activeTab === 2 && <ProfitLossTab />}
       </div>
 

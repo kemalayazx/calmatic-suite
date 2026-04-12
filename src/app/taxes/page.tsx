@@ -9,6 +9,9 @@ import {
   type VATRate,
   type StopajType,
 } from "@/lib/calculations/taxes";
+import ExportButton from "@/components/ui/ExportButton";
+import PrintButton from "@/components/ui/PrintButton";
+import type { ExportRow } from "@/lib/export";
 
 const TABS = ["Invoice VAT", "Annual Income Tax", "Withholding (Stopaj)"];
 
@@ -68,7 +71,7 @@ function Row({ name, amount, highlight, subdued }: { name: string; amount: strin
 
 // ─── Tab 1: Invoice VAT Breakdown ─────────────────────────────────────────────
 
-function InvoiceTab() {
+function InvoiceTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
   const [amount, setAmount] = useState("1000");
   const [inputType, setInputType] = useState<"net" | "gross">("net");
   const [vatRate, setVatRate] = useState<VATRate>(18);
@@ -92,6 +95,19 @@ function InvoiceTab() {
   const valid = amtVal > 0 && amtVal <= 1_000_000_000;
 
   const result = valid ? invoiceTaxBreakdown(amtVal, inputType, vatRate, otvVal, stopajVal) : null;
+
+  if (result) {
+    onResults([
+      { Alan: "Net Tutar", Değer: result.netAmount },
+      { Alan: `KDV (%${vatRate})`, Değer: result.vatAmount },
+      { Alan: "KDV Dahil Tutar", Değer: result.grossAmount },
+      { Alan: "Damga Vergisi", Değer: result.stampTax },
+      { Alan: "ÖTV", Değer: result.otvAmount },
+      { Alan: "Stopaj", Değer: result.stopajAmount },
+      { Alan: "Alıcı Toplam", Değer: result.buyerTotal },
+      { Alan: "Satıcı → Devlet", Değer: result.sellerToGovt },
+    ]);
+  }
 
   return (
     <div>
@@ -166,11 +182,25 @@ function InvoiceTab() {
 
 // ─── Tab 2: Annual Income Tax ─────────────────────────────────────────────────
 
-function AnnualIncomeTaxTab() {
+function AnnualIncomeTaxTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
   const [income, setIncome] = useState("300000");
   const val = parseFloat(income);
   const valid = val > 0 && val <= 100_000_000;
   const result = valid ? annualIncomeTax(val) : null;
+
+  if (result) {
+    onResults([
+      { Alan: "Yıllık Gelir", Değer: result.annualIncome },
+      { Alan: "Toplam Vergi", Değer: result.totalTax },
+      { Alan: "Efektif Oran (%)", Değer: result.effectiveRate.toFixed(2) },
+      ...result.breakdown.map((b) => ({
+        Alan: b.bracket,
+        Değer: b.tax,
+        Matrah: b.taxableAmount,
+        Oran: `%${(b.rate * 100).toFixed(0)}`,
+      })),
+    ]);
+  }
 
   return (
     <div>
@@ -221,7 +251,7 @@ function AnnualIncomeTaxTab() {
 
 // ─── Tab 3: Stopaj ────────────────────────────────────────────────────────────
 
-function StopajTab() {
+function StopajTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
   const [stopajType, setStopajType] = useState<StopajType>("freelance");
   const [gross, setGross] = useState("10000");
   const [manualRate, setManualRate] = useState("");
@@ -238,6 +268,14 @@ function StopajTab() {
     } else {
       result = stopajHesapla(val, stopajType);
     }
+  }
+
+  if (result) {
+    onResults([
+      { Alan: "Brüt Tutar", Değer: result.grossAmount },
+      { Alan: `Stopaj (%${(result.rate * 100).toFixed(0)})`, Değer: result.stopajAmount },
+      { Alan: "Net Tutar", Değer: result.netAmount },
+    ]);
   }
 
   return (
@@ -280,19 +318,26 @@ function StopajTab() {
 
 export default function TaxesPage() {
   const [activeTab, setActiveTab] = useState(0);
+  const [exportData, setExportData] = useState<ExportRow[]>([]);
 
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-      <div style={{ marginBottom: "2rem" }}>
-        <h1 style={{ fontWeight: 800, fontSize: "1.75rem", color: "#fafafa", marginBottom: "0.5rem" }}>Vergi Hesaplayıcı</h1>
-        <p style={{ color: "#71717a", fontSize: "0.9rem" }}>KDV, gelir vergisi dilimleri, stopaj — Türkiye 2025</p>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "2rem" }}>
+        <div>
+          <h1 style={{ fontWeight: 800, fontSize: "1.75rem", color: "#fafafa", marginBottom: "0.5rem" }}>Vergi Hesaplayıcı</h1>
+          <p style={{ color: "#71717a", fontSize: "0.9rem" }}>KDV, gelir vergisi dilimleri, stopaj — Türkiye 2025</p>
+        </div>
+        <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.25rem" }}>
+          <ExportButton getData={() => exportData} filename="calmatic-taxes" sheetName="Taxes" />
+          <PrintButton />
+        </div>
       </div>
 
       <div style={{ display: "flex", gap: "0.375rem", flexWrap: "wrap", marginBottom: "2rem", borderBottom: "1px solid #27272a" }}>
         {TABS.map((tab, i) => (
           <button
             key={tab}
-            onClick={() => setActiveTab(i)}
+            onClick={() => { setActiveTab(i); setExportData([]); }}
             style={{
               padding: "0.625rem 1.125rem",
               border: "none",
@@ -310,9 +355,9 @@ export default function TaxesPage() {
         ))}
       </div>
 
-      {activeTab === 0 && <InvoiceTab />}
-      {activeTab === 1 && <AnnualIncomeTaxTab />}
-      {activeTab === 2 && <StopajTab />}
+      {activeTab === 0 && <InvoiceTab onResults={setExportData} />}
+      {activeTab === 1 && <AnnualIncomeTaxTab onResults={setExportData} />}
+      {activeTab === 2 && <StopajTab onResults={setExportData} />}
 
       <p style={{ textAlign: "center", color: "#52525b", fontSize: "0.75rem", marginTop: "2rem" }}>
         Results are for informational purposes only. Consult a professional for official calculations. (2025 parametreleri)

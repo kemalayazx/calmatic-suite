@@ -12,6 +12,9 @@ import {
   type TaxBracket,
   type OvertimeType,
 } from "@/lib/calculations/payroll";
+import ExportButton from "@/components/ui/ExportButton";
+import PrintButton from "@/components/ui/PrintButton";
+import type { ExportRow } from "@/lib/export";
 
 const TABS = ["Gross → Net", "Net → Gross", "Overtime", "Employer Cost"];
 
@@ -491,11 +494,32 @@ export default function PayrollPage() {
   const [params, setParams] = useState<PayrollParams>(DEFAULT_2025_PARAMS);
   const isCustom = !paramsAreDefault(params);
 
+  function getExportData(): ExportRow[] {
+    // Export a snapshot of 2025 defaults summary
+    const g = grossToNet(30000, params);
+    return [
+      { Alan: "Brüt Maaş", Değer: g.gross },
+      { Alan: "SGK İşçi", Değer: g.sgkWorker },
+      { Alan: "İşsizlik", Değer: g.unemployment },
+      { Alan: "Gelir Vergisi", Değer: g.monthlyIncomeTax },
+      { Alan: "Damga Vergisi", Değer: g.stampTax },
+      { Alan: "AGİ", Değer: g.agi },
+      { Alan: "Net Maaş", Değer: g.net },
+      { Alan: "Efektif Kesinti (%)", Değer: g.effectiveRate.toFixed(2) },
+    ];
+  }
+
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-      <div style={{ marginBottom: "2rem" }}>
-        <h1 style={{ fontWeight: 800, fontSize: "1.75rem", color: "#fafafa", marginBottom: "0.5rem" }}>Maaş &amp; SGK Hesaplayıcı</h1>
-        <p style={{ color: "#71717a", fontSize: "0.9rem" }}>Türkiye 2025 parametreleri — brüt/net, mesai, işveren maliyeti</p>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "2rem" }}>
+        <div>
+          <h1 style={{ fontWeight: 800, fontSize: "1.75rem", color: "#fafafa", marginBottom: "0.5rem" }}>Maaş &amp; SGK Hesaplayıcı</h1>
+          <p style={{ color: "#71717a", fontSize: "0.9rem" }}>Türkiye 2025 parametreleri — brüt/net, mesai, işveren maliyeti</p>
+        </div>
+        <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.25rem" }}>
+          <ExportButton getData={getExportData} filename="calmatic-payroll" sheetName="TR Payroll" />
+          <PrintButton />
+        </div>
       </div>
 
       {/* Collapsible params panel */}

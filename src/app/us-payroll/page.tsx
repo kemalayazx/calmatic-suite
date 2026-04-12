@@ -11,6 +11,9 @@ import {
   type FilingStatus,
   type StateCode,
 } from "@/lib/calculations/us-payroll";
+import ExportButton from "@/components/ui/ExportButton";
+import PrintButton from "@/components/ui/PrintButton";
+import type { ExportRow } from "@/lib/export";
 
 const fmt = (n: number) =>
   n.toLocaleString("en-US", { style: "currency", currency: "USD" });
@@ -53,11 +56,58 @@ export default function USPayrollPage() {
 
   const tabs = ["Federal Tax", "State Tax", "Hourly ↔ Salary"];
 
+  function getExportData(): ExportRow[] {
+    if (activeTab === 0) {
+      return [
+        { Field: "Gross Salary", Value: fedResult.grossSalary },
+        { Field: "Standard Deduction", Value: fedResult.standardDeduction },
+        { Field: "Taxable Income", Value: fedResult.taxableIncome },
+        { Field: "Federal Income Tax", Value: fedResult.totalFederalTax },
+        { Field: "Effective Rate", Value: (fedResult.effectiveRate * 100).toFixed(2) + "%" },
+        { Field: "Social Security (6.2%)", Value: fedResult.socialSecurity },
+        { Field: "Medicare (1.45%)", Value: fedResult.medicare },
+        { Field: "Total FICA", Value: fedResult.totalFICA },
+        { Field: "Net Annual", Value: fedResult.netAnnual },
+        { Field: "Net Monthly", Value: fedResult.netMonthly },
+        { Field: "Net Biweekly", Value: fedResult.netBiweekly },
+      ];
+    }
+    if (activeTab === 1) {
+      return [
+        { Field: "Gross Salary", Value: grossNum },
+        { Field: "Federal Income Tax", Value: fedResult.totalFederalTax },
+        { Field: `${stateResult.stateName} State Tax`, Value: stateResult.stateTax },
+        { Field: "FICA", Value: fedResult.totalFICA },
+        { Field: "Total Tax", Value: combinedTax },
+        { Field: "Net Annual", Value: combinedNet },
+        { Field: "Net Monthly", Value: combinedNet / 12 },
+        { Field: "Net Biweekly", Value: combinedNet / 26 },
+      ];
+    }
+    return [
+      { Field: "Hourly Rate", Value: hourlyNum },
+      { Field: "Annual Salary", Value: hToS.annualSalary },
+      { Field: "Monthly", Value: hToS.monthly },
+      { Field: "Biweekly", Value: hToS.biweekly },
+      { Field: "Weekly", Value: hToS.weekly },
+      { Field: "Overtime Hours", Value: ot.overtimeHours },
+      { Field: "Regular Pay", Value: ot.regularPay },
+      { Field: "Overtime Pay", Value: ot.overtimePay },
+      { Field: "Weekly Total", Value: ot.totalPay },
+    ];
+  }
+
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-      <h1 style={{ fontSize: "2rem", fontWeight: 800, marginBottom: "0.5rem" }}>
-        US Payroll Calculator
-      </h1>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+        <h1 style={{ fontSize: "2rem", fontWeight: 800 }}>
+          US Payroll Calculator
+        </h1>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <ExportButton getData={getExportData} filename="calmatic-us-payroll" sheetName="US Payroll" />
+          <PrintButton />
+        </div>
+      </div>
       <p style={{ color: "#71717a", marginBottom: "2rem" }}>
         Federal income tax, FICA, state tax, and take-home pay — 2025 brackets.
       </p>

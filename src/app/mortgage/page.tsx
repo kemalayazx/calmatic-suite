@@ -7,6 +7,9 @@ import {
   calculateAffordability,
   calculateRefinance,
 } from "@/lib/calculations/mortgage";
+import ExportButton from "@/components/ui/ExportButton";
+import PrintButton from "@/components/ui/PrintButton";
+import type { ExportRow } from "@/lib/export";
 
 const fmt = (n: number) =>
   n.toLocaleString("en-US", { style: "currency", currency: "USD" });
@@ -120,9 +123,53 @@ export default function MortgagePage() {
     });
   }
 
+  function getMortgageExportData(): ExportRow[] {
+    if (activeTab === 0) {
+      return [
+        { Field: "Home Price", Value: paymentResult.loanAmount + paymentResult.downPaymentAmount },
+        { Field: "Loan Amount", Value: paymentResult.loanAmount },
+        { Field: "Down Payment", Value: paymentResult.downPaymentAmount },
+        { Field: "Monthly Payment", Value: paymentResult.monthlyPayment },
+        { Field: "Total Interest", Value: paymentResult.totalInterest },
+        { Field: "Total Cost", Value: paymentResult.totalCost },
+      ];
+    }
+    if (activeTab === 1) {
+      return schedule.map((row) => ({
+        Month: row.month,
+        Payment: row.payment,
+        Principal: row.principal,
+        Interest: row.interest,
+        Balance: row.balance,
+      }));
+    }
+    if (activeTab === 2) {
+      return [
+        { Field: "Max Home Price", Value: affordResult.maxHomePrice },
+        { Field: "Gross Monthly Income", Value: affordResult.grossMonthlyIncome },
+        { Field: "Max Monthly Housing (28%)", Value: affordResult.maxMonthlyHousing },
+        { Field: "Max Total Debt (36%)", Value: affordResult.maxTotalDebt },
+        { Field: "DTI Ratio", Value: (affordResult.debtToIncomeRatio * 100).toFixed(2) + "%" },
+      ];
+    }
+    return [
+      { Field: "Current Monthly Payment", Value: refiResult.currentMonthlyPayment },
+      { Field: "New Monthly Payment", Value: refiResult.newMonthlyPayment },
+      { Field: "Monthly Savings", Value: refiResult.monthlySavings },
+      { Field: "Break-Even Months", Value: refiResult.breakEvenMonths === Infinity ? "Never" : refiResult.breakEvenMonths },
+      { Field: "Total Savings", Value: refiResult.totalSavings },
+    ];
+  }
+
   return (
     <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
-      <h1 style={{ fontSize: "2rem", fontWeight: 800, marginBottom: "0.5rem" }}>Mortgage Calculator</h1>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+        <h1 style={{ fontSize: "2rem", fontWeight: 800 }}>Mortgage Calculator</h1>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <ExportButton getData={getMortgageExportData} filename="calmatic-mortgage" sheetName="Mortgage" />
+          <PrintButton />
+        </div>
+      </div>
       <p style={{ color: "#71717a", marginBottom: "2rem" }}>Monthly payment, amortization, affordability, and refinance analysis.</p>
 
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "2rem", borderBottom: "1px solid #27272a" }}>
