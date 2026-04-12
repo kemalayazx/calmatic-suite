@@ -38,6 +38,12 @@ import {
   Car,
   CreditCard,
   Dice5,
+  Shield,
+  Building2,
+  Lightbulb,
+  Timer,
+  Shuffle,
+  Type,
 } from "lucide-react";
 
 const userPaths = [
@@ -59,21 +65,21 @@ const userPaths = [
     icon: Code2,
     label: "Developer",
     description: "Binary, hex, octal, ASCII",
-    links: ["/converter", "/colors", "/math", "/electronics"],
+    links: ["/converter", "/colors", "/math", "/electronics", "/password", "/random", "/text"],
     color: "#059669",
   },
   {
     icon: Wallet,
     label: "Personal Finance",
     description: "Loans, interest, mortgage, investments",
-    links: ["/financial", "/currency", "/mortgage", "/investment", "/loans", "/fuel", "/savings", "/auto-loan", "/credit-card"],
+    links: ["/financial", "/currency", "/mortgage", "/investment", "/loans", "/fuel", "/savings", "/auto-loan", "/credit-card", "/rent-buy", "/electricity"],
     color: "#d97706",
   },
   {
     icon: ShoppingCart,
     label: "Everyday Use",
     description: "Quick calculations, discounts, cooking, tips",
-    links: ["/basic", "/discount", "/tip", "/health", "/cooking", "/percentage", "/dates", "/age", "/timezone"],
+    links: ["/basic", "/discount", "/tip", "/health", "/cooking", "/percentage", "/dates", "/age", "/timezone", "/random", "/text", "/speed"],
     color: "#db2777",
   },
 ];
@@ -335,6 +341,54 @@ const modules = [
     color: "from-amber-500 to-amber-700",
     glow: "hover:shadow-amber-900/40",
   },
+  {
+    href: "/password",
+    icon: Shield,
+    title: "Password Generator",
+    description: "Cryptographically secure passwords. Length slider, character toggles, strength meter.",
+    color: "from-green-600 to-green-800",
+    glow: "hover:shadow-green-900/40",
+  },
+  {
+    href: "/rent-buy",
+    icon: Building2,
+    title: "Rent vs Buy",
+    description: "Compare true cost of renting vs buying over time. Equity, opportunity cost, crossover analysis.",
+    color: "from-stone-500 to-stone-700",
+    glow: "hover:shadow-stone-900/40",
+  },
+  {
+    href: "/electricity",
+    icon: Lightbulb,
+    title: "Electricity Cost",
+    description: "Appliance cost calculator, solar savings payback, LED vs CFL vs incandescent comparison.",
+    color: "from-yellow-500 to-yellow-700",
+    glow: "hover:shadow-yellow-900/40",
+  },
+  {
+    href: "/speed",
+    icon: Timer,
+    title: "Speed Calculator",
+    description: "Speed / distance / time solver with unit conversion. Running pace and finish time predictor.",
+    color: "from-blue-500 to-blue-700",
+    glow: "hover:shadow-blue-900/40",
+  },
+  {
+    href: "/random",
+    icon: Shuffle,
+    title: "Random Generator",
+    description: "Secure random numbers, list shuffler, coin flip, and dice roller using crypto.getRandomValues.",
+    color: "from-purple-500 to-purple-700",
+    glow: "hover:shadow-purple-900/40",
+  },
+  {
+    href: "/text",
+    icon: Type,
+    title: "Text Counter",
+    description: "Word, character, sentence counter. Reading time, keyword density, and case converter.",
+    color: "from-gray-500 to-gray-700",
+    glow: "hover:shadow-gray-900/40",
+  },
 ];
 
 export default function HomePage() {
@@ -357,7 +411,7 @@ export default function HomePage() {
           Calmatic Suite
         </h1>
         <p style={{ fontSize: "1.125rem", color: "#71717a", maxWidth: "480px", margin: "0 auto" }}>
-          Thirty-two powerful calculator modules in one place. Free, open-source, no ads.
+          Thirty-eight powerful calculator modules in one place. Free, open-source, no ads.
         </p>
       </div>
 

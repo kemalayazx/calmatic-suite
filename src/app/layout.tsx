@@ -1,6 +1,5 @@
 "use client";
 
-import type { Metadata } from "next";
 import "./globals.css";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
@@ -14,6 +13,7 @@ const navCategories = [
       { href: "/percentage", label: "Percentage" },
       { href: "/tip", label: "Tip Calculator" },
       { href: "/discount", label: "Discount" },
+      { href: "/random", label: "Random Generator" },
     ],
   },
   {
@@ -27,6 +27,8 @@ const navCategories = [
       { href: "/savings", label: "Savings Goal" },
       { href: "/auto-loan", label: "Auto Loan" },
       { href: "/credit-card", label: "Credit Card Payoff" },
+      { href: "/rent-buy", label: "Rent vs Buy" },
+      { href: "/electricity", label: "Electricity Cost" },
     ],
   },
   {
@@ -57,6 +59,7 @@ const navCategories = [
       { href: "/dates", label: "Date Calculator" },
       { href: "/fuel", label: "Fuel Calculator" },
       { href: "/timezone", label: "Time Zone" },
+      { href: "/speed", label: "Speed Calculator" },
     ],
   },
   {
@@ -66,6 +69,8 @@ const navCategories = [
       { href: "/cooking", label: "Cooking" },
       { href: "/gpa", label: "GPA Calculator" },
       { href: "/age", label: "Age Calculator" },
+      { href: "/password", label: "Password Gen" },
+      { href: "/text", label: "Text Counter" },
     ],
   },
 ];
@@ -225,6 +230,57 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Calmatic Suite — Free Online Calculator Tools</title>
+        <meta name="description" content="30+ free online calculators: mortgage, payroll, scientific, statistics, unit converter, GPA, investment, and more. No ads, no sign-up, open source." />
+        <meta name="keywords" content="online calculator, free calculator, mortgage calculator, scientific calculator, payroll calculator, GPA calculator, unit converter, investment calculator, compound interest, tax calculator, BMI calculator, statistics calculator, currency converter, loan calculator, percentage calculator, geometry calculator" />
+        <meta name="author" content="Calmatic Suite Contributors" />
+        <meta name="robots" content="index, follow" />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:url" content="https://calmatic.vercel.app" />
+        <meta property="og:site_name" content="Calmatic Suite" />
+        <meta property="og:title" content="Calmatic Suite — Free Online Calculator Tools" />
+        <meta property="og:description" content="30+ free online calculators for finance, math, science, and everyday life." />
+        <meta property="og:image" content="https://calmatic.vercel.app/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Calmatic Suite" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Calmatic Suite — Free Online Calculator Tools" />
+        <meta name="twitter:description" content="30+ free calculators. No ads, no sign-up." />
+        <meta name="twitter:image" content="https://calmatic.vercel.app/og-image.png" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#7c3aed" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <link rel="canonical" href="https://calmatic.vercel.app" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              "name": "Calmatic Suite",
+              "description": "30+ free online calculator tools for finance, math, science, and everyday life",
+              "url": "https://calmatic.vercel.app",
+              "applicationCategory": "UtilitiesApplication",
+              "operatingSystem": "Any",
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+              },
+              "author": {
+                "@type": "Organization",
+                "name": "Calmatic Suite Contributors"
+              }
+            })
+          }}
+        />
+      </head>
       <body className="min-h-screen" style={{ background: "#09090b", color: "#fafafa" }}>
         <Navbar />
 
