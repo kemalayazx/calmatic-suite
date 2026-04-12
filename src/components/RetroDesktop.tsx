@@ -5,13 +5,14 @@ import { useTheme } from "@/context/ThemeContext";
 import { useLanguage, type Locale } from "@/context/LanguageContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import RetroRadio from "@/components/RetroRadio";
 import {
   Calculator, TrendingUp, Receipt, Hash, BarChart2, DollarSign,
   Ruler, Calendar, Tag, Zap, Users, FileText, Atom, Palette,
   Heart, Coffee, Home, LineChart, Scale, Percent, ChefHat,
   GraduationCap, Fuel, Shield, Shuffle, Type, Globe, Cake,
   PiggyBank, Car, CreditCard, Dice5, Building, Lightbulb, Timer, Apple,
-  Folder, Volume2, Settings, LogOut,
+  Folder, Volume2, Settings, LogOut, Monitor, Trash2, Radio,
 } from "lucide-react";
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -126,6 +127,12 @@ const DIRECT_ICONS: AppItem[] = [
   { label: "Electricity", href: "/electricity", icon: Lightbulb },
 ];
 
+// My Computer — shows all apps from all folders + direct icons
+const MY_COMPUTER_ITEMS: AppItem[] = [
+  ...FOLDERS.flatMap(f => f.items),
+  ...DIRECT_ICONS,
+];
+
 // Start menu categories (flat representation for menu)
 const START_MENU_CATEGORIES = [
   {
@@ -229,13 +236,14 @@ function FolderWindowComponent({
         </div>
       </div>
 
-      {/* Toolbar strip */}
+      {/* Toolbar strip — decorative only, no inputs */}
       <div style={{
         padding: "3px 8px",
         borderBottom: "1px solid #808080",
         fontSize: "13px",
         fontFamily: "'Segoe UI', Tahoma, sans-serif",
         background: "#c0c0c0",
+        userSelect: "none",
       }}>
         File&nbsp;&nbsp;Edit&nbsp;&nbsp;View&nbsp;&nbsp;Help
       </div>
@@ -266,6 +274,89 @@ function FolderWindowComponent({
         background: "#c0c0c0",
       }}>
         {win.items.length} object(s)
+      </div>
+    </div>
+  );
+}
+
+// ── RecycleBinWindow ──────────────────────────────────────────────────────────
+
+function RecycleBinWindow({
+  x,
+  y,
+  zIndex,
+  onClose,
+  onFocus,
+}: {
+  x: number;
+  y: number;
+  zIndex: number;
+  onClose: () => void;
+  onFocus: () => void;
+}) {
+  const { pos, onMouseDown } = useDrag(x, y);
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: pos.x,
+        top: pos.y,
+        zIndex,
+        width: "280px",
+        background: "#c0c0c0",
+        border: "2px outset #ffffff",
+        boxShadow: "2px 2px 0 #000",
+        fontFamily: "'Segoe UI', Tahoma, sans-serif",
+      }}
+      onMouseDown={onFocus}
+    >
+      {/* Title bar */}
+      <div
+        className="retro-title-bar"
+        onMouseDown={onMouseDown}
+        style={{ cursor: "move" }}
+      >
+        <span>🗑️ Recycle Bin</span>
+        <div className="retro-title-bar-buttons">
+          <button
+            className="retro-title-bar-btn"
+            onClick={(e) => { e.stopPropagation(); onClose(); }}
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div style={{
+        padding: "20px 24px",
+        textAlign: "center",
+        fontSize: "13px",
+        color: "#000",
+        lineHeight: "1.7",
+      }}>
+        <div style={{ fontSize: "32px", marginBottom: "8px" }}>🗑️</div>
+        <div style={{ fontWeight: "bold", marginBottom: "4px" }}>The Recycle Bin is empty.</div>
+        <div style={{ color: "#444", fontSize: "12px" }}>No deleted calculations.</div>
+      </div>
+
+      {/* OK button */}
+      <div style={{ padding: "8px 0 14px", textAlign: "center" }}>
+        <button
+          style={{
+            padding: "4px 24px",
+            background: "#c0c0c0",
+            border: "2px outset #ffffff",
+            fontFamily: "'Segoe UI', Tahoma, sans-serif",
+            fontSize: "13px",
+            cursor: "pointer",
+            minWidth: "80px",
+          }}
+          onClick={(e) => { e.stopPropagation(); onClose(); }}
+        >
+          OK
+        </button>
       </div>
     </div>
   );
@@ -348,6 +439,9 @@ export default function RetroDesktop() {
   const [maxZ, setMaxZ] = useState(10);
   const [time, setTime] = useState("");
   const [shutDown, setShutDown] = useState(false);
+  const [showRecycleBin, setShowRecycleBin] = useState(false);
+  const [recycleBinZ, setRecycleBinZ] = useState(11);
+  const [showRadio, setShowRadio] = useState(false);
   const startRef = useRef<HTMLDivElement>(null);
   const nextOffset = useRef(0);
 
@@ -421,6 +515,29 @@ export default function RetroDesktop() {
     ]);
   }
 
+  function openMyComputer() {
+    const existing = openFolders.find((w) => w.id === "__mycomputer__");
+    if (existing) {
+      bringToFront("__mycomputer__");
+      return;
+    }
+    const offset = 80 + nextOffset.current * 20;
+    nextOffset.current = (nextOffset.current + 1) % 10;
+    const newZ = maxZ + 1;
+    setMaxZ(newZ);
+    setOpenFolders((prev) => [
+      ...prev,
+      {
+        id: "__mycomputer__",
+        title: "My Computer",
+        items: MY_COMPUTER_ITEMS,
+        x: offset,
+        y: offset,
+        zIndex: newZ,
+      },
+    ]);
+  }
+
   function closeFolder(id: string) {
     setOpenFolders((prev) => prev.filter((w) => w.id !== id));
   }
@@ -431,6 +548,13 @@ export default function RetroDesktop() {
     setOpenFolders((prev) =>
       prev.map((w) => (w.id === id ? { ...w, zIndex: newZ } : w))
     );
+  }
+
+  function openRecycleBin() {
+    const newZ = maxZ + 1;
+    setMaxZ(newZ);
+    setRecycleBinZ(newZ);
+    setShowRecycleBin(true);
   }
 
   return (
@@ -447,7 +571,7 @@ export default function RetroDesktop() {
         }}
         onClick={() => { setStartOpen(false); setOpenStartSub(null); }}
       >
-        {/* Desktop icon grid — 2 columns, folders first then direct shortcuts */}
+        {/* Desktop icon grid — 2 columns, ordered layout */}
         <div
           style={{
             display: "grid",
@@ -458,35 +582,153 @@ export default function RetroDesktop() {
             alignContent: "start",
           }}
         >
-          {/* Folder icons */}
-          {FOLDERS.map((folder) => (
-            <div
-              key={folder.id}
-              className="retro-desktop-icon"
-              onClick={(e) => { e.stopPropagation(); openFolder(folder); }}
-              style={{ cursor: "pointer" }}
-            >
-              <div className="retro-icon-box">
-                <Folder size={36} color="#ffcc00" strokeWidth={1.5} />
-              </div>
-              <span style={{ wordBreak: "break-word" }}>{folder.label}</span>
+          {/* Row 1: My Computer | Finance */}
+          <div
+            className="retro-desktop-icon"
+            onClick={(e) => { e.stopPropagation(); openMyComputer(); }}
+            style={{ cursor: "pointer" }}
+          >
+            <div className="retro-icon-box" style={{ background: "#c0c0c0", border: "1px solid #808080" }}>
+              <Monitor size={36} color="#c0c0c0" strokeWidth={1.5} />
             </div>
-          ))}
+            <span style={{ wordBreak: "break-word" }}>My Computer</span>
+          </div>
 
-          {/* Direct shortcut icons */}
-          {DIRECT_ICONS.map(({ href, label, icon: Icon }) => (
-            <Link key={href} href={href} style={{ textDecoration: "none" }}>
-              <div className="retro-desktop-icon" style={{ cursor: "pointer" }}>
-                <div className="retro-icon-box" style={{
-                  background: "#c0c0c0",
-                  border: "1px solid #808080",
-                }}>
-                  <Icon size={28} color="#000080" />
-                </div>
-                <span style={{ wordBreak: "break-word" }}>{label}</span>
+          {/* Finance folder */}
+          <div
+            className="retro-desktop-icon"
+            onClick={(e) => { e.stopPropagation(); openFolder(FOLDERS[0]); }}
+            style={{ cursor: "pointer" }}
+          >
+            <div className="retro-icon-box">
+              <Folder size={36} color="#ffcc00" strokeWidth={1.5} />
+            </div>
+            <span style={{ wordBreak: "break-word" }}>Finance</span>
+          </div>
+
+          {/* Engineering folder */}
+          <div
+            className="retro-desktop-icon"
+            onClick={(e) => { e.stopPropagation(); openFolder(FOLDERS[1]); }}
+            style={{ cursor: "pointer" }}
+          >
+            <div className="retro-icon-box">
+              <Folder size={36} color="#ffcc00" strokeWidth={1.5} />
+            </div>
+            <span style={{ wordBreak: "break-word" }}>Engineering</span>
+          </div>
+
+          {/* Tax & Payroll folder */}
+          <div
+            className="retro-desktop-icon"
+            onClick={(e) => { e.stopPropagation(); openFolder(FOLDERS[2]); }}
+            style={{ cursor: "pointer" }}
+          >
+            <div className="retro-icon-box">
+              <Folder size={36} color="#ffcc00" strokeWidth={1.5} />
+            </div>
+            <span style={{ wordBreak: "break-word" }}>Tax & Payroll</span>
+          </div>
+
+          {/* Converters folder */}
+          <div
+            className="retro-desktop-icon"
+            onClick={(e) => { e.stopPropagation(); openFolder(FOLDERS[3]); }}
+            style={{ cursor: "pointer" }}
+          >
+            <div className="retro-icon-box">
+              <Folder size={36} color="#ffcc00" strokeWidth={1.5} />
+            </div>
+            <span style={{ wordBreak: "break-word" }}>Converters</span>
+          </div>
+
+          {/* Lifestyle folder */}
+          <div
+            className="retro-desktop-icon"
+            onClick={(e) => { e.stopPropagation(); openFolder(FOLDERS[4]); }}
+            style={{ cursor: "pointer" }}
+          >
+            <div className="retro-icon-box">
+              <Folder size={36} color="#ffcc00" strokeWidth={1.5} />
+            </div>
+            <span style={{ wordBreak: "break-word" }}>Lifestyle</span>
+          </div>
+
+          {/* Games & Tools folder */}
+          <div
+            className="retro-desktop-icon"
+            onClick={(e) => { e.stopPropagation(); openFolder(FOLDERS[5]); }}
+            style={{ cursor: "pointer" }}
+          >
+            <div className="retro-icon-box">
+              <Folder size={36} color="#ffcc00" strokeWidth={1.5} />
+            </div>
+            <span style={{ wordBreak: "break-word" }}>Games &amp; Tools</span>
+          </div>
+
+          {/* Calculator direct icon */}
+          <Link href="/basic" style={{ textDecoration: "none" }}>
+            <div className="retro-desktop-icon" style={{ cursor: "pointer" }}>
+              <div className="retro-icon-box" style={{ background: "#c0c0c0", border: "1px solid #808080" }}>
+                <Calculator size={28} color="#000080" />
               </div>
-            </Link>
-          ))}
+              <span style={{ wordBreak: "break-word" }}>Calculator</span>
+            </div>
+          </Link>
+
+          {/* Scientific direct icon */}
+          <Link href="/scientific" style={{ textDecoration: "none" }}>
+            <div className="retro-desktop-icon" style={{ cursor: "pointer" }}>
+              <div className="retro-icon-box" style={{ background: "#c0c0c0", border: "1px solid #808080" }}>
+                <Atom size={28} color="#000080" />
+              </div>
+              <span style={{ wordBreak: "break-word" }}>Scientific</span>
+            </div>
+          </Link>
+
+          {/* Date Calc direct icon */}
+          <Link href="/dates" style={{ textDecoration: "none" }}>
+            <div className="retro-desktop-icon" style={{ cursor: "pointer" }}>
+              <div className="retro-icon-box" style={{ background: "#c0c0c0", border: "1px solid #808080" }}>
+                <Calendar size={28} color="#000080" />
+              </div>
+              <span style={{ wordBreak: "break-word" }}>Date Calc</span>
+            </div>
+          </Link>
+
+          {/* Electricity direct icon */}
+          <Link href="/electricity" style={{ textDecoration: "none" }}>
+            <div className="retro-desktop-icon" style={{ cursor: "pointer" }}>
+              <div className="retro-icon-box" style={{ background: "#c0c0c0", border: "1px solid #808080" }}>
+                <Lightbulb size={28} color="#000080" />
+              </div>
+              <span style={{ wordBreak: "break-word" }}>Electricity</span>
+            </div>
+          </Link>
+
+          {/* Radio icon */}
+          <div
+            className="retro-desktop-icon"
+            onClick={(e) => { e.stopPropagation(); setShowRadio((v) => !v); }}
+            style={{ cursor: "pointer" }}
+          >
+            <div className="retro-icon-box" style={{ background: "#c0c0c0", border: "1px solid #808080" }}>
+              <Radio size={28} color="#000080" />
+            </div>
+            <span style={{ wordBreak: "break-word" }}>Radio</span>
+          </div>
+
+          {/* Recycle Bin — last icon */}
+          <div
+            className="retro-desktop-icon"
+            onClick={(e) => { e.stopPropagation(); openRecycleBin(); }}
+            style={{ cursor: "pointer" }}
+          >
+            <div className="retro-icon-box" style={{ background: "#c0c0c0", border: "1px solid #808080" }}>
+              <Trash2 size={32} color="#555" strokeWidth={1.5} />
+            </div>
+            <span style={{ wordBreak: "break-word" }}>Recycle Bin</span>
+          </div>
         </div>
 
         {/* Folder windows */}
@@ -498,6 +740,26 @@ export default function RetroDesktop() {
             onFocus={bringToFront}
           />
         ))}
+
+        {/* Recycle Bin window */}
+        {showRecycleBin && (
+          <RecycleBinWindow
+            x={200}
+            y={150}
+            zIndex={recycleBinZ}
+            onClose={() => setShowRecycleBin(false)}
+            onFocus={() => {
+              const newZ = maxZ + 1;
+              setMaxZ(newZ);
+              setRecycleBinZ(newZ);
+            }}
+          />
+        )}
+
+        {/* Radio player */}
+        {showRadio && (
+          <RetroRadio onClose={() => setShowRadio(false)} initialZ={maxZ + 1} />
+        )}
       </div>
 
       {/* ── Taskbar ─────────────────────────────────────────────── */}
@@ -523,6 +785,16 @@ export default function RetroDesktop() {
             📂 {win.title}
           </button>
         ))}
+
+        {/* Radio taskbar button */}
+        {showRadio && (
+          <button
+            className="retro-taskbar-window-btn"
+            onClick={() => setShowRadio(false)}
+          >
+            ♪ Radio
+          </button>
+        )}
 
         {/* Spacer */}
         <div style={{ flex: 1 }} />
