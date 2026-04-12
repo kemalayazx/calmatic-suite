@@ -181,11 +181,8 @@ export default function RetroBoot() {
               🪟 <strong>Start menu</strong> has all calculators organized by
               category
             </div>
-            <div style={{ marginBottom: "6px" }}>
-              🏳️ <strong>Change language</strong> from the taskbar flag icon
-            </div>
             <div>
-              ⚙️ <strong>Modern theme:</strong> Start → Switch to Modern Theme
+              🏳️ <strong>Change language</strong> from the taskbar flag icon
             </div>
           </div>
 
