@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
+import RetroWindow from "@/components/RetroWindow";
 import {
   hexToRgb,
   rgbToHex,
@@ -175,6 +176,7 @@ export default function ColorsPage() {
       : hex;
 
   return (
+    <RetroWindow title="Color Picker">
     <div>
       <div style={{ marginBottom: "1.5rem" }}>
         <Link href="/" style={{ color: "#71717a", textDecoration: "none", fontSize: "0.875rem" }}>
@@ -329,5 +331,6 @@ export default function ColorsPage() {
         Results are for informational purposes only.
       </p>
     </div>
+    </RetroWindow>
   );
 }

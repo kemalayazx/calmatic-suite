@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import RetroWindow from "@/components/RetroWindow";
 import { parseNumbers, calcStats, buildHistogram } from "@/lib/calculations/statistics";
 import ExportButton from "@/components/ui/ExportButton";
 import PrintButton from "@/components/ui/PrintButton";
@@ -63,6 +64,7 @@ export default function StatisticsPage() {
   }
 
   return (
+    <RetroWindow title="Statistics">
     <div style={{ maxWidth: "900px", margin: "0 auto" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem", marginBottom: "1.75rem" }}>
@@ -246,5 +248,6 @@ export default function StatisticsPage() {
         Results are for informational purposes only.
       </p>
     </div>
+    </RetroWindow>
   );
 }

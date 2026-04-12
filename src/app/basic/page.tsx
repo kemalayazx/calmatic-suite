@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, Delete } from "lucide-react";
 import Link from "next/link";
+import RetroWindow from "@/components/RetroWindow";
 import { calculate, formatDisplay, sqrt, square, percentage, negate } from "@/lib/calculations/basic";
 import type { Operation } from "@/lib/calculations/basic";
 
@@ -137,6 +138,7 @@ export default function BasicPage() {
   }, [handleBtn]);
 
   return (
+    <RetroWindow title="Calculator">
     <div style={{ maxWidth: "400px", margin: "0 auto" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
         <Link href="/" style={{ color: "#71717a", display: "flex", alignItems: "center" }}>
@@ -204,5 +206,6 @@ export default function BasicPage() {
         Keyboard supported · For informational use only
       </p>
     </div>
+    </RetroWindow>
   );
 }

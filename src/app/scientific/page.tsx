@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { computeUnary, safeEvaluate, AngleMode } from "@/lib/calculations/scientific";
+import RetroWindow from "@/components/RetroWindow";
 
 const BTN_BASE: React.CSSProperties = {
   display: "flex",
@@ -215,6 +216,7 @@ export default function ScientificPage() {
   ];
 
   return (
+    <RetroWindow title="Scientific Calculator">
     <div style={{ maxWidth: "28rem", margin: "0 auto", padding: "1.5rem 1rem" }}>
       <h1 style={{ textAlign: "center", fontSize: "1.5rem", fontWeight: 800, color: "#a78bfa", marginBottom: "1.5rem" }}>
         Scientific Calculator
@@ -279,5 +281,6 @@ export default function ScientificPage() {
         For educational use. Verify results independently for critical applications.
       </p>
     </div>
+    </RetroWindow>
   );
 }

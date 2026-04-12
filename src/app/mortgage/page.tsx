@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import RetroWindow from "@/components/RetroWindow";
 import {
   calculateMonthlyPayment,
   generateAmortizationSchedule,
@@ -162,6 +163,7 @@ export default function MortgagePage() {
   }
 
   return (
+    <RetroWindow title="Mortgage Calculator">
     <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
         <h1 style={{ fontSize: "2rem", fontWeight: 800 }}>Mortgage Calculator</h1>
@@ -429,5 +431,6 @@ export default function MortgagePage() {
         Results are for informational purposes only. Consult a qualified professional for official decisions.
       </p>
     </div>
+    </RetroWindow>
   );
 }

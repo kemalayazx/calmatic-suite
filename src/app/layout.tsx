@@ -3,8 +3,9 @@
 import "./globals.css";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import { Sun, Moon, Home } from "lucide-react";
+import { Sun, Moon, Monitor, Home } from "lucide-react";
 import { ThemeProvider, useTheme } from "@/context/ThemeContext";
+import RetroDesktop from "@/components/RetroDesktop";
 import { LanguageProvider, useLanguage, type Locale } from "@/context/LanguageContext";
 import { LOCALE_NAMES, LOCALE_FLAGS } from "@/i18n/translations";
 import WelcomeModal from "@/components/WelcomeModal";
@@ -110,7 +111,7 @@ function ThemeToggle() {
         (e.currentTarget as HTMLButtonElement).style.color = "var(--text-secondary)";
       }}
     >
-      {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+      {theme === "dark" ? <Moon size={16} /> : theme === "light" ? <Sun size={16} /> : <Monitor size={16} />}
     </button>
   );
 }
@@ -415,6 +416,30 @@ function AppFooter() {
   );
 }
 
+function LayoutInner({ children }: { children: React.ReactNode }) {
+  const { theme } = useTheme();
+
+  return (
+    <>
+      {theme !== "retro" && <Navbar />}
+      <RetroDesktop />
+      <main
+        style={{
+          maxWidth: theme === "retro" ? "100%" : "1280px",
+          margin: theme === "retro" ? "0" : "0 auto",
+          padding: theme === "retro" ? "0" : "2rem 1.5rem",
+          position: theme === "retro" ? "relative" : "static",
+          zIndex: theme === "retro" ? 1 : "auto",
+          paddingBottom: theme === "retro" ? "40px" : "0",
+        }}
+      >
+        {children}
+      </main>
+      {theme !== "retro" && <AppFooter />}
+    </>
+  );
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -491,13 +516,7 @@ export default function RootLayout({
         <ThemeProvider>
           <LanguageProvider>
             <WelcomeModal />
-            <Navbar />
-
-            <main style={{ maxWidth: "1280px", margin: "0 auto", padding: "2rem 1.5rem" }}>
-              {children}
-            </main>
-
-            <AppFooter />
+            <LayoutInner>{children}</LayoutInner>
           </LanguageProvider>
         </ThemeProvider>
       </body>

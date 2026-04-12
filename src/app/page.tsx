@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
+import { useTheme } from "@/context/ThemeContext";
 import {
   Calculator,
   TrendingUp,
@@ -403,6 +404,11 @@ const modules = [
 
 export default function HomePage() {
   const { t } = useLanguage();
+  const { theme } = useTheme();
+
+  if (theme === "retro") {
+    return null; // RetroDesktop handles the homepage
+  }
 
   return (
     <div>
