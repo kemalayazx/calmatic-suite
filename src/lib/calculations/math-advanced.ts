@@ -113,6 +113,20 @@ export function solveLinear3(
   return { x: Dx / D, y: Dy / D, z: Dz / D };
 }
 
+// ─── Input Sanitization ─────────────────────────────────────────────────────
+
+const SAFE_EXPR_PATTERN = /^[0-9x+\-*/^().sincotaglqrepbSINCOTAGLQREPB \t]+$/;
+
+function sanitizeExpression(expr: string): string {
+  const cleaned = expr.trim();
+  if (cleaned.length === 0) throw new Error("Empty expression");
+  if (cleaned.length > 200) throw new Error("Expression too long");
+  if (/import|require|eval|Function|fetch|XMLHttp|window|document|process|global|__proto__|constructor/i.test(cleaned)) {
+    throw new Error("Invalid expression: contains restricted keywords");
+  }
+  return cleaned;
+}
+
 // ─── Derivative ───────────────────────────────────────────────────────────────
 
 export interface DerivativeResult {
@@ -122,9 +136,10 @@ export interface DerivativeResult {
 }
 
 export function calcDerivative(expr: string, xVal: number): DerivativeResult {
-  const node = parse(expr);
+  const safeExpr = sanitizeExpression(expr);
+  const node = parse(safeExpr);
   const derivNode = derivative(node, "x");
-  const fAtX = evaluate(expr, { x: xVal }) as number;
+  const fAtX = evaluate(safeExpr, { x: xVal }) as number;
   const fPrimeAtX = evaluate(derivNode.toString(), { x: xVal }) as number;
   return {
     symbolicDerivative: derivNode.toString(),
@@ -141,6 +156,7 @@ export interface IntegralResult {
 }
 
 export function calcIntegral(expr: string, a: number, b: number, n = 100): IntegralResult {
+  const safeExpr = sanitizeExpression(expr);
   // n must be even for Simpson
   const steps = n % 2 === 0 ? n : n + 1;
   const h = (b - a) / steps;
@@ -148,7 +164,7 @@ export function calcIntegral(expr: string, a: number, b: number, n = 100): Integ
   const points: { x: number; y: number }[] = [];
   for (let i = 0; i <= steps; i++) {
     const x = a + i * h;
-    const y = evaluate(expr, { x }) as number;
+    const y = evaluate(safeExpr, { x }) as number;
     points.push({ x, y });
     if (i === 0 || i === steps) {
       sum += y;

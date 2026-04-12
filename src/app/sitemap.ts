@@ -10,7 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/currency", "/dates", "/timezone", "/health", "/cooking", "/gpa",
     "/age", "/fuel", "/savings", "/auto-loan", "/credit-card", "/loans",
     "/percentage", "/tip", "/discount", "/electronics", "/disclaimer",
-    "/password", "/rent-buy", "/electricity", "/speed", "/random", "/text",
+    "/password", "/rent-buy", "/electricity", "/speed", "/random", "/text", "/calories",
   ];
 
   return routes.map((route) => ({
