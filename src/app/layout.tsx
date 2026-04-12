@@ -3,6 +3,8 @@
 import "./globals.css";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
+import { Sun, Moon } from "lucide-react";
+import { ThemeProvider, useTheme } from "@/context/ThemeContext";
 
 const navCategories = [
   {
@@ -71,9 +73,44 @@ const navCategories = [
       { href: "/age", label: "Age Calculator" },
       { href: "/password", label: "Password Gen" },
       { href: "/text", label: "Text Counter" },
+      { href: "/calories", label: "Food Calories" },
     ],
   },
 ];
+
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme();
+  return (
+    <button
+      onClick={toggleTheme}
+      aria-label="Toggle theme"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "36px",
+        height: "36px",
+        borderRadius: "0.5rem",
+        border: "1px solid var(--border-color)",
+        background: "transparent",
+        color: "var(--text-secondary)",
+        cursor: "pointer",
+        transition: "all 0.15s",
+        flexShrink: 0,
+      }}
+      onMouseOver={(e) => {
+        (e.currentTarget as HTMLButtonElement).style.background = "var(--bg-tertiary)";
+        (e.currentTarget as HTMLButtonElement).style.color = "var(--text-primary)";
+      }}
+      onMouseOut={(e) => {
+        (e.currentTarget as HTMLButtonElement).style.background = "transparent";
+        (e.currentTarget as HTMLButtonElement).style.color = "var(--text-secondary)";
+      }}
+    >
+      {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+    </button>
+  );
+}
 
 function Navbar() {
   const [open, setOpen] = useState(false);
@@ -92,8 +129,8 @@ function Navbar() {
   return (
     <header
       style={{
-        borderBottom: "1px solid #27272a",
-        background: "rgba(9,9,11,0.92)",
+        borderBottom: "1px solid var(--border-color)",
+        background: "var(--header-bg)",
         backdropFilter: "blur(12px)",
         position: "sticky",
         top: 0,
@@ -109,6 +146,7 @@ function Navbar() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          gap: "1rem",
         }}
       >
         <Link href="/" style={{ textDecoration: "none", flexShrink: 0 }}>
@@ -126,97 +164,101 @@ function Navbar() {
           </span>
         </Link>
 
-        <div ref={dropdownRef} style={{ position: "relative" }}>
-          <button
-            onClick={() => setOpen(!open)}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              padding: "0.5rem 1rem",
-              borderRadius: "0.5rem",
-              border: "1px solid #3f3f46",
-              background: open ? "#27272a" : "transparent",
-              color: "#fafafa",
-              cursor: "pointer",
-              fontSize: "0.875rem",
-              fontWeight: 600,
-            }}
-          >
-            All Calculators
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
-              fill="none"
-              style={{ transform: open ? "rotate(180deg)" : "rotate(0)", transition: "transform 0.2s" }}
-            >
-              <path d="M2 5l5 5 5-5" stroke="#a1a1aa" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <ThemeToggle />
 
-          {open && (
-            <div
+          <div ref={dropdownRef} style={{ position: "relative" }}>
+            <button
+              onClick={() => setOpen(!open)}
               style={{
-                position: "absolute",
-                top: "calc(100% + 8px)",
-                right: 0,
-                background: "#18181b",
-                border: "1px solid #3f3f46",
-                borderRadius: "0.75rem",
-                boxShadow: "0 16px 48px rgba(0,0,0,0.6)",
-                padding: "1.25rem",
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 200px)",
-                gap: "1.5rem",
-                zIndex: 100,
-                minWidth: "640px",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                padding: "0.5rem 1rem",
+                borderRadius: "0.5rem",
+                border: "1px solid var(--border-color)",
+                background: open ? "var(--bg-tertiary)" : "transparent",
+                color: "var(--text-primary)",
+                cursor: "pointer",
+                fontSize: "0.875rem",
+                fontWeight: 600,
               }}
             >
-              {navCategories.map((cat) => (
-                <div key={cat.title}>
-                  <div
-                    style={{
-                      fontSize: "0.7rem",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.08em",
-                      color: "#7c3aed",
-                      fontWeight: 700,
-                      marginBottom: "0.625rem",
-                    }}
-                  >
-                    {cat.title}
-                  </div>
-                  {cat.links.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => setOpen(false)}
+              All Calculators
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 14 14"
+                fill="none"
+                style={{ transform: open ? "rotate(180deg)" : "rotate(0)", transition: "transform 0.2s" }}
+              >
+                <path d="M2 5l5 5 5-5" stroke="var(--text-secondary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+
+            {open && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: "calc(100% + 8px)",
+                  right: 0,
+                  background: "var(--bg-secondary)",
+                  border: "1px solid var(--border-color)",
+                  borderRadius: "0.75rem",
+                  boxShadow: "0 16px 48px rgba(0,0,0,0.3)",
+                  padding: "1.25rem",
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3, 200px)",
+                  gap: "1.5rem",
+                  zIndex: 100,
+                  minWidth: "640px",
+                }}
+              >
+                {navCategories.map((cat) => (
+                  <div key={cat.title}>
+                    <div
                       style={{
-                        display: "block",
-                        padding: "0.3rem 0.5rem",
-                        borderRadius: "0.375rem",
-                        color: "#a1a1aa",
-                        textDecoration: "none",
-                        fontSize: "0.875rem",
-                        transition: "all 0.1s",
-                      }}
-                      onMouseOver={(e) => {
-                        (e.currentTarget as HTMLAnchorElement).style.background = "#27272a";
-                        (e.currentTarget as HTMLAnchorElement).style.color = "#fafafa";
-                      }}
-                      onMouseOut={(e) => {
-                        (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
-                        (e.currentTarget as HTMLAnchorElement).style.color = "#a1a1aa";
+                        fontSize: "0.7rem",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.08em",
+                        color: "#7c3aed",
+                        fontWeight: 700,
+                        marginBottom: "0.625rem",
                       }}
                     >
-                      {link.label}
-                    </Link>
-                  ))}
-                </div>
-              ))}
-            </div>
-          )}
+                      {cat.title}
+                    </div>
+                    {cat.links.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        onClick={() => setOpen(false)}
+                        style={{
+                          display: "block",
+                          padding: "0.3rem 0.5rem",
+                          borderRadius: "0.375rem",
+                          color: "var(--text-secondary)",
+                          textDecoration: "none",
+                          fontSize: "0.875rem",
+                          transition: "all 0.1s",
+                        }}
+                        onMouseOver={(e) => {
+                          (e.currentTarget as HTMLAnchorElement).style.background = "var(--bg-tertiary)";
+                          (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-primary)";
+                        }}
+                        onMouseOut={(e) => {
+                          (e.currentTarget as HTMLAnchorElement).style.background = "transparent";
+                          (e.currentTarget as HTMLAnchorElement).style.color = "var(--text-secondary)";
+                        }}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>
@@ -281,35 +323,37 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen" style={{ background: "#09090b", color: "#fafafa" }}>
-        <Navbar />
+      <body className="min-h-screen" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>
+        <ThemeProvider>
+          <Navbar />
 
-        <main style={{ maxWidth: "1280px", margin: "0 auto", padding: "2rem 1.5rem" }}>
-          {children}
-        </main>
+          <main style={{ maxWidth: "1280px", margin: "0 auto", padding: "2rem 1.5rem" }}>
+            {children}
+          </main>
 
-        <footer
-          style={{
-            borderTop: "1px solid #27272a",
-            textAlign: "center",
-            padding: "1.5rem",
-            color: "#52525b",
-            fontSize: "0.875rem",
-          }}
-        >
-          <div style={{ marginBottom: "0.5rem" }}>
-            Open Source · Free Forever · No Ads · No Data Collection
-          </div>
-          <div style={{ display: "flex", justifyContent: "center", gap: "1.25rem", flexWrap: "wrap" }}>
-            <Link href="/disclaimer" style={{ color: "#52525b", textDecoration: "underline", fontSize: "0.8rem" }}>
-              Disclaimer
-            </Link>
-            <span style={{ color: "#3f3f46" }}>·</span>
-            <span style={{ color: "#3f3f46", fontSize: "0.8rem" }}>
-              For informational use only — not professional advice
-            </span>
-          </div>
-        </footer>
+          <footer
+            style={{
+              borderTop: "1px solid var(--border-color)",
+              textAlign: "center",
+              padding: "1.5rem",
+              color: "var(--text-dim)",
+              fontSize: "0.875rem",
+            }}
+          >
+            <div style={{ marginBottom: "0.5rem" }}>
+              Open Source · Free Forever · No Ads · No Data Collection
+            </div>
+            <div style={{ display: "flex", justifyContent: "center", gap: "1.25rem", flexWrap: "wrap" }}>
+              <Link href="/disclaimer" style={{ color: "var(--text-dim)", textDecoration: "underline", fontSize: "0.8rem" }}>
+                Disclaimer
+              </Link>
+              <span style={{ color: "var(--border-color)" }}>·</span>
+              <span style={{ color: "var(--border-color)", fontSize: "0.8rem" }}>
+                For informational use only — not professional advice
+              </span>
+            </div>
+          </footer>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -44,6 +44,7 @@ import {
   Timer,
   Shuffle,
   Type,
+  Apple,
 } from "lucide-react";
 
 const userPaths = [
@@ -79,7 +80,7 @@ const userPaths = [
     icon: ShoppingCart,
     label: "Everyday Use",
     description: "Quick calculations, discounts, cooking, tips",
-    links: ["/basic", "/discount", "/tip", "/health", "/cooking", "/percentage", "/dates", "/age", "/timezone", "/random", "/text", "/speed"],
+    links: ["/basic", "/discount", "/tip", "/health", "/calories", "/cooking", "/percentage", "/dates", "/age", "/timezone", "/random", "/text", "/speed"],
     color: "#db2777",
   },
 ];
@@ -389,6 +390,14 @@ const modules = [
     color: "from-gray-500 to-gray-700",
     glow: "hover:shadow-gray-900/40",
   },
+  {
+    href: "/calories",
+    icon: Apple,
+    title: "Food Calories",
+    description: "Search 80+ foods, track daily calories and macronutrients with visual breakdown.",
+    color: "from-red-500 to-red-700",
+    glow: "hover:shadow-red-900/40",
+  },
 ];
 
 export default function HomePage() {
@@ -410,14 +419,14 @@ export default function HomePage() {
         >
           Calmatic Suite
         </h1>
-        <p style={{ fontSize: "1.125rem", color: "#71717a", maxWidth: "480px", margin: "0 auto" }}>
-          Thirty-eight powerful calculator modules in one place. Free, open-source, no ads.
+        <p style={{ fontSize: "1.125rem", color: "var(--text-muted)", maxWidth: "480px", margin: "0 auto" }}>
+          Thirty-nine powerful calculator modules in one place. Free, open-source, no ads.
         </p>
       </div>
 
       {/* User Path Section */}
       <div style={{ marginBottom: "3.5rem" }}>
-        <p style={{ textAlign: "center", color: "#52525b", fontSize: "0.8rem", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "1rem" }}>
+        <p style={{ textAlign: "center", color: "var(--text-dim)", fontSize: "0.8rem", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "1rem" }}>
           Jump to what you need
         </p>
         <div
@@ -447,7 +456,7 @@ export default function HomePage() {
                   cursor: "pointer",
                   transition: "all 0.15s",
                   fontSize: "0.875rem",
-                  color: "#d4d4d8",
+                  color: "var(--text-secondary)",
                   fontWeight: 500,
                 }}
                 onMouseOver={(e) => {
@@ -485,8 +494,8 @@ export default function HomePage() {
               className={`group transition-all duration-200 hover:scale-[1.02] hover:shadow-xl ${glow}`}
               style={{
                 borderRadius: "1rem",
-                border: "1px solid #27272a",
-                background: "rgba(24,24,27,0.6)",
+                border: "1px solid var(--border-color)",
+                background: "var(--card-bg)",
                 backdropFilter: "blur(8px)",
                 padding: "1.75rem",
                 cursor: "pointer",
@@ -511,13 +520,13 @@ export default function HomePage() {
                 style={{
                   fontWeight: 700,
                   fontSize: "1.125rem",
-                  color: "#fafafa",
+                  color: "var(--text-primary)",
                   marginBottom: "0.5rem",
                 }}
               >
                 {title}
               </h2>
-              <p style={{ fontSize: "0.875rem", color: "#71717a", lineHeight: 1.6 }}>
+              <p style={{ fontSize: "0.875rem", color: "var(--text-muted)", lineHeight: 1.6 }}>
                 {description}
               </p>
             </div>
