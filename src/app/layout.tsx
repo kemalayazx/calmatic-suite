@@ -62,6 +62,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Source viewer easter egg */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          console.log("%c🔍 Hey seni gidi meraklı! Yanlış yere bakıyorsun 😄", "font-size:20px;color:#7c3aed;font-weight:bold");
+          console.log("%cCalmatic Suite — Free & Open Source Calculator Tools", "font-size:14px;color:#666");
+        `}} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

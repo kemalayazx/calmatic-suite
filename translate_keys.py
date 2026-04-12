@@ -4,7 +4,7 @@ Translate 1118 English keys to 14 languages using llm-balancer.
 Then merge into translations.ts.
 """
 import sys, json, re, time, os
-sys.path.insert(0, '/Users/root1/Desktop/skills for claude by kemal')
+sys.path.insert(0, '/Users/root1/Desktop/skills for claude by kemal/skills for claude by kemal/elastic-leavitt')
 
 from memory_server import ask
 

@@ -587,9 +587,22 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    const block = (e: MouseEvent) => e.preventDefault();
-    document.addEventListener("contextmenu", block);
-    return () => document.removeEventListener("contextmenu", block);
+    // Block right-click
+    const blockCtx = (e: MouseEvent) => e.preventDefault();
+    document.addEventListener("contextmenu", blockCtx);
+
+    // Block Ctrl+U (view source) and Ctrl+S (save page)
+    const blockKeys = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === "u" || e.key === "U" || e.key === "s" || e.key === "S")) {
+        e.preventDefault();
+      }
+    };
+    document.addEventListener("keydown", blockKeys);
+
+    return () => {
+      document.removeEventListener("contextmenu", blockCtx);
+      document.removeEventListener("keydown", blockKeys);
+    };
   }, []);
 
   const isRetroCalcPage =
