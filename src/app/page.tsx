@@ -91,7 +91,7 @@ const modules = [
   {
     href: "/basic",
     icon: Calculator,
-    title: "Basic Calculator",
+    titleKey: "calc.basic.title",
     description: "Standard arithmetic, square root, percentage, keyboard support.",
     color: "from-violet-600 to-violet-800",
     glow: "hover:shadow-violet-900/40",
@@ -99,7 +99,7 @@ const modules = [
   {
     href: "/financial",
     icon: TrendingUp,
-    title: "Financial",
+    titleKey: "calc.financial.title",
     description: "Simple interest, compound interest, loan payment schedule.",
     color: "from-blue-600 to-blue-800",
     glow: "hover:shadow-blue-900/40",
@@ -107,7 +107,7 @@ const modules = [
   {
     href: "/accounting",
     icon: Receipt,
-    title: "Accounting",
+    titleKey: "calc.accounting.title",
     description: "VAT calculator with copy, depreciation straight-line & declining balance.",
     color: "from-emerald-600 to-emerald-800",
     glow: "hover:shadow-emerald-900/40",
@@ -115,7 +115,7 @@ const modules = [
   {
     href: "/converter",
     icon: Hash,
-    title: "Number Converter",
+    titleKey: "calc.converter.title",
     description: "Dec / Bin / Hex / Oct conversions and ASCII ↔ binary translation.",
     color: "from-amber-600 to-amber-800",
     glow: "hover:shadow-amber-900/40",
@@ -123,7 +123,7 @@ const modules = [
   {
     href: "/statistics",
     icon: BarChart2,
-    title: "Statistics",
+    titleKey: "calc.statistics.title",
     description: "Mean, median, mode, std dev, variance + histogram chart.",
     color: "from-rose-600 to-rose-800",
     glow: "hover:shadow-rose-900/40",
@@ -131,7 +131,7 @@ const modules = [
   {
     href: "/currency",
     icon: DollarSign,
-    title: "Currency",
+    titleKey: "calc.currency.title",
     description: "Live exchange rates via Frankfurter API. 12 major currencies.",
     color: "from-teal-600 to-teal-800",
     glow: "hover:shadow-teal-900/40",
@@ -139,7 +139,7 @@ const modules = [
   {
     href: "/units",
     icon: Ruler,
-    title: "Unit Converter",
+    titleKey: "calc.units.title",
     description: "Length, weight, temperature, area, speed — all in one place.",
     color: "from-indigo-600 to-indigo-800",
     glow: "hover:shadow-indigo-900/40",
@@ -147,7 +147,7 @@ const modules = [
   {
     href: "/dates",
     icon: Calendar,
-    title: "Date Calculator",
+    titleKey: "calc.dates.title",
     description: "Date difference, add/subtract days, live countdown timer.",
     color: "from-pink-600 to-pink-800",
     glow: "hover:shadow-pink-900/40",
@@ -155,7 +155,7 @@ const modules = [
   {
     href: "/discount",
     icon: Tag,
-    title: "Discount Calculator",
+    titleKey: "calc.discount.title",
     description: "Discount price, find discount %, and bulk product savings.",
     color: "from-orange-600 to-orange-800",
     glow: "hover:shadow-orange-900/40",
@@ -163,7 +163,7 @@ const modules = [
   {
     href: "/electronics",
     icon: Zap,
-    title: "Electronics",
+    titleKey: "calc.electronics.title",
     description: "Ohm's Law, resistor color code, LED resistor, RC/RL circuits, dB conversions.",
     color: "from-yellow-600 to-yellow-800",
     glow: "hover:shadow-yellow-900/40",
@@ -171,7 +171,7 @@ const modules = [
   {
     href: "/payroll",
     icon: Users,
-    title: "Payroll (Turkey)",
+    titleKey: "calc.payroll.title",
     description: "Gross/net salary, SGK, overtime, employer cost — 2025 parameters.",
     color: "from-cyan-600 to-cyan-800",
     glow: "hover:shadow-cyan-900/40",
@@ -179,7 +179,7 @@ const modules = [
   {
     href: "/taxes",
     icon: FileText,
-    title: "Tax Calculator",
+    titleKey: "calc.taxes.title",
     description: "VAT invoice breakdown, annual income tax brackets, withholding (stopaj).",
     color: "from-red-600 to-red-800",
     glow: "hover:shadow-red-900/40",
@@ -187,7 +187,7 @@ const modules = [
   {
     href: "/math",
     icon: Brain,
-    title: "Advanced Math",
+    titleKey: "calc.math.title",
     description: "Matrix ops, equation solver, derivative, integral (Simpson), permutations, complex numbers.",
     color: "from-purple-600 to-purple-800",
     glow: "hover:shadow-purple-900/40",
@@ -195,7 +195,7 @@ const modules = [
   {
     href: "/colors",
     icon: Palette,
-    title: "Color Converter",
+    titleKey: "calc.colors.title",
     description: "HEX / RGB / HSL live sync, opacity slider, CSS output, complementary & triadic palettes.",
     color: "from-fuchsia-600 to-fuchsia-800",
     glow: "hover:shadow-fuchsia-900/40",
@@ -203,7 +203,7 @@ const modules = [
   {
     href: "/health",
     icon: Heart,
-    title: "Health",
+    titleKey: "calc.health.title",
     description: "BMI with visual gauge, BMR & daily calorie (Harris-Benedict), ideal weight (4 formulas).",
     color: "from-green-600 to-green-800",
     glow: "hover:shadow-green-900/40",
@@ -211,7 +211,7 @@ const modules = [
   {
     href: "/tip",
     icon: Coffee,
-    title: "Tip Calculator",
+    titleKey: "calc.tip.title",
     description: "Bill split with preset tip pills, custom rate, per-person breakdown. ₺ $ € support.",
     color: "from-lime-600 to-lime-800",
     glow: "hover:shadow-lime-900/40",
@@ -219,7 +219,7 @@ const modules = [
   {
     href: "/us-payroll",
     icon: BadgeDollarSign,
-    title: "US Payroll",
+    titleKey: "calc.usPayroll.title",
     description: "Federal tax 2025 brackets, FICA, state tax for top 10 states, hourly ↔ salary.",
     color: "from-sky-600 to-sky-800",
     glow: "hover:shadow-sky-900/40",
@@ -227,7 +227,7 @@ const modules = [
   {
     href: "/mortgage",
     icon: Home,
-    title: "Mortgage",
+    titleKey: "calc.mortgage.title",
     description: "Monthly payment, full amortization schedule, affordability (28/36 rule), refinance.",
     color: "from-stone-600 to-stone-800",
     glow: "hover:shadow-stone-900/40",
@@ -235,7 +235,7 @@ const modules = [
   {
     href: "/investment",
     icon: LineChart,
-    title: "Investment",
+    titleKey: "calc.investment.title",
     description: "Compound growth chart, ROI/CAGR, retirement FIRE calculator, dollar-cost averaging.",
     color: "from-emerald-600 to-emerald-800",
     glow: "hover:shadow-emerald-900/40",
@@ -243,7 +243,7 @@ const modules = [
   {
     href: "/loans",
     icon: Scale,
-    title: "Loan Compare",
+    titleKey: "calc.loans.title",
     description: "Side-by-side loan comparison with effective APR and total cost winner highlight.",
     color: "from-zinc-600 to-zinc-800",
     glow: "hover:shadow-zinc-900/40",
@@ -251,7 +251,7 @@ const modules = [
   {
     href: "/percentage",
     icon: Percent,
-    title: "Percentage",
+    titleKey: "calc.percentage.title",
     description: "What is X% of Y, percent change, margin vs markup calculator.",
     color: "from-violet-500 to-violet-700",
     glow: "hover:shadow-violet-900/40",
@@ -259,7 +259,7 @@ const modules = [
   {
     href: "/cooking",
     icon: ChefHat,
-    title: "Cooking",
+    titleKey: "calc.cooking.title",
     description: "Recipe scaler, cooking unit converter (cups, oz, °F), baking ratios.",
     color: "from-orange-500 to-orange-700",
     glow: "hover:shadow-orange-900/40",
@@ -267,7 +267,7 @@ const modules = [
   {
     href: "/gpa",
     icon: GraduationCap,
-    title: "GPA Calculator",
+    titleKey: "calc.gpa.title",
     description: "Weighted GPA by credits, 4 grading scales, cumulative GPA tracker.",
     color: "from-blue-500 to-blue-700",
     glow: "hover:shadow-blue-900/40",
@@ -275,7 +275,7 @@ const modules = [
   {
     href: "/fuel",
     icon: Fuel,
-    title: "Fuel Calculator",
+    titleKey: "calc.fuel.title",
     description: "Trip fuel cost, cost per person splitter, MPG ↔ L/100km converter.",
     color: "from-amber-500 to-amber-700",
     glow: "hover:shadow-amber-900/40",
@@ -283,7 +283,7 @@ const modules = [
   {
     href: "/scientific",
     icon: Atom,
-    title: "Scientific Calculator",
+    titleKey: "calc.scientific.title",
     description: "sin, cos, tan, log, ln, eˣ, factorial, memory, radians/degrees toggle.",
     color: "from-violet-500 to-violet-700",
     glow: "hover:shadow-violet-900/40",
@@ -291,7 +291,7 @@ const modules = [
   {
     href: "/geometry",
     icon: Shapes,
-    title: "Geometry",
+    titleKey: "calc.geometry.title",
     description: "2D areas & perimeters, 3D volumes & surface areas, Pythagorean theorem.",
     color: "from-sky-500 to-sky-700",
     glow: "hover:shadow-sky-900/40",
@@ -299,7 +299,7 @@ const modules = [
   {
     href: "/timezone",
     icon: Globe,
-    title: "Time Zone Converter",
+    titleKey: "calc.timezone.title",
     description: "Convert between 30 timezones, live world clock for 6 major cities.",
     color: "from-cyan-500 to-cyan-700",
     glow: "hover:shadow-cyan-900/40",
@@ -307,7 +307,7 @@ const modules = [
   {
     href: "/age",
     icon: Cake,
-    title: "Age Calculator",
+    titleKey: "calc.age.title",
     description: "Exact age in years/months/days, zodiac, Chinese zodiac, next birthday countdown.",
     color: "from-pink-500 to-pink-700",
     glow: "hover:shadow-pink-900/40",
@@ -315,7 +315,7 @@ const modules = [
   {
     href: "/savings",
     icon: PiggyBank,
-    title: "Savings Goal",
+    titleKey: "calc.savings.title",
     description: "Savings goal planner, emergency fund tiers, CD/deposit calculator.",
     color: "from-green-500 to-green-700",
     glow: "hover:shadow-green-900/40",
@@ -323,7 +323,7 @@ const modules = [
   {
     href: "/auto-loan",
     icon: Car,
-    title: "Auto Loan",
+    titleKey: "calc.autoLoan.title",
     description: "Monthly payment, affordability, lease vs buy total cost comparison.",
     color: "from-slate-500 to-slate-700",
     glow: "hover:shadow-slate-900/40",
@@ -331,7 +331,7 @@ const modules = [
   {
     href: "/credit-card",
     icon: CreditCard,
-    title: "Credit Card Payoff",
+    titleKey: "calc.creditCard.title",
     description: "Payoff timeline, minimum payment trap, balance transfer break-even.",
     color: "from-red-500 to-red-700",
     glow: "hover:shadow-red-900/40",
@@ -339,7 +339,7 @@ const modules = [
   {
     href: "/probability",
     icon: Dice5,
-    title: "Probability",
+    titleKey: "calc.probability.title",
     description: "Basic probability, dice & coin simulations, binomial distribution chart.",
     color: "from-amber-500 to-amber-700",
     glow: "hover:shadow-amber-900/40",
@@ -347,7 +347,7 @@ const modules = [
   {
     href: "/password",
     icon: Shield,
-    title: "Password Generator",
+    titleKey: "calc.password.title",
     description: "Cryptographically secure passwords. Length slider, character toggles, strength meter.",
     color: "from-green-600 to-green-800",
     glow: "hover:shadow-green-900/40",
@@ -355,7 +355,7 @@ const modules = [
   {
     href: "/rent-buy",
     icon: Building2,
-    title: "Rent vs Buy",
+    titleKey: "calc.rentBuy.title",
     description: "Compare true cost of renting vs buying over time. Equity, opportunity cost, crossover analysis.",
     color: "from-stone-500 to-stone-700",
     glow: "hover:shadow-stone-900/40",
@@ -363,7 +363,7 @@ const modules = [
   {
     href: "/electricity",
     icon: Lightbulb,
-    title: "Electricity Cost",
+    titleKey: "calc.electricity.title",
     description: "Appliance cost calculator, solar savings payback, LED vs CFL vs incandescent comparison.",
     color: "from-yellow-500 to-yellow-700",
     glow: "hover:shadow-yellow-900/40",
@@ -371,7 +371,7 @@ const modules = [
   {
     href: "/speed",
     icon: Timer,
-    title: "Speed Calculator",
+    titleKey: "calc.speed.title",
     description: "Speed / distance / time solver with unit conversion. Running pace and finish time predictor.",
     color: "from-blue-500 to-blue-700",
     glow: "hover:shadow-blue-900/40",
@@ -379,7 +379,7 @@ const modules = [
   {
     href: "/random",
     icon: Shuffle,
-    title: "Random Generator",
+    titleKey: "calc.random.title",
     description: "Secure random numbers, list shuffler, coin flip, and dice roller using crypto.getRandomValues.",
     color: "from-purple-500 to-purple-700",
     glow: "hover:shadow-purple-900/40",
@@ -387,7 +387,7 @@ const modules = [
   {
     href: "/text",
     icon: Type,
-    title: "Text Counter",
+    titleKey: "calc.text.title",
     description: "Word, character, sentence counter. Reading time, keyword density, and case converter.",
     color: "from-gray-500 to-gray-700",
     glow: "hover:shadow-gray-900/40",
@@ -395,7 +395,7 @@ const modules = [
   {
     href: "/calories",
     icon: Apple,
-    title: "Food Calories",
+    titleKey: "calc.calories.title",
     description: "Search 80+ foods, track daily calories and macronutrients with visual breakdown.",
     color: "from-red-500 to-red-700",
     glow: "hover:shadow-red-900/40",
@@ -493,7 +493,7 @@ export default function HomePage() {
           gap: "1.25rem",
         }}
       >
-        {modules.map(({ href, icon: Icon, title, description, color, glow }) => (
+        {modules.map(({ href, icon: Icon, titleKey, description, color, glow }) => (
           <Link
             key={href}
             href={href}
@@ -533,7 +533,7 @@ export default function HomePage() {
                   marginBottom: "0.5rem",
                 }}
               >
-                {title}
+                {t(titleKey)}
               </h2>
               <p style={{ fontSize: "0.875rem", color: "var(--text-muted)", lineHeight: 1.6 }}>
                 {description}
