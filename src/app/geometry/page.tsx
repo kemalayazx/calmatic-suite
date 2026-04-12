@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import { calc2D, calc3D, pythagorean, Shape2D, Shape3D } from "@/lib/calculations/geometry";
 
 const TAB_STYLE = (active: boolean): React.CSSProperties => ({
@@ -52,19 +53,20 @@ function Field({ label, value, onChange }: { label: string; value: string; onCha
 
 // --- 2D Tab ---
 function Tab2D() {
+  const { t } = useLanguage();
   const [shape, setShape] = useState<Shape2D>("circle");
   const [fields, setFields] = useState<Record<string, string>>({});
   const [result, setResult] = useState<{ area?: number; perimeter?: number; circumference?: number } | null>(null);
   const [error, setError] = useState("");
 
   const shapes: { value: Shape2D; label: string; fields: { key: string; label: string }[] }[] = [
-    { value: "circle", label: "Circle", fields: [{ key: "radius", label: "Radius" }] },
-    { value: "rectangle", label: "Rectangle", fields: [{ key: "width", label: "Width" }, { key: "height", label: "Height" }] },
-    { value: "triangle", label: "Triangle (base + height)", fields: [{ key: "base", label: "Base" }, { key: "height", label: "Height" }] },
-    { value: "triangle-heron", label: "Triangle (3 sides / Heron)", fields: [{ key: "a", label: "Side a" }, { key: "b", label: "Side b" }, { key: "c", label: "Side c" }] },
-    { value: "trapezoid", label: "Trapezoid", fields: [{ key: "a", label: "Side a (parallel)" }, { key: "b", label: "Side b (parallel)" }, { key: "height", label: "Height" }] },
-    { value: "ellipse", label: "Ellipse", fields: [{ key: "a", label: "Semi-axis a" }, { key: "b", label: "Semi-axis b" }] },
-    { value: "parallelogram", label: "Parallelogram", fields: [{ key: "base", label: "Base" }, { key: "height", label: "Height" }] },
+    { value: "circle", label: t("geometry.shape.circle"), fields: [{ key: "radius", label: t("geometry.field.radius") }] },
+    { value: "rectangle", label: t("geometry.shape.rectangle"), fields: [{ key: "width", label: t("geometry.field.width") }, { key: "height", label: t("geometry.field.height") }] },
+    { value: "triangle", label: t("geometry.shape.triangleBaseHeight"), fields: [{ key: "base", label: t("geometry.field.base") }, { key: "height", label: t("geometry.field.height") }] },
+    { value: "triangle-heron", label: t("geometry.shape.triangleHeron"), fields: [{ key: "a", label: t("geometry.field.sideA") }, { key: "b", label: t("geometry.field.sideB") }, { key: "c", label: t("geometry.field.sideC") }] },
+    { value: "trapezoid", label: t("geometry.shape.trapezoid"), fields: [{ key: "a", label: t("geometry.field.sideAParallel") }, { key: "b", label: t("geometry.field.sideBParallel") }, { key: "height", label: t("geometry.field.height") }] },
+    { value: "ellipse", label: t("geometry.shape.ellipse"), fields: [{ key: "a", label: t("geometry.field.semiAxisA") }, { key: "b", label: t("geometry.field.semiAxisB") }] },
+    { value: "parallelogram", label: t("geometry.shape.parallelogram"), fields: [{ key: "base", label: t("geometry.field.base") }, { key: "height", label: t("geometry.field.height") }] },
   ];
 
   const current = shapes.find((s) => s.value === shape)!;
@@ -89,7 +91,7 @@ function Tab2D() {
   return (
     <div>
       <div style={{ marginBottom: "1rem" }}>
-        <label style={{ fontSize: "0.8rem", color: "#a1a1aa", display: "block", marginBottom: "0.3rem" }}>Shape</label>
+        <label style={{ fontSize: "0.8rem", color: "#a1a1aa", display: "block", marginBottom: "0.3rem" }}>{t("geometry.label.shape")}</label>
         <select
           value={shape}
           onChange={(e) => { setShape(e.target.value as Shape2D); setResult(null); setFields({}); }}
@@ -109,16 +111,16 @@ function Tab2D() {
         onClick={calculate}
         style={{ background: "#7c3aed", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1.5rem", fontWeight: 700, cursor: "pointer", fontSize: "0.9rem" }}
       >
-        Calculate
+        {t("geometry.btn.calculate")}
       </button>
 
       {error && <p style={{ color: "#f87171", marginTop: "0.75rem", fontSize: "0.85rem" }}>{error}</p>}
 
       {result && (
         <div style={RESULT_BOX}>
-          {result.area !== undefined && <p style={{ color: "#c4b5fd", margin: "0.25rem 0" }}>Area: <strong style={{ color: "#f4f4f5" }}>{fmt(result.area)}</strong></p>}
-          {result.perimeter !== undefined && <p style={{ color: "#c4b5fd", margin: "0.25rem 0" }}>Perimeter: <strong style={{ color: "#f4f4f5" }}>{fmt(result.perimeter)}</strong></p>}
-          {result.circumference !== undefined && <p style={{ color: "#c4b5fd", margin: "0.25rem 0" }}>Circumference: <strong style={{ color: "#f4f4f5" }}>{fmt(result.circumference)}</strong></p>}
+          {result.area !== undefined && <p style={{ color: "#c4b5fd", margin: "0.25rem 0" }}>{t("geometry.result.area")}: <strong style={{ color: "#f4f4f5" }}>{fmt(result.area)}</strong></p>}
+          {result.perimeter !== undefined && <p style={{ color: "#c4b5fd", margin: "0.25rem 0" }}>{t("geometry.result.perimeter")}: <strong style={{ color: "#f4f4f5" }}>{fmt(result.perimeter)}</strong></p>}
+          {result.circumference !== undefined && <p style={{ color: "#c4b5fd", margin: "0.25rem 0" }}>{t("geometry.result.circumference")}: <strong style={{ color: "#f4f4f5" }}>{fmt(result.circumference)}</strong></p>}
         </div>
       )}
     </div>
@@ -127,18 +129,19 @@ function Tab2D() {
 
 // --- 3D Tab ---
 function Tab3D() {
+  const { t } = useLanguage();
   const [shape, setShape] = useState<Shape3D>("sphere");
   const [fields, setFields] = useState<Record<string, string>>({});
   const [result, setResult] = useState<{ volume?: number; surfaceArea?: number; slantHeight?: number } | null>(null);
   const [error, setError] = useState("");
 
   const shapes: { value: Shape3D; label: string; fields: { key: string; label: string }[] }[] = [
-    { value: "sphere", label: "Sphere", fields: [{ key: "r", label: "Radius" }] },
-    { value: "cylinder", label: "Cylinder", fields: [{ key: "r", label: "Radius" }, { key: "h", label: "Height" }] },
-    { value: "cone", label: "Cone", fields: [{ key: "r", label: "Radius" }, { key: "h", label: "Height" }] },
-    { value: "cube", label: "Cube", fields: [{ key: "side", label: "Side" }] },
-    { value: "rectangular-prism", label: "Rectangular Prism", fields: [{ key: "l", label: "Length" }, { key: "w", label: "Width" }, { key: "h", label: "Height" }] },
-    { value: "pyramid", label: "Square Pyramid", fields: [{ key: "side", label: "Base Side" }, { key: "height", label: "Height" }] },
+    { value: "sphere", label: t("geometry.shape3d.sphere"), fields: [{ key: "r", label: t("geometry.field.radius") }] },
+    { value: "cylinder", label: t("geometry.shape3d.cylinder"), fields: [{ key: "r", label: t("geometry.field.radius") }, { key: "h", label: t("geometry.field.height") }] },
+    { value: "cone", label: t("geometry.shape3d.cone"), fields: [{ key: "r", label: t("geometry.field.radius") }, { key: "h", label: t("geometry.field.height") }] },
+    { value: "cube", label: t("geometry.shape3d.cube"), fields: [{ key: "side", label: t("geometry.field.side") }] },
+    { value: "rectangular-prism", label: t("geometry.shape3d.rectPrism"), fields: [{ key: "l", label: t("geometry.field.length") }, { key: "w", label: t("geometry.field.width") }, { key: "h", label: t("geometry.field.height") }] },
+    { value: "pyramid", label: t("geometry.shape3d.squarePyramid"), fields: [{ key: "side", label: t("geometry.field.baseSide") }, { key: "height", label: t("geometry.field.height") }] },
   ];
 
   const current = shapes.find((s) => s.value === shape)!;
@@ -163,7 +166,7 @@ function Tab3D() {
   return (
     <div>
       <div style={{ marginBottom: "1rem" }}>
-        <label style={{ fontSize: "0.8rem", color: "#a1a1aa", display: "block", marginBottom: "0.3rem" }}>Shape</label>
+        <label style={{ fontSize: "0.8rem", color: "#a1a1aa", display: "block", marginBottom: "0.3rem" }}>{t("geometry.label.shape")}</label>
         <select value={shape} onChange={(e) => { setShape(e.target.value as Shape3D); setResult(null); setFields({}); }} style={SELECT_STYLE}>
           {shapes.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
         </select>
@@ -176,17 +179,17 @@ function Tab3D() {
       </div>
 
       <button onClick={calculate} style={{ background: "#7c3aed", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1.5rem", fontWeight: 700, cursor: "pointer", fontSize: "0.9rem" }}>
-        Calculate
+        {t("geometry.btn.calculate")}
       </button>
 
       {error && <p style={{ color: "#f87171", marginTop: "0.75rem", fontSize: "0.85rem" }}>{error}</p>}
 
       {result && (
         <div style={RESULT_BOX}>
-          {result.volume !== undefined && <p style={{ color: "#c4b5fd", margin: "0.25rem 0" }}>Volume: <strong style={{ color: "#f4f4f5" }}>{fmt(result.volume)}</strong></p>}
-          {result.surfaceArea !== undefined && <p style={{ color: "#c4b5fd", margin: "0.25rem 0" }}>Surface Area: <strong style={{ color: "#f4f4f5" }}>{fmt(result.surfaceArea)}</strong></p>}
+          {result.volume !== undefined && <p style={{ color: "#c4b5fd", margin: "0.25rem 0" }}>{t("geometry.result.volume")}: <strong style={{ color: "#f4f4f5" }}>{fmt(result.volume)}</strong></p>}
+          {result.surfaceArea !== undefined && <p style={{ color: "#c4b5fd", margin: "0.25rem 0" }}>{t("geometry.result.surfaceArea")}: <strong style={{ color: "#f4f4f5" }}>{fmt(result.surfaceArea)}</strong></p>}
           {result.slantHeight !== undefined && (
-            <p style={{ color: "#c4b5fd", margin: "0.25rem 0" }}>Slant Height: <strong style={{ color: "#f4f4f5" }}>{fmt(result.slantHeight)}</strong></p>
+            <p style={{ color: "#c4b5fd", margin: "0.25rem 0" }}>{t("geometry.result.slantHeight")}: <strong style={{ color: "#f4f4f5" }}>{fmt(result.slantHeight)}</strong></p>
           )}
         </div>
       )}
@@ -196,6 +199,7 @@ function Tab3D() {
 
 // --- Pythagorean Tab ---
 function TabPyth() {
+  const { t } = useLanguage();
   const [mode, setMode] = useState<"ab" | "ac" | "bc">("ab");
   const [p1, setP1] = useState("");
   const [p2, setP2] = useState("");
@@ -203,9 +207,9 @@ function TabPyth() {
   const [error, setError] = useState("");
 
   const labels: Record<string, [string, string]> = {
-    ab: ["Side a (leg)", "Side b (leg)"],
-    ac: ["Side a (leg)", "Side c (hypotenuse)"],
-    bc: ["Side b (leg)", "Side c (hypotenuse)"],
+    ab: [t("geometry.pyth.sideALeg"), t("geometry.pyth.sideBLeg")],
+    ac: [t("geometry.pyth.sideALeg"), t("geometry.pyth.sideCHyp")],
+    bc: [t("geometry.pyth.sideBLeg"), t("geometry.pyth.sideCHyp")],
   };
   const [l1, l2] = labels[mode];
 
@@ -213,7 +217,7 @@ function TabPyth() {
     try {
       const v1 = parseFloat(p1);
       const v2 = parseFloat(p2);
-      if (isNaN(v1) || isNaN(v2) || v1 <= 0 || v2 <= 0) throw new Error("Enter positive numbers");
+      if (isNaN(v1) || isNaN(v2) || v1 <= 0 || v2 <= 0) throw new Error(t("geometry.pyth.invalidError"));
       const r = pythagorean(mode, v1, v2);
       setResult(r);
       setError("");
@@ -248,11 +252,11 @@ function TabPyth() {
   return (
     <div>
       <div style={{ marginBottom: "1rem" }}>
-        <label style={{ fontSize: "0.8rem", color: "#a1a1aa", display: "block", marginBottom: "0.3rem" }}>Known values</label>
+        <label style={{ fontSize: "0.8rem", color: "#a1a1aa", display: "block", marginBottom: "0.3rem" }}>{t("geometry.pyth.knownValues")}</label>
         <select value={mode} onChange={(e) => { setMode(e.target.value as "ab"|"ac"|"bc"); setResult(null); }} style={SELECT_STYLE}>
-          <option value="ab">Known: a and b (find c)</option>
-          <option value="ac">Known: a and c (find b)</option>
-          <option value="bc">Known: b and c (find a)</option>
+          <option value="ab">{t("geometry.pyth.knownAB")}</option>
+          <option value="ac">{t("geometry.pyth.knownAC")}</option>
+          <option value="bc">{t("geometry.pyth.knownBC")}</option>
         </select>
       </div>
 
@@ -262,7 +266,7 @@ function TabPyth() {
       </div>
 
       <button onClick={calculate} style={{ background: "#7c3aed", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1.5rem", fontWeight: 700, cursor: "pointer", fontSize: "0.9rem" }}>
-        Calculate
+        {t("geometry.btn.calculate")}
       </button>
 
       {error && <p style={{ color: "#f87171", marginTop: "0.75rem", fontSize: "0.85rem" }}>{error}</p>}
@@ -271,7 +275,7 @@ function TabPyth() {
         <div style={RESULT_BOX}>
           <p style={{ color: "#c4b5fd", margin: "0.25rem 0" }}>a = <strong style={{ color: "#f4f4f5" }}>{fmt(result.a)}</strong></p>
           <p style={{ color: "#c4b5fd", margin: "0.25rem 0" }}>b = <strong style={{ color: "#f4f4f5" }}>{fmt(result.b)}</strong></p>
-          <p style={{ color: "#fde68a", margin: "0.25rem 0" }}>c (hypotenuse) = <strong style={{ color: "#f4f4f5" }}>{fmt(result.c)}</strong></p>
+          <p style={{ color: "#fde68a", margin: "0.25rem 0" }}>c ({t("geometry.pyth.hypotenuse")}) = <strong style={{ color: "#f4f4f5" }}>{fmt(result.c)}</strong></p>
           <div style={{ display: "flex", justifyContent: "center" }}>{renderSVG}</div>
         </div>
       )}
@@ -281,18 +285,19 @@ function TabPyth() {
 
 // --- Main Page ---
 export default function GeometryPage() {
+  const { t } = useLanguage();
   const [tab, setTab] = useState<"2d" | "3d" | "pyth">("2d");
 
   return (
     <div style={{ maxWidth: "42rem", margin: "0 auto", padding: "1.5rem 1rem" }}>
       <h1 style={{ textAlign: "center", fontSize: "1.5rem", fontWeight: 800, color: "#38bdf8", marginBottom: "1.5rem" }}>
-        Geometry Calculator
+        {t("geometry.title")}
       </h1>
 
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
-        <button style={TAB_STYLE(tab === "2d")} onClick={() => setTab("2d")}>2D Shapes</button>
-        <button style={TAB_STYLE(tab === "3d")} onClick={() => setTab("3d")}>3D Shapes</button>
-        <button style={TAB_STYLE(tab === "pyth")} onClick={() => setTab("pyth")}>Pythagorean</button>
+        <button style={TAB_STYLE(tab === "2d")} onClick={() => setTab("2d")}>{t("geometry.tab.2d")}</button>
+        <button style={TAB_STYLE(tab === "3d")} onClick={() => setTab("3d")}>{t("geometry.tab.3d")}</button>
+        <button style={TAB_STYLE(tab === "pyth")} onClick={() => setTab("pyth")}>{t("geometry.tab.pythagorean")}</button>
       </div>
 
       <div style={{ background: "#111113", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1.5rem" }}>
@@ -302,7 +307,7 @@ export default function GeometryPage() {
       </div>
 
       <p style={{ marginTop: "1.5rem", fontSize: "0.7rem", color: "#3f3f46", textAlign: "center" }}>
-        Results rounded to 6 decimal places. For educational purposes only.
+        {t("geometry.disclaimer")}
       </p>
     </div>
   );

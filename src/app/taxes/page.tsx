@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   invoiceTaxBreakdown,
   annualIncomeTax,
@@ -13,7 +14,7 @@ import ExportButton from "@/components/ui/ExportButton";
 import PrintButton from "@/components/ui/PrintButton";
 import type { ExportRow } from "@/lib/export";
 
-const TABS = ["Invoice VAT", "Annual Income Tax", "Withholding (Stopaj)"];
+// TABS defined inside component using t()
 
 const card: React.CSSProperties = {
   background: "rgba(24,24,27,0.7)",
@@ -317,8 +318,15 @@ function StopajTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function TaxesPage() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState(0);
   const [exportData, setExportData] = useState<ExportRow[]>([]);
+
+  const TABS = [
+    t("taxes.tab.invoiceVat"),
+    t("taxes.tab.annualIncomeTax"),
+    t("taxes.tab.stopaj"),
+  ];
 
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto" }}>
@@ -360,7 +368,7 @@ export default function TaxesPage() {
       {activeTab === 2 && <StopajTab onResults={setExportData} />}
 
       <p style={{ textAlign: "center", color: "#52525b", fontSize: "0.75rem", marginTop: "2rem" }}>
-        Results are for informational purposes only. Consult a professional for official calculations. (2025 parametreleri)
+        {t("taxes.disclaimer")}
       </p>
     </div>
   );

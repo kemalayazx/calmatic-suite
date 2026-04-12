@@ -6,6 +6,7 @@ import Link from "next/link";
 import RetroWindow from "@/components/RetroWindow";
 import { calculate, formatDisplay, sqrt, square, percentage, negate } from "@/lib/calculations/basic";
 import type { Operation } from "@/lib/calculations/basic";
+import { useLanguage } from "@/context/LanguageContext";
 
 const BUTTONS = [
   ["C", "±", "%", "÷"],
@@ -38,6 +39,7 @@ function getBtnStyle(label: string): React.CSSProperties {
 }
 
 export default function BasicPage() {
+  const { t } = useLanguage();
   const [display, setDisplay] = useState("0");
   const [history, setHistory] = useState("");
   const [stored, setStored] = useState<number | null>(null);
@@ -138,13 +140,13 @@ export default function BasicPage() {
   }, [handleBtn]);
 
   return (
-    <RetroWindow title="Calculator">
+    <RetroWindow title={t("basic.title")}>
     <div style={{ maxWidth: "400px", margin: "0 auto" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}>
         <Link href="/" style={{ color: "#71717a", display: "flex", alignItems: "center" }}>
           <ArrowLeft size={18} />
         </Link>
-        <h1 style={{ fontWeight: 700, fontSize: "1.25rem", color: "#fafafa" }}>Basic Calculator</h1>
+        <h1 style={{ fontWeight: 700, fontSize: "1.25rem", color: "#fafafa" }}>{t("basic.title")}</h1>
       </div>
 
       {/* Display */}
@@ -203,7 +205,7 @@ export default function BasicPage() {
       </div>
 
       <p style={{ textAlign: "center", color: "#3f3f46", fontSize: "0.75rem", marginTop: "1rem" }}>
-        Keyboard supported · For informational use only
+        {t("basic.footer.note")}
       </p>
     </div>
     </RetroWindow>

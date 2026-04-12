@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   ohmFromVI,
   ohmFromVR,
@@ -19,8 +20,6 @@ import {
   dbToVoltageRatio,
 } from "@/lib/calculations/electronics";
 
-const TABS = ["Ohm's Law", "Resistance", "LED", "RC/RL", "dB Converter"];
-
 const card: React.CSSProperties = {
   background: "rgba(24,24,27,0.7)",
   border: "1px solid #27272a",
@@ -29,7 +28,7 @@ const card: React.CSSProperties = {
   marginBottom: "1.25rem",
 };
 
-const label: React.CSSProperties = {
+const labelStyle: React.CSSProperties = {
   display: "block",
   fontSize: "0.75rem",
   color: "#a1a1aa",
@@ -79,6 +78,7 @@ function fmt(n: number, unit = "", decimals = 4): string {
 // ─── Tab 1: Ohm's Law ─────────────────────────────────────────────────────────
 
 function OhmTab() {
+  const { t } = useLanguage();
   const [V, setV] = useState("");
   const [I, setI] = useState("");
   const [R, setR] = useState("");
@@ -105,20 +105,20 @@ function OhmTab() {
           <span style={{ margin: "0 1rem", color: "#3f3f46" }}>|</span>
           <span style={{ fontFamily: "monospace", fontSize: "1rem", color: "#fbbf24" }}>P = I² × R</span>
         </div>
-        <p style={{ fontSize: "0.8rem", color: "#52525b", marginBottom: "1rem" }}>Fill any two fields — third is calculated automatically.</p>
+        <p style={{ fontSize: "0.8rem", color: "#52525b", marginBottom: "1rem" }}>{t("electronics.ohm.hint")}</p>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }}>
           <div>
-            <label style={label}>Voltage (V)</label>
+            <label style={labelStyle}>{t("electronics.ohm.voltage")}</label>
             <input type="number" min="0" style={input} value={V} placeholder="e.g. 12"
               onChange={(e) => setV(e.target.value)} />
           </div>
           <div>
-            <label style={label}>Current (A)</label>
+            <label style={labelStyle}>{t("electronics.ohm.current")}</label>
             <input type="number" min="0" style={input} value={I} placeholder="e.g. 0.5"
               onChange={(e) => setI(e.target.value)} />
           </div>
           <div>
-            <label style={label}>Resistance (Ω)</label>
+            <label style={labelStyle}>{t("electronics.ohm.resistance")}</label>
             <input type="number" min="0" style={input} value={R} placeholder="e.g. 24"
               onChange={(e) => setR(e.target.value)} />
           </div>
@@ -126,11 +126,11 @@ function OhmTab() {
       </div>
       {result && (
         <div style={card}>
-          <h3 style={{ color: "#a78bfa", fontWeight: 700, marginBottom: "1rem" }}>Results</h3>
-          {resultRow("Voltage (V)", fmt(result.voltage, "V"))}
-          {resultRow("Current (I)", fmt(result.current, "A"))}
-          {resultRow("Resistance (R)", fmt(result.resistance, "Ω"))}
-          {resultRow("Power (P = V×I)", fmt(result.power, "W"))}
+          <h3 style={{ color: "#a78bfa", fontWeight: 700, marginBottom: "1rem" }}>{t("electronics.ohm.results")}</h3>
+          {resultRow(t("electronics.ohm.voltage"), fmt(result.voltage, "V"))}
+          {resultRow(t("electronics.ohm.current"), fmt(result.current, "A"))}
+          {resultRow(t("electronics.ohm.resistance"), fmt(result.resistance, "Ω"))}
+          {resultRow(t("electronics.ohm.power"), fmt(result.power, "W"))}
         </div>
       )}
     </div>
@@ -145,6 +145,7 @@ const MULT_COLORS = COLOR_BANDS.map((c) => c.name);
 const TOL_COLORS = COLOR_BANDS.filter((c) => c.tolerance !== null).map((c) => c.name);
 
 function ResistanceTab() {
+  const { t } = useLanguage();
   const [bands, setBands] = useState(4);
   const [b1, setB1] = useState("Brown");
   const [b2, setB2] = useState("Black");
@@ -171,21 +172,21 @@ function ResistanceTab() {
     <div>
       {/* Color Code */}
       <div style={card}>
-        <h3 style={{ color: "#fafafa", fontWeight: 700, marginBottom: "1rem" }}>Color Code Decoder</h3>
+        <h3 style={{ color: "#fafafa", fontWeight: 700, marginBottom: "1rem" }}>{t("electronics.resistance.colorCodeTitle")}</h3>
         <div style={{ marginBottom: "1rem", display: "flex", gap: "0.75rem" }}>
-          <button onClick={() => setBands(4)} style={{ padding: "0.375rem 1rem", borderRadius: "0.5rem", border: "none", cursor: "pointer", background: bands === 4 ? "#7c3aed" : "#27272a", color: "#fafafa", fontSize: "0.8rem" }}>4 Band</button>
-          <button onClick={() => setBands(5)} style={{ padding: "0.375rem 1rem", borderRadius: "0.5rem", border: "none", cursor: "pointer", background: bands === 5 ? "#7c3aed" : "#27272a", color: "#fafafa", fontSize: "0.8rem" }}>5 Band</button>
+          <button onClick={() => setBands(4)} style={{ padding: "0.375rem 1rem", borderRadius: "0.5rem", border: "none", cursor: "pointer", background: bands === 4 ? "#7c3aed" : "#27272a", color: "#fafafa", fontSize: "0.8rem" }}>{t("electronics.resistance.band4")}</button>
+          <button onClick={() => setBands(5)} style={{ padding: "0.375rem 1rem", borderRadius: "0.5rem", border: "none", cursor: "pointer", background: bands === 5 ? "#7c3aed" : "#27272a", color: "#fafafa", fontSize: "0.8rem" }}>{t("electronics.resistance.band5")}</button>
         </div>
         <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginBottom: "1rem" }}>
           {[
-            { lbl: "Band 1", val: b1, set: setB1, opts: DIGIT_COLORS },
-            { lbl: "Band 2", val: b2, set: setB2, opts: DIGIT_COLORS },
-            ...(bands === 5 ? [{ lbl: "Band 3", val: b3, set: setB3, opts: DIGIT_COLORS }] : []),
-            { lbl: "Multiplier", val: mult, set: setMult, opts: MULT_COLORS },
-            { lbl: "Tolerance", val: tol, set: setTol, opts: TOL_COLORS },
+            { lbl: t("electronics.resistance.band1"), val: b1, set: setB1, opts: DIGIT_COLORS },
+            { lbl: t("electronics.resistance.band2"), val: b2, set: setB2, opts: DIGIT_COLORS },
+            ...(bands === 5 ? [{ lbl: t("electronics.resistance.band3"), val: b3, set: setB3, opts: DIGIT_COLORS }] : []),
+            { lbl: t("electronics.resistance.multiplier"), val: mult, set: setMult, opts: MULT_COLORS },
+            { lbl: t("electronics.resistance.tolerance"), val: tol, set: setTol, opts: TOL_COLORS },
           ].map(({ lbl, val, set, opts }) => (
             <div key={lbl} style={{ flex: "1 1 120px" }}>
-              <label style={label}>{lbl}</label>
+              <label style={labelStyle}>{lbl}</label>
               <div style={{ position: "relative" }}>
                 <div style={{ position: "absolute", left: "0.75rem", top: "50%", transform: "translateY(-50%)", width: "12px", height: "12px", borderRadius: "50%", background: colorStyle(val), border: "1px solid #555", zIndex: 1 }} />
                 <select value={val} onChange={(e) => set(e.target.value)} style={{ ...select, paddingLeft: "2rem" }}>
@@ -203,7 +204,7 @@ function ResistanceTab() {
 
       {/* Series */}
       <div style={card}>
-        <h3 style={{ color: "#fafafa", fontWeight: 700, marginBottom: "1rem" }}>Series Connection</h3>
+        <h3 style={{ color: "#fafafa", fontWeight: 700, marginBottom: "1rem" }}>{t("electronics.resistance.seriesTitle")}</h3>
         <p style={{ fontFamily: "monospace", color: "#71717a", fontSize: "0.85rem", marginBottom: "1rem" }}>R_total = R1 + R2 + ...</p>
         {seriesVals.map((v, i) => (
           <div key={i} style={{ display: "flex", gap: "0.5rem", marginBottom: "0.5rem" }}>
@@ -214,13 +215,13 @@ function ResistanceTab() {
             )}
           </div>
         ))}
-        <button onClick={() => setSeriesVals([...seriesVals, ""])} style={{ padding: "0.375rem 0.875rem", background: "#27272a", border: "none", borderRadius: "0.5rem", color: "#a78bfa", cursor: "pointer", fontSize: "0.8rem", marginBottom: "1rem" }}>+ Add Resistor</button>
-        {seriesNums.length > 0 && resultRow("Total Resistance", fmt(seriesResistance(seriesNums), "Ω"))}
+        <button onClick={() => setSeriesVals([...seriesVals, ""])} style={{ padding: "0.375rem 0.875rem", background: "#27272a", border: "none", borderRadius: "0.5rem", color: "#a78bfa", cursor: "pointer", fontSize: "0.8rem", marginBottom: "1rem" }}>+ {t("electronics.resistance.addResistor")}</button>
+        {seriesNums.length > 0 && resultRow(t("electronics.resistance.totalResistance"), fmt(seriesResistance(seriesNums), "Ω"))}
       </div>
 
       {/* Parallel */}
       <div style={card}>
-        <h3 style={{ color: "#fafafa", fontWeight: 700, marginBottom: "1rem" }}>Parallel Connection</h3>
+        <h3 style={{ color: "#fafafa", fontWeight: 700, marginBottom: "1rem" }}>{t("electronics.resistance.parallelTitle")}</h3>
         <p style={{ fontFamily: "monospace", color: "#71717a", fontSize: "0.85rem", marginBottom: "1rem" }}>1/R_total = 1/R1 + 1/R2 + ...</p>
         {parallelVals.map((v, i) => (
           <div key={i} style={{ display: "flex", gap: "0.5rem", marginBottom: "0.5rem" }}>
@@ -231,8 +232,8 @@ function ResistanceTab() {
             )}
           </div>
         ))}
-        <button onClick={() => setParallelVals([...parallelVals, ""])} style={{ padding: "0.375rem 0.875rem", background: "#27272a", border: "none", borderRadius: "0.5rem", color: "#a78bfa", cursor: "pointer", fontSize: "0.8rem", marginBottom: "1rem" }}>+ Add Resistor</button>
-        {parallelNums.length > 0 && resultRow("Total Resistance", fmt(parallelResistance(parallelNums), "Ω"))}
+        <button onClick={() => setParallelVals([...parallelVals, ""])} style={{ padding: "0.375rem 0.875rem", background: "#27272a", border: "none", borderRadius: "0.5rem", color: "#a78bfa", cursor: "pointer", fontSize: "0.8rem", marginBottom: "1rem" }}>+ {t("electronics.resistance.addResistor")}</button>
+        {parallelNums.length > 0 && resultRow(t("electronics.resistance.totalResistance"), fmt(parallelResistance(parallelNums), "Ω"))}
       </div>
     </div>
   );
@@ -241,6 +242,7 @@ function ResistanceTab() {
 // ─── Tab 3: LED ───────────────────────────────────────────────────────────────
 
 function LEDTab() {
+  const { t } = useLanguage();
   const [supply, setSupply] = useState("5");
   const [forward, setForward] = useState("2");
   const [current, setCurrent] = useState("20");
@@ -253,30 +255,30 @@ function LEDTab() {
 
   return (
     <div style={card}>
-      <h3 style={{ color: "#fafafa", fontWeight: 700, marginBottom: "1rem" }}>LED Series Resistor Calculator</h3>
+      <h3 style={{ color: "#fafafa", fontWeight: 700, marginBottom: "1rem" }}>{t("electronics.led.title")}</h3>
       <p style={{ fontFamily: "monospace", color: "#71717a", fontSize: "0.85rem", marginBottom: "1.25rem" }}>R = (Vsupply − Vforward) / I</p>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem", marginBottom: "1.25rem" }}>
         <div>
-          <label style={label}>Supply Voltage (V)</label>
+          <label style={labelStyle}>{t("electronics.led.supplyVoltage")}</label>
           <input type="number" min="0" max="1000" style={input} value={supply} onChange={(e) => setSupply(e.target.value)} />
         </div>
         <div>
-          <label style={label}>LED Forward Voltage (V)</label>
+          <label style={labelStyle}>{t("electronics.led.forwardVoltage")}</label>
           <input type="number" min="0" max="100" step="0.1" style={input} value={forward} onChange={(e) => setForward(e.target.value)} />
         </div>
         <div>
-          <label style={label}>Desired Current (mA)</label>
+          <label style={labelStyle}>{t("electronics.led.desiredCurrent")}</label>
           <input type="number" min="0" max="1000" style={input} value={current} onChange={(e) => setCurrent(e.target.value)} />
         </div>
       </div>
       {!valid && sv > 0 && fv >= sv && (
-        <p style={{ color: "#ef4444", fontSize: "0.8rem" }}>Supply voltage must be greater than forward voltage.</p>
+        <p style={{ color: "#ef4444", fontSize: "0.8rem" }}>{t("electronics.led.voltageError")}</p>
       )}
       {result && (
         <>
-          {resultRow("Calculated Resistor", fmt(result.resistorOhm, "Ω"))}
-          {resultRow("Nearest E12 Standard Value", fmt(result.nearestStandard, "Ω"))}
-          {resultRow("Power Dissipation", fmt(result.powerDissipation * 1000, "mW"))}
+          {resultRow(t("electronics.led.calculatedResistor"), fmt(result.resistorOhm, "Ω"))}
+          {resultRow(t("electronics.led.nearestStandard"), fmt(result.nearestStandard, "Ω"))}
+          {resultRow(t("electronics.led.powerDissipation"), fmt(result.powerDissipation * 1000, "mW"))}
         </>
       )}
     </div>
@@ -286,6 +288,7 @@ function LEDTab() {
 // ─── Tab 4: RC/RL ─────────────────────────────────────────────────────────────
 
 function RCRLTab() {
+  const { t } = useLanguage();
   const [mode, setMode] = useState<"RC" | "RL">("RC");
   const [R, setR] = useState("1000");
   const [C, setC] = useState("0.000001"); // 1µF
@@ -302,42 +305,42 @@ function RCRLTab() {
     <div>
       <div style={card}>
         <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1.25rem" }}>
-          <button onClick={() => setMode("RC")} style={{ padding: "0.375rem 1.25rem", borderRadius: "0.5rem", border: "none", cursor: "pointer", background: mode === "RC" ? "#7c3aed" : "#27272a", color: "#fafafa" }}>RC Circuit</button>
-          <button onClick={() => setMode("RL")} style={{ padding: "0.375rem 1.25rem", borderRadius: "0.5rem", border: "none", cursor: "pointer", background: mode === "RL" ? "#7c3aed" : "#27272a", color: "#fafafa" }}>RL Circuit</button>
+          <button onClick={() => setMode("RC")} style={{ padding: "0.375rem 1.25rem", borderRadius: "0.5rem", border: "none", cursor: "pointer", background: mode === "RC" ? "#7c3aed" : "#27272a", color: "#fafafa" }}>{t("electronics.rcrl.rcCircuit")}</button>
+          <button onClick={() => setMode("RL")} style={{ padding: "0.375rem 1.25rem", borderRadius: "0.5rem", border: "none", cursor: "pointer", background: mode === "RL" ? "#7c3aed" : "#27272a", color: "#fafafa" }}>{t("electronics.rcrl.rlCircuit")}</button>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.25rem" }}>
           <div>
-            <label style={label}>Resistance R (Ω)</label>
+            <label style={labelStyle}>{t("electronics.rcrl.resistance")}</label>
             <input type="number" min="0" style={input} value={R} onChange={(e) => setR(e.target.value)} />
           </div>
           {mode === "RC" ? (
             <div>
-              <label style={label}>Capacitance C (F)</label>
+              <label style={labelStyle}>{t("electronics.rcrl.capacitance")}</label>
               <input type="number" min="0" step="0.000001" style={input} value={C} onChange={(e) => setC(e.target.value)} />
-              <p style={{ fontSize: "0.7rem", color: "#52525b", marginTop: "0.25rem" }}>e.g. 1µF = 0.000001</p>
+              <p style={{ fontSize: "0.7rem", color: "#52525b", marginTop: "0.25rem" }}>{t("electronics.rcrl.capacitanceHint")}</p>
             </div>
           ) : (
             <div>
-              <label style={label}>Inductance L (H)</label>
+              <label style={labelStyle}>{t("electronics.rcrl.inductance")}</label>
               <input type="number" min="0" step="0.001" style={input} value={L} onChange={(e) => setL(e.target.value)} />
-              <p style={{ fontSize: "0.7rem", color: "#52525b", marginTop: "0.25rem" }}>e.g. 1mH = 0.001</p>
+              <p style={{ fontSize: "0.7rem", color: "#52525b", marginTop: "0.25rem" }}>{t("electronics.rcrl.inductanceHint")}</p>
             </div>
           )}
         </div>
         {rcResult && (
           <>
             <div style={{ background: "#27272a", borderRadius: "0.5rem", padding: "0.5rem 1rem", marginBottom: "0.75rem", fontFamily: "monospace", fontSize: "0.85rem", color: "#a78bfa" }}>τ = R × C</div>
-            {resultRow("Time Constant (τ)", fmt(rcResult.tau, "s"))}
-            {resultRow("63.2% Charge Time (1τ)", fmt(rcResult.tau, "s"))}
-            {resultRow("Half Charge Time (0.693τ)", fmt(rcResult.halfChargeTime, "s"))}
-            {resultRow("Cutoff Frequency (fc)", fmt(rcResult.cutoffFrequency, "Hz"))}
+            {resultRow(t("electronics.rcrl.timeConstant"), fmt(rcResult.tau, "s"))}
+            {resultRow(t("electronics.rcrl.charge63"), fmt(rcResult.tau, "s"))}
+            {resultRow(t("electronics.rcrl.halfCharge"), fmt(rcResult.halfChargeTime, "s"))}
+            {resultRow(t("electronics.rcrl.cutoffFreq"), fmt(rcResult.cutoffFrequency, "Hz"))}
           </>
         )}
         {rlResult && (
           <>
             <div style={{ background: "#27272a", borderRadius: "0.5rem", padding: "0.5rem 1rem", marginBottom: "0.75rem", fontFamily: "monospace", fontSize: "0.85rem", color: "#a78bfa" }}>τ = L / R</div>
-            {resultRow("Time Constant (τ)", fmt(rlResult.tau, "s"))}
-            {resultRow("Cutoff Frequency (fc)", fmt(rlResult.cutoffFrequency, "Hz"))}
+            {resultRow(t("electronics.rcrl.timeConstant"), fmt(rlResult.tau, "s"))}
+            {resultRow(t("electronics.rcrl.cutoffFreq"), fmt(rlResult.cutoffFrequency, "Hz"))}
           </>
         )}
       </div>
@@ -348,6 +351,7 @@ function RCRLTab() {
 // ─── Tab 5: dB Converter ─────────────────────────────────────────────────────
 
 function DbTab() {
+  const { t } = useLanguage();
   const [mode, setMode] = useState<"power" | "voltage">("power");
   const [direction, setDirection] = useState<"ratioToDb" | "dbToRatio">("ratioToDb");
   const [val, setVal] = useState("");
@@ -362,26 +366,26 @@ function DbTab() {
     }
   }
 
-  const inputLabel = direction === "ratioToDb" ? "Ratio (dimensionless)" : "dB value";
-  const outputLabel = direction === "ratioToDb" ? "dB" : "Ratio";
+  const inputLabel = direction === "ratioToDb" ? t("electronics.db.ratioLabel") : t("electronics.db.dbLabel");
+  const outputLabel = direction === "ratioToDb" ? "dB" : t("electronics.db.ratioOutput");
   const formula = mode === "power"
     ? (direction === "ratioToDb" ? "dB = 10 × log₁₀(P₂/P₁)" : "P₂/P₁ = 10^(dB/10)")
     : (direction === "ratioToDb" ? "dB = 20 × log₁₀(V₂/V₁)" : "V₂/V₁ = 10^(dB/20)");
 
   return (
     <div style={card}>
-      <h3 style={{ color: "#fafafa", fontWeight: 700, marginBottom: "1rem" }}>dB Converter</h3>
+      <h3 style={{ color: "#fafafa", fontWeight: 700, marginBottom: "1rem" }}>{t("electronics.db.title")}</h3>
       <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginBottom: "1rem" }}>
-        <button onClick={() => setMode("power")} style={{ padding: "0.375rem 1rem", borderRadius: "0.5rem", border: "none", cursor: "pointer", background: mode === "power" ? "#7c3aed" : "#27272a", color: "#fafafa", fontSize: "0.85rem" }}>Power Ratio</button>
-        <button onClick={() => setMode("voltage")} style={{ padding: "0.375rem 1rem", borderRadius: "0.5rem", border: "none", cursor: "pointer", background: mode === "voltage" ? "#7c3aed" : "#27272a", color: "#fafafa", fontSize: "0.85rem" }}>Voltage Ratio</button>
+        <button onClick={() => setMode("power")} style={{ padding: "0.375rem 1rem", borderRadius: "0.5rem", border: "none", cursor: "pointer", background: mode === "power" ? "#7c3aed" : "#27272a", color: "#fafafa", fontSize: "0.85rem" }}>{t("electronics.db.powerRatio")}</button>
+        <button onClick={() => setMode("voltage")} style={{ padding: "0.375rem 1rem", borderRadius: "0.5rem", border: "none", cursor: "pointer", background: mode === "voltage" ? "#7c3aed" : "#27272a", color: "#fafafa", fontSize: "0.85rem" }}>{t("electronics.db.voltageRatio")}</button>
         <span style={{ display: "flex", alignItems: "center", color: "#3f3f46", margin: "0 0.25rem" }}>|</span>
-        <button onClick={() => setDirection("ratioToDb")} style={{ padding: "0.375rem 1rem", borderRadius: "0.5rem", border: "none", cursor: "pointer", background: direction === "ratioToDb" ? "#0891b2" : "#27272a", color: "#fafafa", fontSize: "0.85rem" }}>Ratio → dB</button>
-        <button onClick={() => setDirection("dbToRatio")} style={{ padding: "0.375rem 1rem", borderRadius: "0.5rem", border: "none", cursor: "pointer", background: direction === "dbToRatio" ? "#0891b2" : "#27272a", color: "#fafafa", fontSize: "0.85rem" }}>dB → Ratio</button>
+        <button onClick={() => setDirection("ratioToDb")} style={{ padding: "0.375rem 1rem", borderRadius: "0.5rem", border: "none", cursor: "pointer", background: direction === "ratioToDb" ? "#0891b2" : "#27272a", color: "#fafafa", fontSize: "0.85rem" }}>{t("electronics.db.ratioToDb")}</button>
+        <button onClick={() => setDirection("dbToRatio")} style={{ padding: "0.375rem 1rem", borderRadius: "0.5rem", border: "none", cursor: "pointer", background: direction === "dbToRatio" ? "#0891b2" : "#27272a", color: "#fafafa", fontSize: "0.85rem" }}>{t("electronics.db.dbToRatio")}</button>
       </div>
       <div style={{ background: "#27272a", borderRadius: "0.5rem", padding: "0.5rem 1rem", marginBottom: "1.25rem", fontFamily: "monospace", fontSize: "0.85rem", color: "#a78bfa" }}>{formula}</div>
       <div style={{ marginBottom: "1rem" }}>
-        <label style={label}>{inputLabel}</label>
-        <input type="number" min="0" style={{ ...input, maxWidth: "280px" }} value={val} onChange={(e) => setVal(e.target.value)} placeholder="Enter value" />
+        <label style={labelStyle}>{inputLabel}</label>
+        <input type="number" min="0" style={{ ...input, maxWidth: "280px" }} value={val} onChange={(e) => setVal(e.target.value)} placeholder={t("electronics.db.placeholder")} />
       </div>
       {result !== null && isFinite(result) && (
         <div style={{ background: "#27272a", borderRadius: "0.5rem", padding: "0.875rem 1.25rem" }}>
@@ -398,13 +402,23 @@ function DbTab() {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function ElectronicsPage() {
+  const { t } = useLanguage();
+
+  const TABS = [
+    t("electronics.tab.ohm"),
+    t("electronics.tab.resistance"),
+    t("electronics.tab.led"),
+    t("electronics.tab.rcrl"),
+    t("electronics.tab.db"),
+  ];
+
   const [activeTab, setActiveTab] = useState(0);
 
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto" }}>
       <div style={{ marginBottom: "2rem" }}>
-        <h1 style={{ fontWeight: 800, fontSize: "1.75rem", color: "#fafafa", marginBottom: "0.5rem" }}>Electronics Calculator</h1>
-        <p style={{ color: "#71717a", fontSize: "0.9rem" }}>Ohm&apos;s Law, resistor color code, LED, RC/RL circuits, dB conversions</p>
+        <h1 style={{ fontWeight: 800, fontSize: "1.75rem", color: "#fafafa", marginBottom: "0.5rem" }}>{t("electronics.title")}</h1>
+        <p style={{ color: "#71717a", fontSize: "0.9rem" }}>{t("electronics.subtitle")}</p>
       </div>
 
       {/* Tabs */}
@@ -437,7 +451,7 @@ export default function ElectronicsPage() {
       {activeTab === 4 && <DbTab />}
 
       <p style={{ textAlign: "center", color: "#52525b", fontSize: "0.75rem", marginTop: "2rem" }}>
-        Results are for informational purposes only. Consult a professional for official calculations.
+        {t("electronics.disclaimer")}
       </p>
     </div>
   );

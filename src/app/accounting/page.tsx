@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import { ArrowLeft, Copy, Check, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -43,11 +44,12 @@ const labelStyle: React.CSSProperties = {
   textTransform: "uppercase",
 };
 
-const TABS = ["KDV Hesaplayıcı", "Amortisman", "Kar - Zarar"];
+// TABS defined inside component using t()
 const VAT_RATES = [1, 8, 10, 18, 20];
 
 // --- Copy button ---
 function CopyBtn({ text }: { text: string }) {
+  const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
   const handleCopy = () => {
     navigator.clipboard.writeText(text).then(() => {
@@ -73,13 +75,14 @@ function CopyBtn({ text }: { text: string }) {
       }}
     >
       {copied ? <Check size={11} /> : <Copy size={11} />}
-      {copied ? "Kopyalandı" : "Kopyala"}
+      {copied ? t("accounting.btn.copied") : t("accounting.btn.copy")}
     </button>
   );
 }
 
 // --- VAT Tab ---
 function VatTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
+  const { t } = useLanguage();
   const [mode, setMode] = useState<"from-net" | "from-gross">("from-net");
   const [amount, setAmount] = useState("");
   const [vatRate, setVatRate] = useState(18);
@@ -121,14 +124,14 @@ function VatTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
               cursor: "pointer",
             }}
           >
-            {m === "from-net" ? "KDV Hariç → KDV Dahil" : "KDV Dahil → KDV Hariç"}
+            {m === "from-net" ? t("accounting.vat.modeNetToGross") : t("accounting.vat.modeGrossToNet")}
           </button>
         ))}
       </div>
 
       {/* VAT Rate pills */}
       <div style={{ marginBottom: "1.25rem" }}>
-        <label style={labelStyle}>KDV Oranı</label>
+        <label style={labelStyle}>{t("accounting.vat.rate")}</label>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
           {VAT_RATES.map((r) => (
             <button
@@ -154,7 +157,7 @@ function VatTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
 
       <div style={{ marginBottom: "1.25rem" }}>
         <label style={labelStyle}>
-          {mode === "from-net" ? "KDV Hariç Tutar (₺)" : "KDV Dahil Tutar (₺)"}
+          {mode === "from-net" ? t("accounting.vat.amountExcl") : t("accounting.vat.amountIncl")}
         </label>
         <input
           type="number"
@@ -168,9 +171,9 @@ function VatTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
       {result && (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }}>
           {[
-            { label: "Net Tutar", value: result.net, color: "#a1a1aa" },
-            { label: "KDV Tutarı", value: result.vat, color: "#fb923c" },
-            { label: "Brüt Tutar", value: result.gross, color: "#4ade80" },
+            { label: t("accounting.vat.netAmount"), value: result.net, color: "#a1a1aa" },
+            { label: t("accounting.vat.vatAmount"), value: result.vat, color: "#fb923c" },
+            { label: t("accounting.vat.grossAmount"), value: result.gross, color: "#4ade80" },
           ].map(({ label, value, color }) => (
             <div key={label} style={{
               background: "#09090b",
@@ -196,6 +199,7 @@ function VatTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
 
 // --- Depreciation Tab ---
 function DepreciationTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
+  const { t } = useLanguage();
   const [assetValue, setAssetValue] = useState("");
   const [salvageValue, setSalvageValue] = useState("");
   const [lifeYears, setLifeYears] = useState("");
@@ -225,22 +229,22 @@ function DepreciationTab({ onResults }: { onResults: (d: ExportRow[]) => void })
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem", marginBottom: "1.25rem" }}>
         <div>
-          <label style={labelStyle}>Varlık Değeri (₺)</label>
+          <label style={labelStyle}>{t("accounting.dep.assetValue")}</label>
           <input type="number" style={inputStyle} placeholder="100000" value={assetValue} onChange={(e) => setAssetValue(e.target.value)} />
         </div>
         <div>
-          <label style={labelStyle}>Hurda Değer (₺)</label>
+          <label style={labelStyle}>{t("accounting.dep.salvageValue")}</label>
           <input type="number" style={inputStyle} placeholder="10000" value={salvageValue} onChange={(e) => setSalvageValue(e.target.value)} />
         </div>
         <div>
-          <label style={labelStyle}>Ekonomik Ömür (yıl)</label>
+          <label style={labelStyle}>{t("accounting.dep.lifeYears")}</label>
           <input type="number" style={inputStyle} placeholder="5" value={lifeYears} onChange={(e) => setLifeYears(e.target.value)} />
         </div>
       </div>
 
       {/* Method toggle */}
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.25rem" }}>
-        {([["straight", "Doğrusal Yöntem"], ["declining", "Azalan Bakiye"]] as const).map(([m, label]) => (
+        {([["straight", t("accounting.dep.straightLine")], ["declining", t("accounting.dep.decliningBalance")]] as const).map(([m, label]) => (
           <button
             key={m}
             onClick={() => setMethod(m)}
@@ -267,7 +271,7 @@ function DepreciationTab({ onResults }: { onResults: (d: ExportRow[]) => void })
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid #27272a" }}>
-                {["Yıl", "Amortisman Tutarı", "Birikmiş Amortisman", "Net Defter Değeri"].map((h) => (
+                {[t("accounting.dep.year"), t("accounting.dep.depAmount"), t("accounting.dep.accumulatedDep"), t("accounting.dep.bookValue")].map((h) => (
                   <th key={h} style={{ padding: "0.5rem 0.75rem", textAlign: "right", color: "#71717a", fontWeight: 600, fontSize: "0.75rem" }}>
                     {h}
                   </th>
@@ -295,6 +299,7 @@ function DepreciationTab({ onResults }: { onResults: (d: ExportRow[]) => void })
 interface LineItem { id: number; label: string; amount: string; }
 
 function ProfitLossTab() {
+  const { t } = useLanguage();
   const [revenues, setRevenues] = useState<LineItem[]>([{ id: 1, label: "", amount: "" }]);
   const [expenses, setExpenses] = useState<LineItem[]>([{ id: 1, label: "", amount: "" }]);
   let nextId = 100;
@@ -334,7 +339,7 @@ function ProfitLossTab() {
             <input
               type="text"
               style={{ ...inputStyle, flex: 2, padding: "0.5rem 0.75rem", fontSize: "0.875rem" }}
-              placeholder="Açıklama"
+              placeholder={t("accounting.pl.descriptionPlaceholder")}
               value={item.label}
               onChange={(e) => updateRow(setter, item.id, "label", e.target.value)}
             />
@@ -373,7 +378,7 @@ function ProfitLossTab() {
             marginTop: "0.25rem",
           }}
         >
-          <Plus size={13} /> Satır Ekle
+          <Plus size={13} /> {t("accounting.pl.addRow")}
         </button>
         <div style={{
           marginTop: "0.75rem",
@@ -384,7 +389,7 @@ function ProfitLossTab() {
           display: "flex",
           justifyContent: "space-between",
         }}>
-          <span style={{ fontSize: "0.8rem", color: "#a1a1aa" }}>Toplam {title}</span>
+          <span style={{ fontSize: "0.8rem", color: "#a1a1aa" }}>{t("accounting.pl.total")} {title}</span>
           <span style={{ fontWeight: 700, color: accentColor, fontSize: "0.9rem" }}>
             ₺{fmtCurrency(title === "Gelirler" ? totalRevenue : totalExpense)}
           </span>
@@ -396,8 +401,8 @@ function ProfitLossTab() {
   return (
     <div>
       <div style={{ display: "flex", gap: "1.5rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
-        {renderList(revenues, setRevenues, "#4ade80", "Gelirler")}
-        {renderList(expenses, setExpenses, "#f87171", "Giderler")}
+        {renderList(revenues, setRevenues, "#4ade80", t("accounting.pl.revenues"))}
+        {renderList(expenses, setExpenses, "#f87171", t("accounting.pl.expenses"))}
       </div>
 
       {/* Summary */}
@@ -410,16 +415,16 @@ function ProfitLossTab() {
       }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }}>
           <div>
-            <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.4rem", textTransform: "uppercase" }}>Toplam Gelir</p>
+            <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.4rem", textTransform: "uppercase" }}>{t("accounting.pl.totalRevenue")}</p>
             <p style={{ fontSize: "1.5rem", fontWeight: 800, color: "#4ade80" }}>₺{fmtCurrency(totalRevenue)}</p>
           </div>
           <div>
-            <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.4rem", textTransform: "uppercase" }}>Toplam Gider</p>
+            <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.4rem", textTransform: "uppercase" }}>{t("accounting.pl.totalExpense")}</p>
             <p style={{ fontSize: "1.5rem", fontWeight: 800, color: "#f87171" }}>₺{fmtCurrency(totalExpense)}</p>
           </div>
           <div>
             <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.4rem", textTransform: "uppercase" }}>
-              {net >= 0 ? "Net Kar" : "Net Zarar"}
+              {net >= 0 ? t("accounting.pl.netProfit") : t("accounting.pl.netLoss")}
             </p>
             <p style={{ fontSize: "1.5rem", fontWeight: 800, color: net >= 0 ? "#4ade80" : "#f87171" }}>
               {net >= 0 ? "+" : ""}₺{fmtCurrency(Math.abs(net))}
@@ -433,8 +438,15 @@ function ProfitLossTab() {
 
 // --- Main Page ---
 export default function AccountingPage() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState(0);
   const [exportData, setExportData] = useState<ExportRow[]>([]);
+
+  const TABS = [
+    t("accounting.tab.vat"),
+    t("accounting.tab.depreciation"),
+    t("accounting.tab.profitLoss"),
+  ];
 
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto" }}>
@@ -443,7 +455,7 @@ export default function AccountingPage() {
           <Link href="/" style={{ color: "#71717a", display: "flex", alignItems: "center" }}>
             <ArrowLeft size={18} />
           </Link>
-          <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>Muhasebe Araçları</h1>
+          <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>{t("accounting.title")}</h1>
         </div>
         <div style={{ display: "flex", gap: "0.5rem" }}>
           <ExportButton getData={() => exportData} filename="calmatic-accounting" sheetName="Accounting" />
@@ -486,7 +498,7 @@ export default function AccountingPage() {
       </div>
 
       <p style={{ textAlign: "center", color: "#3f3f46", fontSize: "0.75rem", marginTop: "1.25rem" }}>
-        Sonuçlar yalnızca bilgilendirme amaçlıdır.
+        {t("accounting.disclaimer")}
       </p>
     </div>
   );

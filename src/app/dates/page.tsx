@@ -3,8 +3,7 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-
-const TABS = ["Date Difference", "Add / Subtract Days", "Countdown"];
+import { useLanguage } from "@/context/LanguageContext";
 
 function todayStr() {
   return new Date().toISOString().slice(0, 10);
@@ -66,6 +65,7 @@ const card: React.CSSProperties = {
 
 // --- Date Difference Tab ---
 function DiffTab() {
+  const { t } = useLanguage();
   const today = todayStr();
   const [date1, setDate1] = useState(today);
   const [date2, setDate2] = useState(today);
@@ -78,11 +78,11 @@ function DiffTab() {
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.25rem" }}>
         <div>
-          <label style={labelStyle}>Start Date</label>
+          <label style={labelStyle}>{t("dates.label.startDate")}</label>
           <input type="date" style={inputStyle} value={date1} onChange={(e) => setDate1(e.target.value)} />
         </div>
         <div>
-          <label style={labelStyle}>End Date</label>
+          <label style={labelStyle}>{t("dates.label.endDate")}</label>
           <input type="date" style={inputStyle} value={date2} onChange={(e) => setDate2(e.target.value)} />
         </div>
       </div>
@@ -91,10 +91,10 @@ function DiffTab() {
         <div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "0.75rem", marginBottom: "1rem" }}>
             {[
-              { label: "Days", value: result.abs.toLocaleString("en-US") },
-              { label: "Weeks", value: result.weeks.toLocaleString("en-US") },
-              { label: "Months (approx)", value: `${result.years * 12 + result.months}` },
-              { label: "Years (approx)", value: `${(result.abs / 365.25).toFixed(2)}` },
+              { label: t("dates.stat.days"), value: result.abs.toLocaleString("en-US") },
+              { label: t("dates.stat.weeks"), value: result.weeks.toLocaleString("en-US") },
+              { label: t("dates.stat.monthsApprox"), value: `${result.years * 12 + result.months}` },
+              { label: t("dates.stat.yearsApprox"), value: `${(result.abs / 365.25).toFixed(2)}` },
             ].map(({ label, value }) => (
               <div key={label} style={card}>
                 <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.35rem" }}>{label}</p>
@@ -111,7 +111,7 @@ function DiffTab() {
             color: "#a1a1aa",
           }}>
             {result.totalDays === 0
-              ? "Same day"
+              ? t("dates.msg.sameDay")
               : result.totalDays > 0
               ? `${result.years > 0 ? `${result.years} year${result.years > 1 ? "s" : ""}, ` : ""}${result.months > 0 ? `${result.months} month${result.months > 1 ? "s" : ""}, ` : ""}${result.days} day${result.days !== 1 ? "s" : ""} apart`
               : `${Math.abs(result.totalDays)} days before`}
@@ -124,6 +124,7 @@ function DiffTab() {
 
 // --- Add/Subtract Tab ---
 function AddTab() {
+  const { t } = useLanguage();
   const [startDate, setStartDate] = useState(todayStr());
   const [daysInput, setDaysInput] = useState("30");
   const [op, setOp] = useState<"add" | "sub">("add");
@@ -138,17 +139,17 @@ function AddTab() {
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.25rem" }}>
         <div>
-          <label style={labelStyle}>Start Date</label>
+          <label style={labelStyle}>{t("dates.label.startDate")}</label>
           <input type="date" style={inputStyle} value={startDate} onChange={(e) => setStartDate(e.target.value)} />
         </div>
         <div>
-          <label style={labelStyle}>Number of Days</label>
+          <label style={labelStyle}>{t("dates.label.numberOfDays")}</label>
           <input type="number" style={inputStyle} placeholder="30" value={daysInput} onChange={(e) => setDaysInput(e.target.value)} />
         </div>
       </div>
 
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem" }}>
-        {([["add", "+ Add"], ["sub", "− Subtract"]] as const).map(([v, label]) => (
+        {([["add", t("dates.op.add")], ["sub", t("dates.op.subtract")]] as const).map(([v, label]) => (
           <button
             key={v}
             onClick={() => setOp(v)}
@@ -178,7 +179,7 @@ function AddTab() {
           padding: "1.75rem",
           textAlign: "center",
         }}>
-          <p style={{ color: "#71717a", fontSize: "0.85rem", marginBottom: "0.5rem" }}>Result Date</p>
+          <p style={{ color: "#71717a", fontSize: "0.85rem", marginBottom: "0.5rem" }}>{t("dates.label.resultDate")}</p>
           <p style={{ fontSize: "2.5rem", fontWeight: 900, color: "#a5b4fc" }}>
             {resultDate}
           </p>
@@ -193,6 +194,7 @@ function AddTab() {
 
 // --- Countdown Tab ---
 function CountdownTab() {
+  const { t } = useLanguage();
   const [target, setTarget] = useState("");
   const [now, setNow] = useState(new Date());
 
@@ -214,7 +216,7 @@ function CountdownTab() {
   return (
     <div>
       <div style={{ marginBottom: "1.5rem" }}>
-        <label style={labelStyle}>Target Date & Time</label>
+        <label style={labelStyle}>{t("dates.label.targetDateTime")}</label>
         <input
           type="datetime-local"
           style={inputStyle}
@@ -232,14 +234,14 @@ function CountdownTab() {
           textAlign: "center",
         }}>
           <p style={{ fontSize: "0.85rem", color: isPast ? "#f87171" : "#4ade80", marginBottom: "1rem", fontWeight: 700 }}>
-            {isPast ? "This date has passed" : "Time remaining"}
+            {isPast ? t("dates.msg.datePassed") : t("dates.msg.timeRemaining")}
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "0.75rem" }}>
             {[
-              { label: "Days", value: days },
-              { label: "Hours", value: hours },
-              { label: "Minutes", value: minutes },
-              { label: "Seconds", value: seconds },
+              { label: t("dates.stat.days"), value: days },
+              { label: t("dates.stat.hours"), value: hours },
+              { label: t("dates.stat.minutes"), value: minutes },
+              { label: t("dates.stat.seconds"), value: seconds },
             ].map(({ label, value }) => (
               <div key={label} style={{
                 background: "#18181b",
@@ -261,6 +263,8 @@ function CountdownTab() {
 }
 
 export default function DatesPage() {
+  const { t } = useLanguage();
+  const TABS = [t("dates.tab.diff"), t("dates.tab.addSubtract"), t("dates.tab.countdown")];
   const [activeTab, setActiveTab] = useState(0);
 
   return (
@@ -269,7 +273,7 @@ export default function DatesPage() {
         <Link href="/" style={{ color: "#71717a", display: "flex", alignItems: "center" }}>
           <ArrowLeft size={18} />
         </Link>
-        <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>Date Calculator</h1>
+        <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>{t("dates.title")}</h1>
       </div>
 
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.25rem" }}>
@@ -306,7 +310,7 @@ export default function DatesPage() {
       </div>
 
       <p style={{ textAlign: "center", color: "#3f3f46", fontSize: "0.75rem", marginTop: "1.25rem" }}>
-        Results are for informational purposes only.
+        {t("common.disclaimer")}
       </p>
     </div>
   );

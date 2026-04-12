@@ -7,13 +7,16 @@ import {
   calculateRetirement,
   calculateDCA,
 } from "@/lib/calculations/investment";
+import { useLanguage } from "@/context/LanguageContext";
 
 const fmt = (n: number) =>
   n.toLocaleString("en-US", { style: "currency", currency: "USD" });
 
-function AreaChart({ data, height = 200 }: {
+function AreaChart({ data, height = 200, legendValue, legendContrib }: {
   data: { year: number; contributions: number; value: number }[];
   height?: number;
+  legendValue: string;
+  legendContrib: string;
 }) {
   if (!data.length) return null;
   const width = 560;
@@ -51,9 +54,9 @@ function AreaChart({ data, height = 200 }: {
         <path d={contribPath} fill="none" stroke="#86efac" strokeWidth={1.5} strokeDasharray="4 2" />
         {/* Axes */}
         <line x1={0} y1={h} x2={w} y2={h} stroke="#3f3f46" />
-        {[0, 0.25, 0.5, 0.75, 1].map((t) => (
-          <text key={t} x={-6} y={yScale(maxVal * (1 - t)) + 4} textAnchor="end" fill="#71717a" fontSize={10}>
-            {t === 0 ? fmt(maxVal).replace(/\.00$/, "") : ""}
+        {[0, 0.25, 0.5, 0.75, 1].map((tv) => (
+          <text key={tv} x={-6} y={yScale(maxVal * (1 - tv)) + 4} textAnchor="end" fill="#71717a" fontSize={10}>
+            {tv === 0 ? fmt(maxVal).replace(/\.00$/, "") : ""}
           </text>
         ))}
         {/* Year labels */}
@@ -68,8 +71,14 @@ function AreaChart({ data, height = 200 }: {
 }
 
 export default function InvestmentPage() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState(0);
-  const tabs = ["Compound Growth", "ROI", "Retirement (FIRE)", "Dollar Cost Average"];
+  const tabs = [
+    t("investment.tab.compoundGrowth"),
+    t("investment.tab.roi"),
+    t("investment.tab.retirement"),
+    t("investment.tab.dca"),
+  ];
 
   // Tab 1
   const [initial, setInitial] = useState("10000");
@@ -115,14 +124,14 @@ export default function InvestmentPage() {
 
   return (
     <div style={{ maxWidth: "950px", margin: "0 auto" }}>
-      <h1 style={{ fontSize: "2rem", fontWeight: 800, marginBottom: "0.5rem" }}>Investment Calculator</h1>
-      <p style={{ color: "#71717a", marginBottom: "2rem" }}>Compound growth, ROI, retirement planning, and dollar-cost averaging.</p>
+      <h1 style={{ fontSize: "2rem", fontWeight: 800, marginBottom: "0.5rem" }}>{t("investment.title")}</h1>
+      <p style={{ color: "#71717a", marginBottom: "2rem" }}>{t("investment.desc.intro")}</p>
 
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "2rem", borderBottom: "1px solid #27272a", flexWrap: "wrap" }}>
-        {tabs.map((t, i) => (
+        {tabs.map((tab, i) => (
           <button key={i} onClick={() => setActiveTab(i)}
             style={{ padding: "0.625rem 1.25rem", border: "none", background: "transparent", color: activeTab === i ? "#a78bfa" : "#71717a", fontWeight: activeTab === i ? 700 : 400, cursor: "pointer", fontSize: "0.9rem", borderBottom: activeTab === i ? "2px solid #7c3aed" : "2px solid transparent" }}>
-            {t}
+            {tab}
           </button>
         ))}
       </div>
@@ -132,10 +141,10 @@ export default function InvestmentPage() {
         <div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
             {[
-              { label: "Initial Investment ($)", value: initial, set: setInitial },
-              { label: "Monthly Contribution ($)", value: monthly, set: setMonthly },
-              { label: "Annual Return (%)", value: annualReturn, set: setAnnualReturn },
-              { label: "Time Horizon (years)", value: years, set: setYears },
+              { label: t("investment.label.initialInvestment"), value: initial, set: setInitial },
+              { label: t("investment.label.monthlyContribution"), value: monthly, set: setMonthly },
+              { label: t("investment.label.annualReturn"), value: annualReturn, set: setAnnualReturn },
+              { label: t("investment.label.timeHorizon"), value: years, set: setYears },
             ].map(({ label, value, set }) => (
               <div key={label}>
                 <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.8rem", marginBottom: "0.3rem" }}>{label}</label>
@@ -146,9 +155,9 @@ export default function InvestmentPage() {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem", marginBottom: "2rem" }}>
             {[
-              { label: "Final Value", value: fmt(compoundResult.finalValue), color: "#a78bfa" },
-              { label: "Total Contributions", value: fmt(compoundResult.totalContributions), color: "#86efac" },
-              { label: "Total Earnings", value: fmt(compoundResult.totalEarnings), color: "#fbbf24" },
+              { label: t("investment.result.finalValue"), value: fmt(compoundResult.finalValue), color: "#a78bfa" },
+              { label: t("investment.result.totalContributions"), value: fmt(compoundResult.totalContributions), color: "#86efac" },
+              { label: t("investment.result.totalEarnings"), value: fmt(compoundResult.totalEarnings), color: "#fbbf24" },
             ].map(({ label, value, color }) => (
               <div key={label} style={{ background: "#18181b", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1.25rem", textAlign: "center" }}>
                 <div style={{ fontSize: "0.8rem", color: "#71717a", marginBottom: "0.4rem" }}>{label}</div>
@@ -158,11 +167,16 @@ export default function InvestmentPage() {
           </div>
           <div style={{ background: "#18181b", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1.5rem", overflowX: "auto" }}>
             <div style={{ fontSize: "0.8rem", color: "#71717a", marginBottom: "1rem" }}>
-              <span style={{ color: "#a78bfa" }}>— Total Value</span>
+              <span style={{ color: "#a78bfa" }}>— {t("investment.chart.totalValue")}</span>
               {"  "}
-              <span style={{ color: "#86efac" }}>– – Contributions</span>
+              <span style={{ color: "#86efac" }}>– – {t("investment.chart.contributions")}</span>
             </div>
-            <AreaChart data={compoundResult.yearlyData} height={220} />
+            <AreaChart
+              data={compoundResult.yearlyData}
+              height={220}
+              legendValue={t("investment.chart.totalValue")}
+              legendContrib={t("investment.chart.contributions")}
+            />
           </div>
         </div>
       )}
@@ -172,9 +186,9 @@ export default function InvestmentPage() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
           <div>
             {[
-              { label: "Initial Investment ($)", value: roiInitial, set: setRoiInitial },
-              { label: "Final Value ($)", value: roiFinal, set: setRoiFinal },
-              { label: "Time Period (years)", value: roiYears, set: setRoiYears },
+              { label: t("investment.label.initialInvestment"), value: roiInitial, set: setRoiInitial },
+              { label: t("investment.label.finalValue"), value: roiFinal, set: setRoiFinal },
+              { label: t("investment.label.timePeriod"), value: roiYears, set: setRoiYears },
             ].map(({ label, value, set }) => (
               <div key={label} style={{ marginBottom: "1rem" }}>
                 <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.85rem", marginBottom: "0.3rem" }}>{label}</label>
@@ -184,11 +198,11 @@ export default function InvestmentPage() {
             ))}
           </div>
           <div style={{ background: "#18181b", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1.5rem" }}>
-            <div style={{ fontSize: "0.75rem", color: "#71717a", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1.5rem" }}>ROI Results</div>
+            <div style={{ fontSize: "0.75rem", color: "#71717a", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1.5rem" }}>{t("investment.roi.resultsTitle")}</div>
             {[
-              ["Total Gain / Loss", fmt(roiResult.totalGain)],
-              ["ROI", roiResult.roi.toFixed(2) + "%"],
-              ["Annualized Return (CAGR)", roiResult.annualizedReturn.toFixed(2) + "%"],
+              [t("investment.roi.totalGainLoss"), fmt(roiResult.totalGain)],
+              [t("investment.roi.roi"), roiResult.roi.toFixed(2) + "%"],
+              [t("investment.roi.cagr"), roiResult.annualizedReturn.toFixed(2) + "%"],
             ].map(([l, v]) => (
               <div key={l} style={{ marginBottom: "1.25rem" }}>
                 <div style={{ fontSize: "0.8rem", color: "#71717a", marginBottom: "0.25rem" }}>{l}</div>
@@ -204,12 +218,12 @@ export default function InvestmentPage() {
         <div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
             {[
-              { label: "Current Age", value: currentAge, set: setCurrentAge },
-              { label: "Target Retirement Age", value: retireAge, set: setRetireAge },
-              { label: "Current Savings ($)", value: currentSavings, set: setCurrentSavings },
-              { label: "Monthly Savings ($)", value: monthlySavings, set: setMonthlySavings },
-              { label: "Expected Return (%)", value: retireReturn, set: setRetireReturn },
-              { label: "Expected Inflation (%)", value: inflation, set: setInflation },
+              { label: t("investment.label.currentAge"), value: currentAge, set: setCurrentAge },
+              { label: t("investment.label.targetRetirementAge"), value: retireAge, set: setRetireAge },
+              { label: t("investment.label.currentSavings"), value: currentSavings, set: setCurrentSavings },
+              { label: t("investment.label.monthlySavings"), value: monthlySavings, set: setMonthlySavings },
+              { label: t("investment.label.expectedReturn"), value: retireReturn, set: setRetireReturn },
+              { label: t("investment.label.expectedInflation"), value: inflation, set: setInflation },
             ].map(({ label, value, set }) => (
               <div key={label}>
                 <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.8rem", marginBottom: "0.3rem" }}>{label}</label>
@@ -220,9 +234,9 @@ export default function InvestmentPage() {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem", marginBottom: "2rem" }}>
             {[
-              { label: "Projected Savings at Retirement", value: fmt(retireResult.projectedSavings), color: "#a78bfa" },
-              { label: "Monthly Withdrawal (4% rule)", value: fmt(retireResult.monthlyWithdrawal), color: "#86efac" },
-              { label: "Money Lasts to Age 90?", value: retireResult.willMoneyLast ? "YES" : "NO", color: retireResult.willMoneyLast ? "#22c55e" : "#ef4444" },
+              { label: t("investment.retire.projectedSavings"), value: fmt(retireResult.projectedSavings), color: "#a78bfa" },
+              { label: t("investment.retire.monthlyWithdrawal"), value: fmt(retireResult.monthlyWithdrawal), color: "#86efac" },
+              { label: t("investment.retire.moneyLasts"), value: retireResult.willMoneyLast ? t("investment.retire.yes") : t("investment.retire.no"), color: retireResult.willMoneyLast ? "#22c55e" : "#ef4444" },
             ].map(({ label, value, color }) => (
               <div key={label} style={{ background: "#18181b", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1.25rem", textAlign: "center" }}>
                 <div style={{ fontSize: "0.8rem", color: "#71717a", marginBottom: "0.4rem" }}>{label}</div>
@@ -231,8 +245,13 @@ export default function InvestmentPage() {
             ))}
           </div>
           <div style={{ background: "#18181b", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1.5rem", overflowX: "auto" }}>
-            <div style={{ fontSize: "0.8rem", color: "#71717a", marginBottom: "1rem" }}>Savings trajectory (accumulation + withdrawal phase)</div>
-            <AreaChart data={retireResult.yearlyData.map((d) => ({ year: d.age, contributions: 0, value: d.savings }))} height={200} />
+            <div style={{ fontSize: "0.8rem", color: "#71717a", marginBottom: "1rem" }}>{t("investment.retire.trajectoryDesc")}</div>
+            <AreaChart
+              data={retireResult.yearlyData.map((d) => ({ year: d.age, contributions: 0, value: d.savings }))}
+              height={200}
+              legendValue={t("investment.chart.totalValue")}
+              legendContrib={t("investment.chart.contributions")}
+            />
           </div>
         </div>
       )}
@@ -242,10 +261,10 @@ export default function InvestmentPage() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
           <div>
             {[
-              { label: "Total Investment ($)", value: dcaTotal, set: setDcaTotal },
-              { label: "Number of Periods (months)", value: dcaPeriods, set: setDcaPeriods },
-              { label: "Starting Price ($)", value: dcaStartPrice, set: setDcaStartPrice },
-              { label: "Ending Price ($)", value: dcaEndPrice, set: setDcaEndPrice },
+              { label: t("investment.label.totalInvestment"), value: dcaTotal, set: setDcaTotal },
+              { label: t("investment.label.numPeriods"), value: dcaPeriods, set: setDcaPeriods },
+              { label: t("investment.label.startingPrice"), value: dcaStartPrice, set: setDcaStartPrice },
+              { label: t("investment.label.endingPrice"), value: dcaEndPrice, set: setDcaEndPrice },
             ].map(({ label, value, set }) => (
               <div key={label} style={{ marginBottom: "1rem" }}>
                 <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.85rem", marginBottom: "0.3rem" }}>{label}</label>
@@ -256,12 +275,12 @@ export default function InvestmentPage() {
           </div>
           <div>
             <div style={{ background: "#18181b", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1.5rem", marginBottom: "1rem" }}>
-              <div style={{ fontSize: "0.75rem", color: "#71717a", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1rem" }}>Dollar Cost Average</div>
+              <div style={{ fontSize: "0.75rem", color: "#71717a", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1rem" }}>{t("investment.dca.title")}</div>
               {[
-                ["Avg Cost Per Unit", fmt(dcaResult.dcaAverageCost)],
-                ["Total Units Acquired", dcaResult.dcaTotalUnits.toFixed(4)],
-                ["Final DCA Value", fmt(dcaResult.dcaFinalValue)],
-                ["DCA Return", dcaResult.dcaReturn.toFixed(2) + "%"],
+                [t("investment.dca.avgCost"), fmt(dcaResult.dcaAverageCost)],
+                [t("investment.dca.totalUnits"), dcaResult.dcaTotalUnits.toFixed(4)],
+                [t("investment.dca.finalValue"), fmt(dcaResult.dcaFinalValue)],
+                [t("investment.dca.return"), dcaResult.dcaReturn.toFixed(2) + "%"],
               ].map(([l, v]) => (
                 <div key={l} style={{ display: "flex", justifyContent: "space-between", padding: "0.3rem 0", borderBottom: "1px solid #27272a", fontSize: "0.875rem" }}>
                   <span style={{ color: "#a1a1aa" }}>{l}</span>
@@ -270,11 +289,11 @@ export default function InvestmentPage() {
               ))}
             </div>
             <div style={{ background: "#18181b", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1.5rem" }}>
-              <div style={{ fontSize: "0.75rem", color: "#71717a", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1rem" }}>Lump Sum Comparison</div>
+              <div style={{ fontSize: "0.75rem", color: "#71717a", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1rem" }}>{t("investment.lumpsum.title")}</div>
               {[
-                ["Units Acquired", dcaResult.lumpSumUnits.toFixed(4)],
-                ["Final Lump Sum Value", fmt(dcaResult.lumpSumFinalValue)],
-                ["Lump Sum Return", dcaResult.lumpSumReturn.toFixed(2) + "%"],
+                [t("investment.lumpsum.units"), dcaResult.lumpSumUnits.toFixed(4)],
+                [t("investment.lumpsum.finalValue"), fmt(dcaResult.lumpSumFinalValue)],
+                [t("investment.lumpsum.return"), dcaResult.lumpSumReturn.toFixed(2) + "%"],
               ].map(([l, v]) => (
                 <div key={l} style={{ display: "flex", justifyContent: "space-between", padding: "0.3rem 0", borderBottom: "1px solid #27272a", fontSize: "0.875rem" }}>
                   <span style={{ color: "#a1a1aa" }}>{l}</span>
@@ -284,9 +303,9 @@ export default function InvestmentPage() {
               <div style={{ marginTop: "1rem", padding: "0.75rem", borderRadius: "0.5rem",
                 background: dcaResult.winner === "dca" ? "rgba(34,197,94,0.1)" : dcaResult.winner === "lumpsum" ? "rgba(168,85,247,0.1)" : "rgba(100,100,100,0.1)",
                 border: `1px solid ${dcaResult.winner === "dca" ? "#22c55e" : dcaResult.winner === "lumpsum" ? "#a855f7" : "#52525b"}` }}>
-                <div style={{ fontSize: "0.8rem", color: "#a1a1aa", marginBottom: "0.25rem" }}>Winner</div>
+                <div style={{ fontSize: "0.8rem", color: "#a1a1aa", marginBottom: "0.25rem" }}>{t("investment.dca.winner")}</div>
                 <div style={{ fontWeight: 700, color: dcaResult.winner === "dca" ? "#22c55e" : dcaResult.winner === "lumpsum" ? "#a78bfa" : "#71717a" }}>
-                  {dcaResult.winner === "dca" ? "DCA wins" : dcaResult.winner === "lumpsum" ? "Lump Sum wins" : "Tie"}
+                  {dcaResult.winner === "dca" ? t("investment.dca.dcaWins") : dcaResult.winner === "lumpsum" ? t("investment.dca.lumpSumWins") : t("investment.dca.tie")}
                 </div>
               </div>
             </div>
@@ -295,7 +314,7 @@ export default function InvestmentPage() {
       )}
 
       <p style={{ marginTop: "3rem", fontSize: "0.8rem", color: "#52525b", borderTop: "1px solid #27272a", paddingTop: "1rem" }}>
-        Results are for informational purposes only. Consult a qualified professional for official decisions.
+        {t("investment.desc.disclaimer")}
       </p>
     </div>
   );

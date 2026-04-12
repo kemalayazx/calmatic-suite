@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowLeft, Copy, Check } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   decimalToBinary,
   decimalToHex,
@@ -30,7 +31,7 @@ function useCopy() {
   return { copied, copy };
 }
 
-function CopyBtn({ id, text, copied, copy }: { id: string; text: string; copied: CopiedKey; copy: (k: string, t: string) => void }) {
+function CopyBtn({ id, text, copied, copy, labelCopy, labelCopied }: { id: string; text: string; copied: CopiedKey; copy: (k: string, t: string) => void; labelCopy: string; labelCopied: string }) {
   if (!text) return null;
   return (
     <button
@@ -50,7 +51,7 @@ function CopyBtn({ id, text, copied, copy }: { id: string; text: string; copied:
       }}
     >
       {copied === id ? <Check size={12} /> : <Copy size={12} />}
-      {copied === id ? "Copied" : "Copy"}
+      {copied === id ? labelCopied : labelCopy}
     </button>
   );
 }
@@ -86,6 +87,7 @@ const card: React.CSSProperties = {
 };
 
 export default function ConverterPage() {
+  const { t } = useLanguage();
   const [vals, setVals] = useState<Bases>({ decimal: "", binary: "", hex: "", octal: "" });
   const [errors, setErrors] = useState<Partial<Bases>>({});
 
@@ -114,27 +116,27 @@ export default function ConverterPage() {
     if (source === "decimal") {
       dec = parseInt(v, 10);
       if (isNaN(dec) || String(dec) !== v) {
-        setErrors({ decimal: "Invalid decimal number" });
+        setErrors({ decimal: t("converter.error.invalidDecimal") });
         setVals({ ...vals, decimal: raw });
         return;
       }
     } else if (source === "binary") {
       if (!/^[01]+$/.test(v)) {
-        setErrors({ binary: "Only 0 and 1 allowed" });
+        setErrors({ binary: t("converter.error.invalidBinary") });
         setVals({ ...vals, binary: raw });
         return;
       }
       dec = binaryToDecimal(v);
     } else if (source === "hex") {
       if (!/^[0-9a-fA-F]+$/.test(v)) {
-        setErrors({ hex: "Only 0-9 and A-F allowed" });
+        setErrors({ hex: t("converter.error.invalidHex") });
         setVals({ ...vals, hex: raw });
         return;
       }
       dec = hexToDecimal(v);
     } else {
       if (!/^[0-7]+$/.test(v)) {
-        setErrors({ octal: "Only 0-7 allowed" });
+        setErrors({ octal: t("converter.error.invalidOctal") });
         setVals({ ...vals, octal: raw });
         return;
       }
@@ -142,7 +144,7 @@ export default function ConverterPage() {
     }
 
     if (isNaN(dec)) {
-      setErrors({ [source]: "Conversion error" });
+      setErrors({ [source]: t("converter.error.conversionError") });
       return;
     }
 
@@ -161,17 +163,17 @@ export default function ConverterPage() {
     if (!value.trim()) return;
     const result = ipToBinary(value);
     if (!result) {
-      setIpError("Invalid IP address (e.g. 192.168.1.1)");
+      setIpError(t("converter.ip.invalidError"));
     } else {
       setIpResult(result.octets);
     }
   }
 
   const fields: { key: keyof Bases; label: string; placeholder: string }[] = [
-    { key: "decimal", label: "Decimal (Base 10)", placeholder: "255" },
-    { key: "binary", label: "Binary (Base 2)", placeholder: "11111111" },
-    { key: "hex", label: "Hexadecimal (Base 16)", placeholder: "FF" },
-    { key: "octal", label: "Octal (Base 8)", placeholder: "377" },
+    { key: "decimal", label: t("converter.base.decimal"), placeholder: "255" },
+    { key: "binary", label: t("converter.base.binary"), placeholder: "11111111" },
+    { key: "hex", label: t("converter.base.hex"), placeholder: "FF" },
+    { key: "octal", label: t("converter.base.octal"), placeholder: "377" },
   ];
 
   return (
@@ -181,13 +183,13 @@ export default function ConverterPage() {
         <Link href="/" style={{ color: "#71717a", display: "flex", alignItems: "center" }}>
           <ArrowLeft size={18} />
         </Link>
-        <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>Number Base Converter</h1>
+        <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>{t("converter.title")}</h1>
       </div>
 
       {/* 4-way base converter */}
       <div style={card}>
         <h2 style={{ fontWeight: 700, fontSize: "1rem", color: "#a78bfa", marginBottom: "1.25rem" }}>
-          Base Conversion
+          {t("converter.section.baseConversion")}
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
           {fields.map(({ key, label, placeholder }) => {
@@ -210,7 +212,7 @@ export default function ConverterPage() {
                       update(key, e.target.value);
                     }}
                   />
-                  <CopyBtn id={`base-${key}`} text={vals[key]} copied={copied} copy={copy} />
+                  <CopyBtn id={`base-${key}`} text={vals[key]} copied={copied} copy={copy} labelCopy={t("common.copy")} labelCopied={t("common.copied")} />
                 </div>
                 {hasError && (
                   <p style={{ color: "#f87171", fontSize: "0.75rem", marginTop: "0.3rem" }}>{errors[key]}</p>
@@ -220,18 +222,18 @@ export default function ConverterPage() {
           })}
         </div>
         <p style={{ color: "#3f3f46", fontSize: "0.75rem", marginTop: "1rem" }}>
-          Type in any field — others update automatically
+          {t("converter.base.hint")}
         </p>
       </div>
 
       {/* ASCII ↔ Binary */}
       <div style={card}>
         <h2 style={{ fontWeight: 700, fontSize: "1rem", color: "#a78bfa", marginBottom: "1.25rem" }}>
-          ASCII ↔ Binary
+          {t("converter.section.asciiBinary")}
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }}>
           <div>
-            <label style={labelStyle}>Text → Binary</label>
+            <label style={labelStyle}>{t("converter.ascii.textToBinary")}</label>
             <input
               type="text"
               style={inputBase}
@@ -245,8 +247,8 @@ export default function ConverterPage() {
             {asciiResult && (
               <div style={{ marginTop: "0.75rem" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem" }}>
-                  <span style={{ fontSize: "0.7rem", color: "#52525b" }}>8-bit per character</span>
-                  <CopyBtn id="ascii-bin" text={asciiResult} copied={copied} copy={copy} />
+                  <span style={{ fontSize: "0.7rem", color: "#52525b" }}>{t("converter.ascii.bitPerChar")}</span>
+                  <CopyBtn id="ascii-bin" text={asciiResult} copied={copied} copy={copy} labelCopy={t("common.copy")} labelCopied={t("common.copied")} />
                 </div>
                 <div style={{
                   background: "#09090b",
@@ -266,7 +268,7 @@ export default function ConverterPage() {
           </div>
 
           <div>
-            <label style={labelStyle}>Binary → Text</label>
+            <label style={labelStyle}>{t("converter.ascii.binaryToText")}</label>
             <input
               type="text"
               style={inputBase}
@@ -280,8 +282,8 @@ export default function ConverterPage() {
             {binText && (
               <div style={{ marginTop: "0.75rem" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem" }}>
-                  <span style={{ fontSize: "0.7rem", color: "#52525b" }}>Decoded text</span>
-                  <CopyBtn id="bin-ascii" text={binResult} copied={copied} copy={copy} />
+                  <span style={{ fontSize: "0.7rem", color: "#52525b" }}>{t("converter.ascii.decodedText")}</span>
+                  <CopyBtn id="bin-ascii" text={binResult} copied={copied} copy={copy} labelCopy={t("common.copy")} labelCopied={t("common.copied")} />
                 </div>
                 <div style={{
                   background: "#09090b",
@@ -294,7 +296,7 @@ export default function ConverterPage() {
                   wordBreak: "break-all",
                   minHeight: "2.5rem",
                 }}>
-                  {binResult || "Invalid binary input"}
+                  {binResult || t("converter.ascii.invalidBinaryInput")}
                 </div>
               </div>
             )}
@@ -305,10 +307,10 @@ export default function ConverterPage() {
       {/* IP ↔ Binary */}
       <div style={card}>
         <h2 style={{ fontWeight: 700, fontSize: "1rem", color: "#a78bfa", marginBottom: "1.25rem" }}>
-          IP Address → Binary
+          {t("converter.section.ipBinary")}
         </h2>
         <div>
-          <label style={labelStyle}>IPv4 Address</label>
+          <label style={labelStyle}>{t("converter.ip.label")}</label>
           <input
             type="text"
             style={{ ...inputBase, border: `1px solid ${ipError ? "#f87171" : "#3f3f46"}` }}
@@ -335,10 +337,10 @@ export default function ConverterPage() {
                 fontFamily: "monospace",
               }}>
                 <span style={{ color: "#71717a", fontSize: "0.85rem", minWidth: "100px" }}>
-                  Octet {i + 1}: <span style={{ color: "#fafafa" }}>{ip.split(".")[i]}</span>
+                  {t("converter.ip.octet").replace("{n}", String(i + 1))}: <span style={{ color: "#fafafa" }}>{ip.split(".")[i]}</span>
                 </span>
                 <span style={{ color: "#a78bfa", fontSize: "0.9rem", letterSpacing: "0.1em" }}>{bin}</span>
-                <CopyBtn id={`ip-${i}`} text={bin} copied={copied} copy={copy} />
+                <CopyBtn id={`ip-${i}`} text={bin} copied={copied} copy={copy} labelCopy={t("common.copy")} labelCopied={t("common.copied")} />
               </div>
             ))}
             <div style={{
@@ -351,11 +353,11 @@ export default function ConverterPage() {
               border: "1px solid #3f3f46",
               borderRadius: "0.5rem",
             }}>
-              <span style={{ color: "#71717a", fontSize: "0.8rem" }}>Full binary:</span>
+              <span style={{ color: "#71717a", fontSize: "0.8rem" }}>{t("converter.ip.fullBinary")}:</span>
               <span style={{ fontFamily: "monospace", fontSize: "0.8rem", color: "#c4b5fd" }}>
                 {ipResult.join(".")}
               </span>
-              <CopyBtn id="ip-full" text={ipResult.join(".")} copied={copied} copy={copy} />
+              <CopyBtn id="ip-full" text={ipResult.join(".")} copied={copied} copy={copy} labelCopy={t("common.copy")} labelCopied={t("common.copied")} />
             </div>
           </div>
         )}
@@ -364,13 +366,13 @@ export default function ConverterPage() {
       {/* Quick Reference Table */}
       <div style={card}>
         <h2 style={{ fontWeight: 700, fontSize: "1rem", color: "#a78bfa", marginBottom: "1.25rem" }}>
-          Quick Reference (0–15)
+          {t("converter.section.quickRef")}
         </h2>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "monospace", fontSize: "0.85rem" }}>
             <thead>
               <tr>
-                {["Dec", "Binary", "Hex", "Oct"].map((h) => (
+                {[t("converter.table.dec"), t("converter.table.binary"), t("converter.table.hex"), t("converter.table.oct")].map((h) => (
                   <th key={h} style={{
                     padding: "0.5rem 0.75rem",
                     textAlign: "center",
@@ -398,7 +400,7 @@ export default function ConverterPage() {
       </div>
 
       <p style={{ textAlign: "center", color: "#3f3f46", fontSize: "0.75rem", marginTop: "1rem" }}>
-        Results are for informational purposes only.
+        {t("common.disclaimer")}
       </p>
     </div>
   );

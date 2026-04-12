@@ -7,6 +7,7 @@ import { simpleInterest, compoundInterest, loanPayment } from "@/lib/calculation
 import ExportButton from "@/components/ui/ExportButton";
 import PrintButton from "@/components/ui/PrintButton";
 import type { ExportRow } from "@/lib/export";
+import { useLanguage } from "@/context/LanguageContext";
 
 function fmt(n: number, digits = 2) {
   return n.toLocaleString("en-US", { maximumFractionDigits: digits });
@@ -59,10 +60,8 @@ const resultCard = (color: string): React.CSSProperties => ({
   textAlign: "center",
 });
 
-const TABS = ["Simple Interest", "Compound Interest", "Loan / Mortgage"];
-
 // SVG Bar Chart for compound interest
-function BarChart({ data }: { data: { year: number; balance: number }[]; }) {
+function BarChart({ data, label }: { data: { year: number; balance: number }[]; label: string }) {
   if (!data.length) return null;
   const show = data.slice(0, 20);
   const max = Math.max(...show.map((d) => d.balance));
@@ -71,7 +70,7 @@ function BarChart({ data }: { data: { year: number; balance: number }[]; }) {
   return (
     <div style={{ marginTop: "1.5rem" }}>
       <p style={{ fontSize: "0.8rem", color: "#71717a", marginBottom: "0.75rem", fontWeight: 600 }}>
-        Year-by-Year Growth
+        {label}
       </p>
       <div style={{ display: "flex", alignItems: "flex-end", gap: "4px", height: `${chartH}px` }}>
         {show.map((d) => {
@@ -101,6 +100,7 @@ function BarChart({ data }: { data: { year: number; balance: number }[]; }) {
 
 // --- Simple Interest Tab ---
 function SimpleTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
+  const { t } = useLanguage();
   const [principal, setPrincipal] = useState("");
   const [rate, setRate] = useState("");
   const [time, setTime] = useState("");
@@ -108,10 +108,10 @@ function SimpleTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
 
   const p = parseFloat(principal);
   const r = parseFloat(rate);
-  const t = parseFloat(time);
-  const years = unit === "month" ? t / 12 : t;
+  const tv = parseFloat(time);
+  const years = unit === "month" ? tv / 12 : tv;
 
-  const valid = !isNaN(p) && !isNaN(r) && !isNaN(t) && p > 0 && r > 0 && t > 0;
+  const valid = !isNaN(p) && !isNaN(r) && !isNaN(tv) && p > 0 && r > 0 && tv > 0;
   const result = valid ? simpleInterest(p, r, years) : null;
 
   if (result) {
@@ -128,26 +128,26 @@ function SimpleTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
         <div>
-          <label style={labelStyle}>Principal ($)</label>
+          <label style={labelStyle}>{t("financial.label.principal")}</label>
           <input type="number" style={inputStyle} placeholder="10000" value={principal} onChange={(e) => setPrincipal(e.target.value)} />
         </div>
         <div>
-          <label style={labelStyle}>Annual Rate (%)</label>
+          <label style={labelStyle}>{t("financial.label.annualRate")}</label>
           <input type="number" style={inputStyle} placeholder="5" value={rate} onChange={(e) => setRate(e.target.value)} />
         </div>
         <div>
-          <label style={labelStyle}>Duration</label>
+          <label style={labelStyle}>{t("financial.label.duration")}</label>
           <input type="number" style={inputStyle} placeholder="3" value={time} onChange={(e) => setTime(e.target.value)} />
         </div>
         <div>
-          <label style={labelStyle}>Unit</label>
+          <label style={labelStyle}>{t("financial.label.unit")}</label>
           <select
             style={selectStyle}
             value={unit}
             onChange={(e) => setUnit(e.target.value as "year" | "month")}
           >
-            <option value="year">Years</option>
-            <option value="month">Months</option>
+            <option value="year">{t("financial.option.years")}</option>
+            <option value="month">{t("financial.option.months")}</option>
           </select>
         </div>
       </div>
@@ -155,13 +155,13 @@ function SimpleTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
       {result && (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginTop: "0.5rem" }}>
           <div style={resultCard("#4ade80")}>
-            <p style={{ fontSize: "0.75rem", color: "#71717a", marginBottom: "0.4rem" }}>INTEREST</p>
+            <p style={{ fontSize: "0.75rem", color: "#71717a", marginBottom: "0.4rem" }}>{t("financial.result.interest")}</p>
             <p style={{ fontSize: "2rem", fontWeight: 800, color: "#4ade80" }}>
               ${fmtCurrency(result.interest)}
             </p>
           </div>
           <div style={resultCard("#60a5fa")}>
-            <p style={{ fontSize: "0.75rem", color: "#71717a", marginBottom: "0.4rem" }}>TOTAL AMOUNT</p>
+            <p style={{ fontSize: "0.75rem", color: "#71717a", marginBottom: "0.4rem" }}>{t("financial.result.totalAmount")}</p>
             <p style={{ fontSize: "2rem", fontWeight: 800, color: "#60a5fa" }}>
               ${fmtCurrency(result.total)}
             </p>
@@ -174,13 +174,14 @@ function SimpleTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
 
 // --- Compound Interest Tab ---
 const PERIODS = [
-  { label: "Annually", value: 1 },
-  { label: "Semi-Annually", value: 2 },
-  { label: "Monthly", value: 12 },
-  { label: "Daily", value: 365 },
+  { labelKey: "financial.option.annually", value: 1 },
+  { labelKey: "financial.option.semiAnnually", value: 2 },
+  { labelKey: "financial.option.monthly", value: 12 },
+  { labelKey: "financial.option.daily", value: 365 },
 ];
 
 function CompoundTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
+  const { t } = useLanguage();
   const [principal, setPrincipal] = useState("");
   const [rate, setRate] = useState("");
   const [years, setYears] = useState("");
@@ -204,21 +205,21 @@ function CompoundTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
         <div>
-          <label style={labelStyle}>Principal ($)</label>
+          <label style={labelStyle}>{t("financial.label.principal")}</label>
           <input type="number" style={inputStyle} placeholder="10000" value={principal} onChange={(e) => setPrincipal(e.target.value)} />
         </div>
         <div>
-          <label style={labelStyle}>Annual Rate (%)</label>
+          <label style={labelStyle}>{t("financial.label.annualRate")}</label>
           <input type="number" style={inputStyle} placeholder="7" value={rate} onChange={(e) => setRate(e.target.value)} />
         </div>
         <div>
-          <label style={labelStyle}>Years</label>
+          <label style={labelStyle}>{t("financial.label.years")}</label>
           <input type="number" style={inputStyle} placeholder="10" value={years} onChange={(e) => setYears(e.target.value)} />
         </div>
         <div>
-          <label style={labelStyle}>Compounding</label>
+          <label style={labelStyle}>{t("financial.label.compounding")}</label>
           <select style={selectStyle} value={periods} onChange={(e) => setPeriods(Number(e.target.value))}>
-            {PERIODS.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
+            {PERIODS.map((p) => <option key={p.value} value={p.value}>{t(p.labelKey)}</option>)}
           </select>
         </div>
       </div>
@@ -227,19 +228,19 @@ function CompoundTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
         <>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
             <div style={resultCard("#60a5fa")}>
-              <p style={{ fontSize: "0.75rem", color: "#71717a", marginBottom: "0.4rem" }}>FINAL AMOUNT</p>
+              <p style={{ fontSize: "0.75rem", color: "#71717a", marginBottom: "0.4rem" }}>{t("financial.result.finalAmount")}</p>
               <p style={{ fontSize: "1.8rem", fontWeight: 800, color: "#60a5fa" }}>
                 ${fmtCurrency(result.total)}
               </p>
             </div>
             <div style={resultCard("#4ade80")}>
-              <p style={{ fontSize: "0.75rem", color: "#71717a", marginBottom: "0.4rem" }}>TOTAL EARNED</p>
+              <p style={{ fontSize: "0.75rem", color: "#71717a", marginBottom: "0.4rem" }}>{t("financial.result.totalEarned")}</p>
               <p style={{ fontSize: "1.8rem", fontWeight: 800, color: "#4ade80" }}>
                 ${fmtCurrency(result.earned)}
               </p>
             </div>
           </div>
-          <BarChart data={result.yearlyData} />
+          <BarChart data={result.yearlyData} label={t("financial.chart.yearByYear")} />
         </>
       )}
     </div>
@@ -248,6 +249,7 @@ function CompoundTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
 
 // --- Loan Tab ---
 function LoanTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
+  const { t } = useLanguage();
   const [principal, setPrincipal] = useState("");
   const [rate, setRate] = useState("");
   const [months, setMonths] = useState("");
@@ -276,15 +278,15 @@ function LoanTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
         <div>
-          <label style={labelStyle}>Principal ($)</label>
+          <label style={labelStyle}>{t("financial.label.principal")}</label>
           <input type="number" style={inputStyle} placeholder="200000" value={principal} onChange={(e) => setPrincipal(e.target.value)} />
         </div>
         <div>
-          <label style={labelStyle}>Annual Rate (%)</label>
+          <label style={labelStyle}>{t("financial.label.annualRate")}</label>
           <input type="number" style={inputStyle} placeholder="4.5" value={rate} onChange={(e) => setRate(e.target.value)} />
         </div>
         <div>
-          <label style={labelStyle}>Term (months)</label>
+          <label style={labelStyle}>{t("financial.label.termMonths")}</label>
           <input type="number" style={inputStyle} placeholder="360" value={months} onChange={(e) => setMonths(e.target.value)} />
         </div>
       </div>
@@ -293,19 +295,19 @@ function LoanTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
         <>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem", marginBottom: "1.5rem" }}>
             <div style={resultCard("#a78bfa")}>
-              <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.4rem" }}>MONTHLY PAYMENT</p>
+              <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.4rem" }}>{t("financial.result.monthlyPayment")}</p>
               <p style={{ fontSize: "1.6rem", fontWeight: 800, color: "#a78bfa" }}>
                 ${fmtCurrency(result.monthlyPayment)}
               </p>
             </div>
             <div style={resultCard("#60a5fa")}>
-              <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.4rem" }}>TOTAL PAYMENT</p>
+              <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.4rem" }}>{t("financial.result.totalPayment")}</p>
               <p style={{ fontSize: "1.6rem", fontWeight: 800, color: "#60a5fa" }}>
                 ${fmtCurrency(result.totalPayment)}
               </p>
             </div>
             <div style={resultCard("#f87171")}>
-              <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.4rem" }}>TOTAL INTEREST</p>
+              <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.4rem" }}>{t("financial.result.totalInterest")}</p>
               <p style={{ fontSize: "1.6rem", fontWeight: 800, color: "#f87171" }}>
                 ${fmtCurrency(result.totalInterest)}
               </p>
@@ -315,13 +317,19 @@ function LoanTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
           {/* Amortization table */}
           <div>
             <p style={{ fontSize: "0.85rem", color: "#a1a1aa", fontWeight: 600, marginBottom: "0.75rem" }}>
-              Amortization Schedule {!showFull && result.schedule.length > 12 ? "(first 12 months)" : ""}
+              {t("financial.amort.schedule")} {!showFull && result.schedule.length > 12 ? `(${t("financial.amort.first12")})` : ""}
             </p>
             <div style={{ overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.82rem" }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid #27272a" }}>
-                    {["Month", "Payment", "Principal", "Interest", "Balance"].map((h) => (
+                    {[
+                      t("financial.table.month"),
+                      t("financial.table.payment"),
+                      t("financial.table.principal"),
+                      t("financial.table.interest"),
+                      t("financial.table.balance"),
+                    ].map((h) => (
                       <th key={h} style={{ padding: "0.5rem 0.75rem", textAlign: "right", color: "#71717a", fontWeight: 600, fontSize: "0.75rem" }}>
                         {h}
                       </th>
@@ -356,7 +364,7 @@ function LoanTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
                   width: "100%",
                 }}
               >
-                {showFull ? "Show less" : `Show all ${result.schedule.length} months`}
+                {showFull ? t("financial.btn.showLess") : `${t("financial.btn.showAll")} ${result.schedule.length} months`}
               </button>
             )}
           </div>
@@ -368,8 +376,15 @@ function LoanTab({ onResults }: { onResults: (d: ExportRow[]) => void }) {
 
 // --- Main Page ---
 export default function FinancialPage() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState(0);
   const [exportData, setExportData] = useState<ExportRow[]>([]);
+
+  const TABS = [
+    t("financial.tab.simple"),
+    t("financial.tab.compound"),
+    t("financial.tab.loan"),
+  ];
 
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto" }}>
@@ -378,7 +393,7 @@ export default function FinancialPage() {
           <Link href="/" style={{ color: "#71717a", display: "flex", alignItems: "center" }}>
             <ArrowLeft size={18} />
           </Link>
-          <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>Financial Calculator</h1>
+          <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>{t("financial.title")}</h1>
         </div>
         <div style={{ display: "flex", gap: "0.5rem" }}>
           <ExportButton getData={() => exportData} filename="calmatic-financial" sheetName="Financial" />
@@ -421,7 +436,7 @@ export default function FinancialPage() {
       </div>
 
       <p style={{ textAlign: "center", color: "#3f3f46", fontSize: "0.75rem", marginTop: "1.25rem" }}>
-        Results are for informational purposes only.
+        {t("financial.desc.disclaimer")}
       </p>
     </div>
   );

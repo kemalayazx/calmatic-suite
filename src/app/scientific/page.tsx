@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { computeUnary, safeEvaluate, AngleMode } from "@/lib/calculations/scientific";
 import RetroWindow from "@/components/RetroWindow";
+import { useLanguage } from "@/context/LanguageContext";
 
 const BTN_BASE: React.CSSProperties = {
   display: "flex",
@@ -34,6 +35,7 @@ type BtnDef = {
 };
 
 export default function ScientificPage() {
+  const { t } = useLanguage();
   const [display, setDisplay] = useState("0");
   const [history, setHistory] = useState("");
   const [mode, setMode] = useState<AngleMode>("deg");
@@ -216,10 +218,10 @@ export default function ScientificPage() {
   ];
 
   return (
-    <RetroWindow title="Scientific Calculator">
+    <RetroWindow title={t("scientific.title")}>
     <div style={{ maxWidth: "28rem", margin: "0 auto", padding: "1.5rem 1rem" }}>
       <h1 style={{ textAlign: "center", fontSize: "1.5rem", fontWeight: 800, color: "#a78bfa", marginBottom: "1.5rem" }}>
-        Scientific Calculator
+        {t("scientific.title")}
       </h1>
 
       {/* Display */}
@@ -278,7 +280,7 @@ export default function ScientificPage() {
 
       {/* Disclaimer */}
       <p style={{ marginTop: "1.5rem", fontSize: "0.7rem", color: "#3f3f46", textAlign: "center" }}>
-        For educational use. Verify results independently for critical applications.
+        {t("scientific.footer.note")}
       </p>
     </div>
     </RetroWindow>

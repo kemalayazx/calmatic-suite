@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { calcSavingsGoal, calcEmergencyFund, calcCD } from "@/lib/calculations/savings";
+import { useLanguage } from "@/context/LanguageContext";
 
 const INPUT_STYLE: React.CSSProperties = {
   background: "#0a0a0b",
@@ -50,6 +51,7 @@ function Field({ label, value, onChange, prefix }: { label: string; value: strin
 
 // --- Tab 1: Savings Goal ---
 function TabGoal() {
+  const { t } = useLanguage();
   const [target, setTarget] = useState("50000");
   const [current, setCurrent] = useState("5000");
   const [monthly, setMonthly] = useState("500");
@@ -59,10 +61,10 @@ function TabGoal() {
 
   function calculate() {
     try {
-      const t = parseFloat(target), c = parseFloat(current), m = parseFloat(monthly), r = parseFloat(rate);
-      if ([t, c, m, r].some(isNaN) || t <= 0 || m < 0) throw new Error("Enter valid positive numbers");
-      if (c >= t) throw new Error("Current savings already meets the goal");
-      const res = calcSavingsGoal(t, c, m, r);
+      const tv = parseFloat(target), c = parseFloat(current), m = parseFloat(monthly), r = parseFloat(rate);
+      if ([tv, c, m, r].some(isNaN) || tv <= 0 || m < 0) throw new Error(t("savings.error.invalidPositive"));
+      if (c >= tv) throw new Error(t("savings.error.alreadyMet"));
+      const res = calcSavingsGoal(tv, c, m, r);
       setResult(res);
       setError("");
     } catch (e) { setError((e as Error).message); setResult(null); }
@@ -75,23 +77,23 @@ function TabGoal() {
   return (
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "0.75rem", marginBottom: "1rem" }}>
-        <Field label="Target Amount" value={target} onChange={setTarget} prefix="$" />
-        <Field label="Current Savings" value={current} onChange={setCurrent} prefix="$" />
-        <Field label="Monthly Contribution" value={monthly} onChange={setMonthly} prefix="$" />
-        <Field label="Annual Interest Rate (%)" value={rate} onChange={setRate} />
+        <Field label={t("savings.label.targetAmount")} value={target} onChange={setTarget} prefix="$" />
+        <Field label={t("savings.label.currentSavings")} value={current} onChange={setCurrent} prefix="$" />
+        <Field label={t("savings.label.monthlyContribution")} value={monthly} onChange={setMonthly} prefix="$" />
+        <Field label={t("savings.label.annualInterestRate")} value={rate} onChange={setRate} />
       </div>
       <button onClick={calculate} style={{ background: "#16a34a", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1.5rem", fontWeight: 700, cursor: "pointer" }}>
-        Calculate
+        {t("savings.btn.calculate")}
       </button>
       {error && <p style={{ color: "#f87171", marginTop: "0.5rem", fontSize: "0.85rem" }}>{error}</p>}
       {result && (
         <div style={{ marginTop: "1rem" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "0.75rem", marginBottom: "1rem" }}>
             {[
-              { label: "Time to Goal", value: result.monthsToGoal < 0 ? "50+ years" : `${result.monthsToGoal} months (${(result.monthsToGoal / 12).toFixed(1)} yrs)` },
-              { label: "Total Contributions", value: usd(result.totalContributions) },
-              { label: "Total Interest Earned", value: usd(result.totalInterest) },
-              { label: "Final Balance", value: usd(result.finalAmount) },
+              { label: t("savings.result.timeToGoal"), value: result.monthsToGoal < 0 ? t("savings.result.50plusYears") : `${result.monthsToGoal} ${t("savings.result.months")} (${(result.monthsToGoal / 12).toFixed(1)} ${t("savings.result.yrs")})` },
+              { label: t("savings.result.totalContributions"), value: usd(result.totalContributions) },
+              { label: t("savings.result.totalInterestEarned"), value: usd(result.totalInterest) },
+              { label: t("savings.result.finalBalance"), value: usd(result.finalAmount) },
             ].map(({ label, value }) => (
               <div key={label} style={{ background: "#0f2318", border: "1px solid #166534", borderRadius: "0.75rem", padding: "0.75rem 1rem" }}>
                 <div style={{ fontSize: "0.7rem", color: "#4ade80", textTransform: "uppercase", letterSpacing: "0.08em" }}>{label}</div>
@@ -130,9 +132,9 @@ function TabGoal() {
                   return `${x},${y}`;
                 }).join(" ")}
               />
-              <text x="4" y={chartH - (parseFloat(target) / maxBalance) * chartH - 4} fill="#fbbf24" fontSize="9">Goal: {usd(parseFloat(target))}</text>
-              <text x="4" y={chartH + 20} fill="#4ade80" fontSize="9">Balance</text>
-              <text x="60" y={chartH + 20} fill="#60a5fa" fontSize="9">Contributions</text>
+              <text x="4" y={chartH - (parseFloat(target) / maxBalance) * chartH - 4} fill="#fbbf24" fontSize="9">{t("savings.chart.goal")}: {usd(parseFloat(target))}</text>
+              <text x="4" y={chartH + 20} fill="#4ade80" fontSize="9">{t("savings.chart.balance")}</text>
+              <text x="60" y={chartH + 20} fill="#60a5fa" fontSize="9">{t("savings.chart.contributions")}</text>
             </svg>
           </div>
         </div>
@@ -143,6 +145,7 @@ function TabGoal() {
 
 // --- Tab 2: Emergency Fund ---
 function TabEmergency() {
+  const { t } = useLanguage();
   const [expenses, setExpenses] = useState("4000");
   const [savings, setSavings] = useState("5000");
   const [monthlySave, setMonthlySave] = useState("500");
@@ -152,7 +155,7 @@ function TabEmergency() {
   function calculate() {
     try {
       const e = parseFloat(expenses), s = parseFloat(savings);
-      if (isNaN(e) || e <= 0) throw new Error("Enter valid monthly expenses");
+      if (isNaN(e) || e <= 0) throw new Error(t("savings.error.invalidExpenses"));
       const r = calcEmergencyFund(e, s || 0);
       setResult(r);
       setError("");
@@ -164,20 +167,20 @@ function TabEmergency() {
   return (
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "0.75rem", marginBottom: "1rem" }}>
-        <Field label="Monthly Expenses" value={expenses} onChange={setExpenses} prefix="$" />
-        <Field label="Current Savings" value={savings} onChange={setSavings} prefix="$" />
-        <Field label="Monthly Savings" value={monthlySave} onChange={setMonthlySave} prefix="$" />
+        <Field label={t("savings.label.monthlyExpenses")} value={expenses} onChange={setExpenses} prefix="$" />
+        <Field label={t("savings.label.currentSavings")} value={savings} onChange={setSavings} prefix="$" />
+        <Field label={t("savings.label.monthlySavings")} value={monthlySave} onChange={setMonthlySave} prefix="$" />
       </div>
       <button onClick={calculate} style={{ background: "#16a34a", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1.5rem", fontWeight: 700, cursor: "pointer" }}>
-        Calculate
+        {t("savings.btn.calculate")}
       </button>
       {error && <p style={{ color: "#f87171", marginTop: "0.5rem", fontSize: "0.85rem" }}>{error}</p>}
       {result && (
         <div style={{ marginTop: "1rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
           {[
-            { tier: "3-Month Fund", target: result.threeMonth, gap: result.gapThree, months: result.monthsToThree(monthly), color: "#fbbf24" },
-            { tier: "6-Month Fund", target: result.sixMonth, gap: result.gapSix, months: result.monthsToSix(monthly), color: "#60a5fa" },
-            { tier: "12-Month Fund", target: result.twelveMonth, gap: result.gapTwelve, months: result.monthsToTwelve(monthly), color: "#4ade80" },
+            { tier: t("savings.emergency.3month"), target: result.threeMonth, gap: result.gapThree, months: result.monthsToThree(monthly), color: "#fbbf24" },
+            { tier: t("savings.emergency.6month"), target: result.sixMonth, gap: result.gapSix, months: result.monthsToSix(monthly), color: "#60a5fa" },
+            { tier: t("savings.emergency.12month"), target: result.twelveMonth, gap: result.gapTwelve, months: result.monthsToTwelve(monthly), color: "#4ade80" },
           ].map(({ tier, target, gap, months, color }) => (
             <div key={tier} style={{ background: "#0a0a0b", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1rem" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
@@ -185,9 +188,9 @@ function TabEmergency() {
                 <span style={{ color: "#f4f4f5", fontWeight: 700 }}>{usd(target)}</span>
               </div>
               <div style={{ fontSize: "0.85rem", color: "#71717a" }}>
-                Gap: <span style={{ color: gap === 0 ? "#4ade80" : "#f87171" }}>{gap === 0 ? "Already funded!" : usd(gap)}</span>
+                {t("savings.emergency.gap")}: <span style={{ color: gap === 0 ? "#4ade80" : "#f87171" }}>{gap === 0 ? t("savings.emergency.alreadyFunded") : usd(gap)}</span>
                 {gap > 0 && monthly > 0 && (
-                  <span style={{ marginLeft: "1rem" }}>Time to reach: <strong style={{ color: "#f4f4f5" }}>{months} months</strong></span>
+                  <span style={{ marginLeft: "1rem" }}>{t("savings.emergency.timeToReach")}: <strong style={{ color: "#f4f4f5" }}>{months} {t("savings.result.months")}</strong></span>
                 )}
               </div>
             </div>
@@ -200,6 +203,7 @@ function TabEmergency() {
 
 // --- Tab 3: CD Calculator ---
 function TabCD() {
+  const { t } = useLanguage();
   const [principal, setPrincipal] = useState("10000");
   const [apy, setApy] = useState("5.0");
   const [term, setTerm] = useState("12");
@@ -209,9 +213,9 @@ function TabCD() {
 
   function calculate() {
     try {
-      const p = parseFloat(principal), a = parseFloat(apy), t = parseInt(term);
-      if (isNaN(p) || p <= 0 || isNaN(a) || a < 0 || isNaN(t) || t <= 0) throw new Error("Invalid inputs");
-      const terms = [t, t * 2, t * 3].filter((v, i, arr) => arr.indexOf(v) === i).slice(0, 3);
+      const p = parseFloat(principal), a = parseFloat(apy), tv = parseInt(term);
+      if (isNaN(p) || p <= 0 || isNaN(a) || a < 0 || isNaN(tv) || tv <= 0) throw new Error(t("savings.error.invalidInputs"));
+      const terms = [tv, tv * 2, tv * 3].filter((v, i, arr) => arr.indexOf(v) === i).slice(0, 3);
       const res = terms.map((tm) => ({ termMonths: tm, res: calcCD(p, a, tm, compounding) }));
       setResults(res);
       setError("");
@@ -221,30 +225,30 @@ function TabCD() {
   return (
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "0.75rem", marginBottom: "1rem" }}>
-        <Field label="Principal" value={principal} onChange={setPrincipal} prefix="$" />
-        <Field label="APY (%)" value={apy} onChange={setApy} />
-        <Field label="Term (months)" value={term} onChange={setTerm} />
+        <Field label={t("savings.label.principal")} value={principal} onChange={setPrincipal} prefix="$" />
+        <Field label={t("savings.label.apy")} value={apy} onChange={setApy} />
+        <Field label={t("savings.label.termMonths")} value={term} onChange={setTerm} />
         <div>
-          <label style={{ fontSize: "0.8rem", color: "#a1a1aa", display: "block", marginBottom: "0.3rem" }}>Compounding</label>
+          <label style={{ fontSize: "0.8rem", color: "#a1a1aa", display: "block", marginBottom: "0.3rem" }}>{t("savings.label.compounding")}</label>
           <select value={compounding} onChange={(e) => setCompounding(e.target.value as "daily"|"monthly"|"quarterly"|"yearly")} style={SELECT_STYLE}>
-            <option value="daily">Daily</option>
-            <option value="monthly">Monthly</option>
-            <option value="quarterly">Quarterly</option>
-            <option value="yearly">Yearly</option>
+            <option value="daily">{t("savings.option.daily")}</option>
+            <option value="monthly">{t("savings.option.monthly")}</option>
+            <option value="quarterly">{t("savings.option.quarterly")}</option>
+            <option value="yearly">{t("savings.option.yearly")}</option>
           </select>
         </div>
       </div>
       <button onClick={calculate} style={{ background: "#16a34a", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1.5rem", fontWeight: 700, cursor: "pointer" }}>
-        Calculate
+        {t("savings.btn.calculate")}
       </button>
       {error && <p style={{ color: "#f87171", marginTop: "0.5rem", fontSize: "0.85rem" }}>{error}</p>}
       {results && (
         <div style={{ marginTop: "1rem", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "0.75rem" }}>
           {results.map(({ termMonths, res }, i) => (
             <div key={termMonths} style={{ background: i === 0 ? "#0f2318" : "#0a0a0b", border: `1px solid ${i === 0 ? "#166534" : "#27272a"}`, borderRadius: "0.75rem", padding: "1rem" }}>
-              <div style={{ fontSize: "0.8rem", color: "#71717a", marginBottom: "0.5rem" }}>{termMonths} months ({(termMonths / 12).toFixed(1)} yr)</div>
+              <div style={{ fontSize: "0.8rem", color: "#71717a", marginBottom: "0.5rem" }}>{termMonths} {t("savings.result.months")} ({(termMonths / 12).toFixed(1)} {t("savings.result.yr")})</div>
               <div style={{ fontSize: "1.15rem", fontWeight: 800, color: "#f4f4f5" }}>{usd(res.maturityValue)}</div>
-              <div style={{ fontSize: "0.8rem", color: "#4ade80", marginTop: "0.25rem" }}>+{usd(res.interestEarned)} interest</div>
+              <div style={{ fontSize: "0.8rem", color: "#4ade80", marginTop: "0.25rem" }}>+{usd(res.interestEarned)} {t("savings.cd.interest")}</div>
             </div>
           ))}
         </div>
@@ -255,17 +259,18 @@ function TabCD() {
 
 // --- Main ---
 export default function SavingsPage() {
+  const { t } = useLanguage();
   const [tab, setTab] = useState<"goal" | "emergency" | "cd">("goal");
 
   return (
     <div style={{ maxWidth: "52rem", margin: "0 auto", padding: "1.5rem 1rem" }}>
       <h1 style={{ textAlign: "center", fontSize: "1.5rem", fontWeight: 800, color: "#4ade80", marginBottom: "1.5rem" }}>
-        Savings Goal Calculator
+        {t("savings.title")}
       </h1>
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
-        <button style={TAB_STYLE(tab === "goal")} onClick={() => setTab("goal")}>Savings Goal</button>
-        <button style={TAB_STYLE(tab === "emergency")} onClick={() => setTab("emergency")}>Emergency Fund</button>
-        <button style={TAB_STYLE(tab === "cd")} onClick={() => setTab("cd")}>CD / Deposit</button>
+        <button style={TAB_STYLE(tab === "goal")} onClick={() => setTab("goal")}>{t("savings.tab.goal")}</button>
+        <button style={TAB_STYLE(tab === "emergency")} onClick={() => setTab("emergency")}>{t("savings.tab.emergency")}</button>
+        <button style={TAB_STYLE(tab === "cd")} onClick={() => setTab("cd")}>{t("savings.tab.cd")}</button>
       </div>
       <div style={{ background: "#111113", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1.5rem" }}>
         {tab === "goal" && <TabGoal />}
@@ -273,7 +278,7 @@ export default function SavingsPage() {
         {tab === "cd" && <TabCD />}
       </div>
       <p style={{ marginTop: "1.5rem", fontSize: "0.7rem", color: "#3f3f46", textAlign: "center" }}>
-        For educational purposes only. Results are estimates — consult a financial advisor for personalized guidance. (2025 rates)
+        {t("savings.desc.disclaimer")}
       </p>
     </div>
   );

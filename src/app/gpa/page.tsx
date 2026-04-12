@@ -8,6 +8,7 @@ import {
   type GradingScale,
   type Course,
 } from "@/lib/calculations/gpa";
+import { useLanguage } from "@/context/LanguageContext";
 
 const SCALE_LABELS: Record<GradingScale, string> = {
   us4: "US 4.0",
@@ -17,6 +18,7 @@ const SCALE_LABELS: Record<GradingScale, string> = {
 };
 
 export default function GPAPage() {
+  const { t } = useLanguage();
   const [scale, setScale] = useState<GradingScale>("us4");
   const [courses, setCourses] = useState<Course[]>([
     { name: "Mathematics", grade: "A", credits: 3 },
@@ -60,8 +62,8 @@ export default function GPAPage() {
 
   return (
     <div style={{ maxWidth: "860px", margin: "0 auto" }}>
-      <h1 style={{ fontSize: "2rem", fontWeight: 800, marginBottom: "0.5rem" }}>GPA Calculator</h1>
-      <p style={{ color: "#71717a", marginBottom: "2rem" }}>Weighted GPA by credits + cumulative GPA tracker.</p>
+      <h1 style={{ fontSize: "2rem", fontWeight: 800, marginBottom: "0.5rem" }}>{t("gpa.title")}</h1>
+      <p style={{ color: "#71717a", marginBottom: "2rem" }}>{t("gpa.subtitle")}</p>
 
       {/* Scale selector */}
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "2rem" }}>
@@ -83,7 +85,7 @@ export default function GPAPage() {
           {/* Course table */}
           <div style={{ background: "#18181b", border: "1px solid #27272a", borderRadius: "0.75rem", overflow: "hidden", marginBottom: "1rem" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 110px 80px 80px 32px", gap: "0.5rem", padding: "0.75rem 1.25rem", borderBottom: "1px solid #3f3f46" }}>
-              {["Course Name", "Grade", "Credits", "Points", ""].map((h) => (
+              {[t("gpa.col.courseName"), t("gpa.col.grade"), t("gpa.col.credits"), t("gpa.col.points"), ""].map((h) => (
                 <div key={h} style={{ fontSize: "0.75rem", color: "#71717a", fontWeight: 600 }}>{h}</div>
               ))}
             </div>
@@ -92,7 +94,7 @@ export default function GPAPage() {
               return (
                 <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 110px 80px 80px 32px", gap: "0.5rem", padding: "0.5rem 1.25rem", borderBottom: "1px solid #27272a", alignItems: "center" }}>
                   <input type="text" value={course.name} onChange={(e) => updateCourse(i, "name", e.target.value)}
-                    placeholder="Course name"
+                    placeholder={t("gpa.placeholder.courseName")}
                     style={{ padding: "0.35rem 0.5rem", borderRadius: "0.375rem", border: "1px solid #3f3f46", background: "#09090b", color: "#fafafa", fontSize: "0.85rem", width: "100%" }} />
                   <select value={course.grade} onChange={(e) => updateCourse(i, "grade", e.target.value)}
                     style={{ padding: "0.35rem 0.5rem", borderRadius: "0.375rem", border: "1px solid #3f3f46", background: "#09090b", color: "#fafafa", fontSize: "0.85rem", width: "100%" }}>
@@ -111,53 +113,53 @@ export default function GPAPage() {
           </div>
           <button onClick={addCourse}
             style={{ padding: "0.5rem 1.25rem", background: "#27272a", border: "1px solid #3f3f46", borderRadius: "0.5rem", color: "#a1a1aa", cursor: "pointer", fontSize: "0.875rem" }}>
-            + Add Course
+            {t("gpa.btn.addCourse")}
           </button>
         </div>
 
         {/* Results panel */}
         <div>
           <div style={{ background: "#18181b", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1.5rem", marginBottom: "1rem", textAlign: "center" }}>
-            <div style={{ fontSize: "0.75rem", color: "#71717a", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.5rem" }}>Semester GPA</div>
+            <div style={{ fontSize: "0.75rem", color: "#71717a", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "0.5rem" }}>{t("gpa.result.semesterGPA")}</div>
             <div style={{ fontSize: "3.5rem", fontWeight: 900, color: gpaColor(gpaResult.gpa), lineHeight: 1 }}>
               {gpaResult.gpa.toFixed(2)}
             </div>
             <div style={{ fontSize: "0.85rem", color: "#71717a", marginTop: "0.5rem" }}>
-              {gpaResult.totalCredits} credits · {gpaResult.totalPoints.toFixed(1)} total points
+              {gpaResult.totalCredits} {t("gpa.result.credits")} · {gpaResult.totalPoints.toFixed(1)} {t("gpa.result.totalPoints")}
             </div>
             <div style={{ marginTop: "1rem", height: "8px", background: "#27272a", borderRadius: "4px", overflow: "hidden" }}>
               <div style={{ height: "100%", width: `${(gpaResult.gpa / maxGPA) * 100}%`, background: gpaColor(gpaResult.gpa), borderRadius: "4px", transition: "width 0.3s" }} />
             </div>
             <div style={{ fontSize: "0.75rem", color: "#71717a", marginTop: "0.25rem" }}>
-              {((gpaResult.gpa / maxGPA) * 100).toFixed(1)}% of max ({maxGPA.toFixed(1)})
+              {((gpaResult.gpa / maxGPA) * 100).toFixed(1)}% {t("gpa.result.ofMax")} ({maxGPA.toFixed(1)})
             </div>
           </div>
 
           <div style={{ background: "#18181b", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1.5rem" }}>
-            <div style={{ fontWeight: 700, color: "#a78bfa", marginBottom: "1rem", fontSize: "0.9rem" }}>Cumulative GPA</div>
+            <div style={{ fontWeight: 700, color: "#a78bfa", marginBottom: "1rem", fontSize: "0.9rem" }}>{t("gpa.result.cumulativeGPA")}</div>
             <div style={{ marginBottom: "0.75rem" }}>
-              <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.75rem", marginBottom: "0.25rem" }}>Previous GPA</label>
+              <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.75rem", marginBottom: "0.25rem" }}>{t("gpa.label.previousGPA")}</label>
               <input type="number" value={prevGPA} onChange={(e) => setPrevGPA(e.target.value)} step="0.01"
                 style={{ width: "100%", padding: "0.4rem 0.6rem", borderRadius: "0.375rem", border: "1px solid #3f3f46", background: "#09090b", color: "#fafafa", fontSize: "0.875rem" }} />
             </div>
             <div style={{ marginBottom: "1rem" }}>
-              <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.75rem", marginBottom: "0.25rem" }}>Previous Credits</label>
+              <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.75rem", marginBottom: "0.25rem" }}>{t("gpa.label.previousCredits")}</label>
               <input type="number" value={prevCredits} onChange={(e) => setPrevCredits(e.target.value)}
                 style={{ width: "100%", padding: "0.4rem 0.6rem", borderRadius: "0.375rem", border: "1px solid #3f3f46", background: "#09090b", color: "#fafafa", fontSize: "0.875rem" }} />
             </div>
             <div style={{ textAlign: "center", padding: "0.875rem", background: "#09090b", borderRadius: "0.5rem" }}>
-              <div style={{ fontSize: "0.75rem", color: "#71717a", marginBottom: "0.25rem" }}>New Cumulative GPA</div>
+              <div style={{ fontSize: "0.75rem", color: "#71717a", marginBottom: "0.25rem" }}>{t("gpa.result.newCumulativeGPA")}</div>
               <div style={{ fontSize: "2rem", fontWeight: 800, color: gpaColor(cumulResult.newGPA) }}>
                 {cumulResult.newGPA.toFixed(2)}
               </div>
-              <div style={{ fontSize: "0.75rem", color: "#71717a" }}>{cumulResult.totalCredits} total credits</div>
+              <div style={{ fontSize: "0.75rem", color: "#71717a" }}>{cumulResult.totalCredits} {t("gpa.result.totalCredits")}</div>
             </div>
           </div>
         </div>
       </div>
 
       <p style={{ marginTop: "3rem", fontSize: "0.8rem", color: "#52525b", borderTop: "1px solid #27272a", paddingTop: "1rem" }}>
-        Results are for informational purposes only. Consult a qualified professional for official decisions.
+        {t("common.disclaimerProfessional")}
       </p>
     </div>
   );

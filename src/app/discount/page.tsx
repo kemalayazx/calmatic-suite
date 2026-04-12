@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
 
 function fmtCurrency(n: number) {
   return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -30,10 +31,9 @@ const labelStyle: React.CSSProperties = {
   textTransform: "uppercase",
 };
 
-const TABS = ["Price → Discount", "Find Discount %", "Bulk Calculator"];
-
 // --- Tab 1: Original price + discount % → discounted price ---
 function PriceDiscountTab() {
+  const { t } = useLanguage();
   const [original, setOriginal] = useState("");
   const [discountPct, setDiscountPct] = useState("");
 
@@ -48,11 +48,11 @@ function PriceDiscountTab() {
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.5rem" }}>
         <div>
-          <label style={labelStyle}>Original Price</label>
+          <label style={labelStyle}>{t("discount.label.original_price")}</label>
           <input type="number" style={inputStyle} placeholder="100" value={original} onChange={(e) => setOriginal(e.target.value)} />
         </div>
         <div>
-          <label style={labelStyle}>Discount (%)</label>
+          <label style={labelStyle}>{t("discount.label.discount_pct")}</label>
           <input type="number" style={inputStyle} placeholder="20" min="0" max="100" value={discountPct} onChange={(e) => setDiscountPct(e.target.value)} />
         </div>
       </div>
@@ -66,10 +66,10 @@ function PriceDiscountTab() {
             padding: "1.5rem",
             textAlign: "center",
           }}>
-            <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.5rem", textTransform: "uppercase" }}>Discounted Price</p>
+            <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.5rem", textTransform: "uppercase" }}>{t("discount.result.discounted_price")}</p>
             <p style={{ fontSize: "2.25rem", fontWeight: 900, color: "#4ade80" }}>${fmtCurrency(discounted)}</p>
             <p style={{ fontSize: "0.8rem", color: "#52525b", marginTop: "0.4rem" }}>
-              was ${fmtCurrency(price)}
+              {t("discount.result.was")} ${fmtCurrency(price)}
             </p>
           </div>
           <div style={{
@@ -79,7 +79,7 @@ function PriceDiscountTab() {
             padding: "1.5rem",
             textAlign: "center",
           }}>
-            <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.5rem", textTransform: "uppercase" }}>You Save</p>
+            <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.5rem", textTransform: "uppercase" }}>{t("discount.result.you_save")}</p>
             <p style={{ fontSize: "2.25rem", fontWeight: 900, color: "#fb923c" }}>${fmtCurrency(savings)}</p>
             <p style={{ fontSize: "0.8rem", color: "#52525b", marginTop: "0.4rem" }}>
               {pct}% off
@@ -93,6 +93,7 @@ function PriceDiscountTab() {
 
 // --- Tab 2: Original + discounted → find % ---
 function FindPctTab() {
+  const { t } = useLanguage();
   const [original, setOriginal] = useState("");
   const [discounted, setDiscounted] = useState("");
 
@@ -107,11 +108,11 @@ function FindPctTab() {
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.5rem" }}>
         <div>
-          <label style={labelStyle}>Original Price</label>
+          <label style={labelStyle}>{t("discount.label.original_price")}</label>
           <input type="number" style={inputStyle} placeholder="100" value={original} onChange={(e) => setOriginal(e.target.value)} />
         </div>
         <div>
-          <label style={labelStyle}>Sale Price</label>
+          <label style={labelStyle}>{t("discount.label.sale_price")}</label>
           <input type="number" style={inputStyle} placeholder="75" value={discounted} onChange={(e) => setDiscounted(e.target.value)} />
         </div>
       </div>
@@ -125,7 +126,7 @@ function FindPctTab() {
             padding: "1.5rem",
             textAlign: "center",
           }}>
-            <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.5rem", textTransform: "uppercase" }}>Discount Rate</p>
+            <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.5rem", textTransform: "uppercase" }}>{t("discount.result.discount_rate")}</p>
             <p style={{ fontSize: "2.5rem", fontWeight: 900, color: "#a78bfa" }}>{pct.toFixed(2)}%</p>
           </div>
           <div style={{
@@ -135,7 +136,7 @@ function FindPctTab() {
             padding: "1.5rem",
             textAlign: "center",
           }}>
-            <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.5rem", textTransform: "uppercase" }}>Total Savings</p>
+            <p style={{ fontSize: "0.7rem", color: "#71717a", marginBottom: "0.5rem", textTransform: "uppercase" }}>{t("discount.result.total_savings")}</p>
             <p style={{ fontSize: "2.5rem", fontWeight: 900, color: "#fb923c" }}>${fmtCurrency(savings)}</p>
           </div>
         </div>
@@ -149,6 +150,7 @@ interface BulkItem { id: number; name: string; price: string; pct: string; }
 let nextBulkId = 10;
 
 function BulkTab() {
+  const { t } = useLanguage();
   const [items, setItems] = useState<BulkItem[]>([
     { id: 1, name: "", price: "", pct: "" },
     { id: 2, name: "", price: "", pct: "" },
@@ -183,13 +185,13 @@ function BulkTab() {
     <div>
       <div style={{ marginBottom: "0.75rem" }}>
         <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 32px", gap: "0.5rem", marginBottom: "0.4rem" }}>
-          {["Item", "Price", "Discount %", ""].map((h) => (
+          {[t("discount.bulk.col.item"), t("discount.bulk.col.price"), t("discount.bulk.col.discount_pct"), ""].map((h) => (
             <p key={h} style={{ fontSize: "0.7rem", color: "#71717a", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em" }}>{h}</p>
           ))}
         </div>
         {items.map((item) => (
           <div key={item.id} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 32px", gap: "0.5rem", marginBottom: "0.5rem", alignItems: "center" }}>
-            <input type="text" style={{ ...inputStyle, fontSize: "0.875rem", padding: "0.5rem 0.75rem" }} placeholder="Product name" value={item.name} onChange={(e) => update(item.id, "name", e.target.value)} />
+            <input type="text" style={{ ...inputStyle, fontSize: "0.875rem", padding: "0.5rem 0.75rem" }} placeholder={t("discount.placeholder.product_name")} value={item.name} onChange={(e) => update(item.id, "name", e.target.value)} />
             <input type="number" style={{ ...inputStyle, fontSize: "0.875rem", padding: "0.5rem 0.75rem" }} placeholder="0.00" value={item.price} onChange={(e) => update(item.id, "price", e.target.value)} />
             <input type="number" style={{ ...inputStyle, fontSize: "0.875rem", padding: "0.5rem 0.75rem" }} placeholder="0" min="0" max="100" value={item.pct} onChange={(e) => update(item.id, "pct", e.target.value)} />
             {items.length > 1 ? (
@@ -217,7 +219,7 @@ function BulkTab() {
           marginBottom: "1.5rem",
         }}
       >
-        <Plus size={13} /> Add Item
+        <Plus size={13} /> {t("discount.btn.add_item")}
       </button>
 
       {/* Results table */}
@@ -227,7 +229,13 @@ function BulkTab() {
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid #27272a" }}>
-                  {["Item", "Original", "Discount", "Sale Price", "Savings"].map((h) => (
+                  {[
+                    t("discount.table.item"),
+                    t("discount.table.original"),
+                    t("discount.table.discount"),
+                    t("discount.table.sale_price"),
+                    t("discount.table.savings"),
+                  ].map((h) => (
                     <th key={h} style={{ padding: "0.5rem 0.75rem", textAlign: "right", color: "#71717a", fontWeight: 600, fontSize: "0.75rem" }}>{h}</th>
                   ))}
                 </tr>
@@ -248,9 +256,9 @@ function BulkTab() {
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.75rem" }}>
             {[
-              { label: "Total Original", value: totalOriginal, color: "#a1a1aa" },
-              { label: "Total Sale Price", value: totalDiscounted, color: "#4ade80" },
-              { label: "Total Savings", value: totalSavings, color: "#fb923c" },
+              { label: t("discount.total.original"), value: totalOriginal, color: "#a1a1aa" },
+              { label: t("discount.total.sale_price"), value: totalDiscounted, color: "#4ade80" },
+              { label: t("discount.total.savings"), value: totalSavings, color: "#fb923c" },
             ].map(({ label, value, color }) => (
               <div key={label} style={{
                 background: "#09090b",
@@ -271,7 +279,14 @@ function BulkTab() {
 }
 
 export default function DiscountPage() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState(0);
+
+  const TABS = [
+    t("discount.tab.price_discount"),
+    t("discount.tab.find_pct"),
+    t("discount.tab.bulk"),
+  ];
 
   return (
     <div style={{ maxWidth: "760px", margin: "0 auto" }}>
@@ -279,7 +294,7 @@ export default function DiscountPage() {
         <Link href="/" style={{ color: "#71717a", display: "flex", alignItems: "center" }}>
           <ArrowLeft size={18} />
         </Link>
-        <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>Discount Calculator</h1>
+        <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>{t("discount.title")}</h1>
       </div>
 
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.25rem" }}>
@@ -316,7 +331,7 @@ export default function DiscountPage() {
       </div>
 
       <p style={{ textAlign: "center", color: "#3f3f46", fontSize: "0.75rem", marginTop: "1.25rem" }}>
-        Results are for informational purposes only.
+        {t("discount.footer.note")}
       </p>
     </div>
   );

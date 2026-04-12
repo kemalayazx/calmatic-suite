@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import RetroWindow from "@/components/RetroWindow";
+import { useLanguage } from "@/context/LanguageContext";
 import { parseNumbers, calcStats, buildHistogram } from "@/lib/calculations/statistics";
 import ExportButton from "@/components/ui/ExportButton";
 import PrintButton from "@/components/ui/PrintButton";
@@ -22,6 +23,7 @@ const card: React.CSSProperties = {
 };
 
 export default function StatisticsPage() {
+  const { t } = useLanguage();
   const [input, setInput] = useState("");
   const [showSorted, setShowSorted] = useState(false);
 
@@ -34,37 +36,37 @@ export default function StatisticsPage() {
 
   const statCards = stats
     ? [
-        { label: "Count", value: String(stats.count), color: "#a78bfa" },
-        { label: "Sum", value: fmt(stats.sum), color: "#a78bfa" },
-        { label: "Mean", value: fmt(stats.mean), color: "#60a5fa" },
-        { label: "Median", value: fmt(stats.median), color: "#60a5fa" },
-        { label: "Mode", value: stats.mode.map(fmt).join(", "), color: "#34d399" },
-        { label: "Range", value: fmt(stats.range), color: "#34d399" },
-        { label: "Min", value: fmt(stats.min), color: "#fb923c" },
-        { label: "Max", value: fmt(stats.max), color: "#fb923c" },
-        { label: "Std Dev", value: fmt(stats.stdDev), color: "#f472b6" },
-        { label: "Variance", value: fmt(stats.variance), color: "#f472b6" },
+        { label: t("statistics.stat.count"), value: String(stats.count), color: "#a78bfa" },
+        { label: t("statistics.stat.sum"), value: fmt(stats.sum), color: "#a78bfa" },
+        { label: t("statistics.stat.mean"), value: fmt(stats.mean), color: "#60a5fa" },
+        { label: t("statistics.stat.median"), value: fmt(stats.median), color: "#60a5fa" },
+        { label: t("statistics.stat.mode"), value: stats.mode.map(fmt).join(", "), color: "#34d399" },
+        { label: t("statistics.stat.range"), value: fmt(stats.range), color: "#34d399" },
+        { label: t("statistics.stat.min"), value: fmt(stats.min), color: "#fb923c" },
+        { label: t("statistics.stat.max"), value: fmt(stats.max), color: "#fb923c" },
+        { label: t("statistics.stat.stdDev"), value: fmt(stats.stdDev), color: "#f472b6" },
+        { label: t("statistics.stat.variance"), value: fmt(stats.variance), color: "#f472b6" },
       ]
     : [];
 
   function getExportData() {
     if (!stats) return [];
     return [
-      { Statistic: "Count", Value: stats.count },
-      { Statistic: "Sum", Value: stats.sum },
-      { Statistic: "Mean", Value: stats.mean },
-      { Statistic: "Median", Value: stats.median },
-      { Statistic: "Mode", Value: stats.mode.map(fmt).join(", ") },
-      { Statistic: "Range", Value: stats.range },
-      { Statistic: "Min", Value: stats.min },
-      { Statistic: "Max", Value: stats.max },
-      { Statistic: "Std Dev", Value: stats.stdDev },
-      { Statistic: "Variance", Value: stats.variance },
+      { Statistic: t("statistics.stat.count"), Value: stats.count },
+      { Statistic: t("statistics.stat.sum"), Value: stats.sum },
+      { Statistic: t("statistics.stat.mean"), Value: stats.mean },
+      { Statistic: t("statistics.stat.median"), Value: stats.median },
+      { Statistic: t("statistics.stat.mode"), Value: stats.mode.map(fmt).join(", ") },
+      { Statistic: t("statistics.stat.range"), Value: stats.range },
+      { Statistic: t("statistics.stat.min"), Value: stats.min },
+      { Statistic: t("statistics.stat.max"), Value: stats.max },
+      { Statistic: t("statistics.stat.stdDev"), Value: stats.stdDev },
+      { Statistic: t("statistics.stat.variance"), Value: stats.variance },
     ];
   }
 
   return (
-    <RetroWindow title="Statistics">
+    <RetroWindow title={t("statistics.title")}>
     <div style={{ maxWidth: "900px", margin: "0 auto" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem", marginBottom: "1.75rem" }}>
@@ -72,7 +74,7 @@ export default function StatisticsPage() {
           <Link href="/" style={{ color: "#71717a", display: "flex", alignItems: "center" }}>
             <ArrowLeft size={18} />
           </Link>
-          <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>Statistics Calculator</h1>
+          <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>{t("statistics.heading")}</h1>
         </div>
         <div style={{ display: "flex", gap: "0.5rem" }}>
           <ExportButton getData={getExportData} filename="calmatic-statistics" sheetName="Statistics" />
@@ -83,12 +85,12 @@ export default function StatisticsPage() {
       {/* Input */}
       <div style={card}>
         <label style={{ fontSize: "0.875rem", color: "#a1a1aa", display: "block", marginBottom: "0.5rem", fontWeight: 600 }}>
-          Enter numbers — separated by commas or newlines
+          {t("statistics.input.label")}
         </label>
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder={"1, 4, 7, 2, 9, 3, 5\n\nor one per line:\n10\n20\n30\n40"}
+          placeholder={t("statistics.input.placeholder")}
           style={{
             width: "100%",
             background: "#27272a",
@@ -107,15 +109,15 @@ export default function StatisticsPage() {
         <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.5rem" }}>
           <p style={{ fontSize: "0.75rem", color: "#52525b" }}>
             {numbers.length > 0
-              ? `${numbers.length} number${numbers.length !== 1 ? "s" : ""} detected`
-              : "Enter numbers to calculate statistics"}
+              ? t("statistics.input.detected").replace("{count}", String(numbers.length)).replace("{plural}", numbers.length !== 1 ? "s" : "")
+              : t("statistics.input.hint")}
           </p>
           {numbers.length > 0 && (
             <button
               onClick={() => setInput("")}
               style={{ background: "none", border: "none", color: "#71717a", fontSize: "0.75rem", cursor: "pointer" }}
             >
-              Clear
+              {t("common.clear")}
             </button>
           )}
         </div>
@@ -152,7 +154,7 @@ export default function StatisticsPage() {
           {histogram.length > 0 && (
             <div style={card}>
               <p style={{ fontSize: "0.9rem", color: "#a1a1aa", marginBottom: "1.25rem", fontWeight: 600 }}>
-                Frequency Histogram
+                {t("statistics.histogram.title")}
               </p>
               <div style={{ display: "flex", alignItems: "flex-end", gap: "6px", height: "180px" }}>
                 {histogram.map((bin, i) => {
@@ -196,7 +198,7 @@ export default function StatisticsPage() {
                 })}
               </div>
               <p style={{ fontSize: "0.7rem", color: "#3f3f46", marginTop: "0.75rem" }}>
-                {histogram.length} equal-width bins · range {fmt(stats.min)} to {fmt(stats.max)}
+                {t("statistics.histogram.footer").replace("{bins}", String(histogram.length)).replace("{min}", fmt(stats.min)).replace("{max}", fmt(stats.max))}
               </p>
             </div>
           )}
@@ -205,7 +207,7 @@ export default function StatisticsPage() {
           <div style={card}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <p style={{ fontSize: "0.9rem", color: "#a1a1aa", fontWeight: 600 }}>
-                Sorted Numbers ({numbers.length})
+                {t("statistics.sorted.title").replace("{count}", String(numbers.length))}
               </p>
               <button
                 onClick={() => setShowSorted(!showSorted)}
@@ -219,7 +221,7 @@ export default function StatisticsPage() {
                   cursor: "pointer",
                 }}
               >
-                {showSorted ? "Hide" : "Show"}
+                {showSorted ? t("common.hide") : t("common.show")}
               </button>
             </div>
             {showSorted && (
@@ -245,7 +247,7 @@ export default function StatisticsPage() {
       )}
 
       <p style={{ textAlign: "center", color: "#3f3f46", fontSize: "0.75rem", marginTop: "1rem" }}>
-        Results are for informational purposes only.
+        {t("common.disclaimer")}
       </p>
     </div>
     </RetroWindow>

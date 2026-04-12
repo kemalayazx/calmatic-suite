@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowLeft, ArrowLeftRight } from "lucide-react";
 import Link from "next/link";
 import { CATEGORIES, convert } from "@/lib/calculations/units";
+import { useLanguage } from "@/context/LanguageContext";
 
 function fmt(n: number) {
   if (!isFinite(n)) return "—";
@@ -49,6 +50,7 @@ const labelStyle: React.CSSProperties = {
 const CATEGORY_KEYS = Object.keys(CATEGORIES);
 
 export default function UnitsPage() {
+  const { t } = useLanguage();
   const [categoryKey, setCategoryKey] = useState("length");
   const [fromUnit, setFromUnit] = useState("m");
   const [toUnit, setToUnit] = useState("ft");
@@ -79,7 +81,7 @@ export default function UnitsPage() {
         <Link href="/" style={{ color: "#71717a", display: "flex", alignItems: "center" }}>
           <ArrowLeft size={18} />
         </Link>
-        <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>Unit Converter</h1>
+        <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>{t("units.title")}</h1>
       </div>
 
       {/* Category tabs */}
@@ -109,7 +111,7 @@ export default function UnitsPage() {
       <div style={{ background: "#18181b", borderRadius: "1rem", border: "1px solid #27272a", padding: "1.75rem" }}>
         {/* Input */}
         <div style={{ marginBottom: "1.25rem" }}>
-          <label style={labelStyle}>Value</label>
+          <label style={labelStyle}>{t("units.label.value")}</label>
           <input
             type="number"
             style={inputStyle}
@@ -122,7 +124,7 @@ export default function UnitsPage() {
         {/* From / Swap / To */}
         <div style={{ display: "flex", alignItems: "flex-end", gap: "0.75rem", marginBottom: "1.5rem" }}>
           <div style={{ flex: 1 }}>
-            <label style={labelStyle}>From</label>
+            <label style={labelStyle}>{t("units.label.from")}</label>
             <select style={selectStyle} value={fromUnit} onChange={(e) => setFromUnit(e.target.value)}>
               {unitKeys.map((key) => (
                 <option key={key} value={key}>{category.units[key].label}</option>
@@ -149,7 +151,7 @@ export default function UnitsPage() {
           </button>
 
           <div style={{ flex: 1 }}>
-            <label style={labelStyle}>To</label>
+            <label style={labelStyle}>{t("units.label.to")}</label>
             <select style={selectStyle} value={toUnit} onChange={(e) => setToUnit(e.target.value)}>
               {unitKeys.map((key) => (
                 <option key={key} value={key}>{category.units[key].label}</option>
@@ -181,7 +183,7 @@ export default function UnitsPage() {
       {result !== null && (
         <div style={{ background: "#18181b", borderRadius: "1rem", border: "1px solid #27272a", padding: "1.5rem", marginTop: "1.25rem" }}>
           <p style={{ fontSize: "0.85rem", color: "#a1a1aa", fontWeight: 600, marginBottom: "1rem" }}>
-            {inputValue} {fromUnit} in all {category.name.toLowerCase()} units
+            {inputValue} {fromUnit} {t("units.allConversionsIn")} {category.name.toLowerCase()} {t("units.allConversionsUnits")}
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
             {unitKeys.filter((k) => k !== fromUnit).map((key) => {
@@ -212,7 +214,7 @@ export default function UnitsPage() {
       )}
 
       <p style={{ textAlign: "center", color: "#3f3f46", fontSize: "0.75rem", marginTop: "1.25rem" }}>
-        Results are for informational purposes only.
+        {t("common.disclaimer")}
       </p>
     </div>
   );

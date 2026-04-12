@@ -13,6 +13,7 @@ import {
 } from "@/lib/calculations/calories";
 import ExportButton from "@/components/ui/ExportButton";
 import PrintButton from "@/components/ui/PrintButton";
+import { useLanguage } from "@/context/LanguageContext";
 
 const PORTION_OPTIONS = [0.5, 1, 1.5, 2, 3];
 const MEAL_TYPES = ["Breakfast", "Lunch", "Dinner", "Snacks"] as const;
@@ -26,6 +27,7 @@ function FoodSearch({
   customFoods: FoodItem[];
   onAdd: (food: FoodItem, portions: number) => void;
 }) {
+  const { t } = useLanguage();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<FoodItem[]>([]);
   const [selectedFood, setSelectedFood] = useState<FoodItem | null>(null);
@@ -68,7 +70,7 @@ function FoodSearch({
     <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", alignItems: "flex-end" }}>
       <div ref={containerRef} style={{ position: "relative", flex: "1 1 240px" }}>
         <label style={{ display: "block", fontSize: "0.75rem", color: "#a1a1aa", marginBottom: "0.4rem" }}>
-          Search food
+          {t("calories.label.searchFood")}
         </label>
         <input
           value={query}
@@ -77,7 +79,7 @@ function FoodSearch({
             if (selectedFood && e.target.value !== selectedFood.name) setSelectedFood(null);
           }}
           onFocus={() => results.length > 0 && setOpen(true)}
-          placeholder="e.g. chicken, apple, rice…"
+          placeholder={t("calories.placeholder.searchFood")}
           style={{
             width: "100%",
             padding: "0.55rem 0.875rem",
@@ -127,7 +129,7 @@ function FoodSearch({
               >
                 <span style={{ fontWeight: 500 }}>{food.name}</span>
                 <span style={{ color: "#71717a", marginLeft: "0.5rem", fontSize: "0.78rem" }}>
-                  {food.serving} · {food.calories} cal
+                  {food.serving} · {food.calories} {t("calories.unit.cal")}
                 </span>
               </button>
             ))}
@@ -137,7 +139,7 @@ function FoodSearch({
 
       <div style={{ flex: "0 0 auto" }}>
         <label style={{ display: "block", fontSize: "0.75rem", color: "#a1a1aa", marginBottom: "0.4rem" }}>
-          Portions
+          {t("calories.label.portions")}
         </label>
         <select
           value={portions}
@@ -176,7 +178,7 @@ function FoodSearch({
           whiteSpace: "nowrap",
         }}
       >
-        Add Food
+        {t("calories.btn.addFood")}
       </button>
     </div>
   );
@@ -190,6 +192,7 @@ function FoodLogTable({
   items: LoggedFood[];
   onRemove: (id: string) => void;
 }) {
+  const { t } = useLanguage();
   if (items.length === 0) return null;
 
   return (
@@ -197,7 +200,16 @@ function FoodLogTable({
       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.875rem" }}>
         <thead>
           <tr style={{ borderBottom: "1px solid #3f3f46" }}>
-            {["Food", "Serving", "Portions", "Calories", "Fat (g)", "Carbs (g)", "Protein (g)", ""].map((h) => (
+            {[
+              t("calories.col.food"),
+              t("calories.col.serving"),
+              t("calories.col.portions"),
+              t("calories.col.calories"),
+              t("calories.col.fat"),
+              t("calories.col.carbs"),
+              t("calories.col.protein"),
+              "",
+            ].map((h) => (
               <th
                 key={h}
                 style={{
@@ -268,13 +280,14 @@ function FoodLogTable({
 
 // ── Shared: Totals Cards ───────────────────────────────────────────────────────
 function TotalsCards({ items }: { items: LoggedFood[] }) {
+  const { t } = useLanguage();
   const totals = calcTotals(items);
 
   const cards = [
-    { label: "Total Calories", value: Math.round(totals.calories), unit: "kcal", color: "#fbbf24" },
-    { label: "Total Fat", value: totals.fat.toFixed(1), unit: "g", color: "#f87171" },
-    { label: "Total Carbs", value: totals.carbs.toFixed(1), unit: "g", color: "#facc15" },
-    { label: "Total Protein", value: totals.protein.toFixed(1), unit: "g", color: "#60a5fa" },
+    { label: t("calories.total.calories"), value: Math.round(totals.calories), unit: "kcal", color: "#fbbf24" },
+    { label: t("calories.total.fat"), value: totals.fat.toFixed(1), unit: "g", color: "#f87171" },
+    { label: t("calories.total.carbs"), value: totals.carbs.toFixed(1), unit: "g", color: "#facc15" },
+    { label: t("calories.total.protein"), value: totals.protein.toFixed(1), unit: "g", color: "#60a5fa" },
   ];
 
   return (
@@ -311,6 +324,8 @@ function Tab1({
   loggedFoods: LoggedFood[];
   setLoggedFoods: React.Dispatch<React.SetStateAction<LoggedFood[]>>;
 }) {
+  const { t } = useLanguage();
+
   function addFood(food: FoodItem, portions: number) {
     setLoggedFoods((prev) => [
       ...prev,
@@ -325,7 +340,7 @@ function Tab1({
   return (
     <div>
       <h2 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#fafafa", marginBottom: "1.25rem" }}>
-        Food Search & Log
+        {t("calories.tab.foodSearch")}
       </h2>
       <FoodSearch customFoods={customFoods} onAdd={addFood} />
       {loggedFoods.length > 0 ? (
@@ -344,7 +359,7 @@ function Tab1({
             padding: "2.5rem",
           }}
         >
-          Search and add foods to start tracking your calories.
+          {t("calories.msg.addFoodsToStart")}
         </div>
       )}
     </div>
@@ -361,6 +376,7 @@ function Tab2({
   mealLogs: Record<MealType, LoggedFood[]>;
   setMealLogs: React.Dispatch<React.SetStateAction<Record<MealType, LoggedFood[]>>>;
 }) {
+  const { t } = useLanguage();
   const [dailyGoal, setDailyGoal] = useState(2000);
 
   function addToMeal(meal: MealType, food: FoodItem, portions: number) {
@@ -392,10 +408,10 @@ function Tab2({
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
         <h2 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#fafafa", margin: 0 }}>
-          Meal Planner
+          {t("calories.tab.mealPlanner")}
         </h2>
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <label style={{ fontSize: "0.8rem", color: "#a1a1aa" }}>Daily Goal:</label>
+          <label style={{ fontSize: "0.8rem", color: "#a1a1aa" }}>{t("calories.label.dailyGoal")}:</label>
           <input
             type="number"
             value={dailyGoal}
@@ -470,7 +486,7 @@ function Tab2({
       {/* Daily totals */}
       {allItems.length > 0 && (
         <div style={{ marginTop: "0.5rem" }}>
-          <h3 style={{ fontWeight: 700, color: "#fafafa", marginBottom: "0.75rem" }}>Daily Total</h3>
+          <h3 style={{ fontWeight: 700, color: "#fafafa", marginBottom: "0.75rem" }}>{t("calories.label.dailyTotal")}</h3>
           <TotalsCards items={allItems} />
         </div>
       )}
@@ -486,6 +502,7 @@ function Tab3({
   customFoods: FoodItem[];
   setCustomFoods: React.Dispatch<React.SetStateAction<FoodItem[]>>;
 }) {
+  const { t } = useLanguage();
   const [form, setForm] = useState({
     name: "",
     calories: "",
@@ -499,7 +516,7 @@ function Tab3({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.name.trim() || !form.calories || !form.serving.trim()) {
-      setError("Name, calories and serving description are required.");
+      setError(t("calories.error.requiredFields"));
       return;
     }
     const item: FoodItem = {
@@ -543,33 +560,33 @@ function Tab3({
   return (
     <div>
       <h2 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#fafafa", marginBottom: "1.25rem" }}>
-        Custom Food
+        {t("calories.tab.customFood")}
       </h2>
       <div style={{ background: "#18181b", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1.5rem", marginBottom: "1.5rem" }}>
         <form onSubmit={handleSubmit}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "0.875rem", marginBottom: "1rem" }}>
             <div>
-              <label style={labelStyle}>Food Name *</label>
-              <input style={inputStyle} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Homemade Soup" />
+              <label style={labelStyle}>{t("calories.custom.foodName")} *</label>
+              <input style={inputStyle} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder={t("calories.custom.foodNamePlaceholder")} />
             </div>
             <div>
-              <label style={labelStyle}>Serving Description *</label>
-              <input style={inputStyle} value={form.serving} onChange={(e) => setForm({ ...form, serving: e.target.value })} placeholder="e.g. 1 bowl (300ml)" />
+              <label style={labelStyle}>{t("calories.custom.servingDesc")} *</label>
+              <input style={inputStyle} value={form.serving} onChange={(e) => setForm({ ...form, serving: e.target.value })} placeholder={t("calories.custom.servingDescPlaceholder")} />
             </div>
             <div>
-              <label style={labelStyle}>Calories (kcal) *</label>
+              <label style={labelStyle}>{t("calories.custom.calories")} *</label>
               <input style={inputStyle} type="number" min="0" value={form.calories} onChange={(e) => setForm({ ...form, calories: e.target.value })} placeholder="e.g. 250" />
             </div>
             <div>
-              <label style={labelStyle}>Fat (g)</label>
+              <label style={labelStyle}>{t("calories.custom.fat")}</label>
               <input style={inputStyle} type="number" min="0" step="0.1" value={form.fat} onChange={(e) => setForm({ ...form, fat: e.target.value })} placeholder="0" />
             </div>
             <div>
-              <label style={labelStyle}>Carbs (g)</label>
+              <label style={labelStyle}>{t("calories.custom.carbs")}</label>
               <input style={inputStyle} type="number" min="0" step="0.1" value={form.carbs} onChange={(e) => setForm({ ...form, carbs: e.target.value })} placeholder="0" />
             </div>
             <div>
-              <label style={labelStyle}>Protein (g)</label>
+              <label style={labelStyle}>{t("calories.custom.protein")}</label>
               <input style={inputStyle} type="number" min="0" step="0.1" value={form.protein} onChange={(e) => setForm({ ...form, protein: e.target.value })} placeholder="0" />
             </div>
           </div>
@@ -587,7 +604,7 @@ function Tab3({
               cursor: "pointer",
             }}
           >
-            Add Custom Food
+            {t("calories.btn.addCustomFood")}
           </button>
         </form>
       </div>
@@ -595,13 +612,21 @@ function Tab3({
       {customFoods.length > 0 && (
         <div>
           <h3 style={{ fontWeight: 700, color: "#fafafa", marginBottom: "0.75rem" }}>
-            My Custom Foods ({customFoods.length})
+            {t("calories.label.myCustomFoods")} ({customFoods.length})
           </h3>
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.875rem" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid #3f3f46" }}>
-                  {["Name", "Serving", "Calories", "Fat", "Carbs", "Protein", ""].map((h) => (
+                  {[
+                    t("calories.col.name"),
+                    t("calories.col.serving"),
+                    t("calories.col.calories"),
+                    t("calories.col.fatShort"),
+                    t("calories.col.carbsShort"),
+                    t("calories.col.proteinShort"),
+                    "",
+                  ].map((h) => (
                     <th key={h} style={{ textAlign: "left", padding: "0.5rem 0.75rem", color: "#71717a", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>{h}</th>
                   ))}
                 </tr>
@@ -633,7 +658,7 @@ function Tab3({
 
       {customFoods.length === 0 && (
         <div style={{ textAlign: "center", color: "#52525b", border: "1px dashed #3f3f46", borderRadius: "0.75rem", padding: "2rem" }}>
-          No custom foods yet. Add your own foods above — they will appear in the Food Search tab.
+          {t("calories.msg.noCustomFoods")}
         </div>
       )}
     </div>
@@ -642,12 +667,13 @@ function Tab3({
 
 // ── Tab 4: Macronutrient Summary ───────────────────────────────────────────────
 function DonutChart({ fat, carbs, protein }: { fat: number; carbs: number; protein: number }) {
+  const { t } = useLanguage();
   const total = fat + carbs + protein;
   if (total === 0) {
     return (
       <svg width="180" height="180" viewBox="0 0 180 180">
         <circle cx="90" cy="90" r="70" fill="none" stroke="#27272a" strokeWidth="28" />
-        <text x="90" y="94" textAnchor="middle" fill="#52525b" fontSize="13">No data</text>
+        <text x="90" y="94" textAnchor="middle" fill="#52525b" fontSize="13">{t("calories.msg.noData")}</text>
       </svg>
     );
   }
@@ -658,9 +684,9 @@ function DonutChart({ fat, carbs, protein }: { fat: number; carbs: number; prote
   const circumference = 2 * Math.PI * r;
 
   const segments = [
-    { value: fat, color: "#f87171", label: "Fat" },
-    { value: carbs, color: "#facc15", label: "Carbs" },
-    { value: protein, color: "#60a5fa", label: "Protein" },
+    { value: fat, color: "#f87171", label: t("calories.macro.fat") },
+    { value: carbs, color: "#facc15", label: t("calories.macro.carbs") },
+    { value: protein, color: "#60a5fa", label: t("calories.macro.protein") },
   ];
 
   let offset = 0;
@@ -701,6 +727,7 @@ function Tab4({
   loggedFoods: LoggedFood[];
   mealLogs: Record<MealType, LoggedFood[]>;
 }) {
+  const { t } = useLanguage();
   const [preset, setPreset] = useState<MacroPreset>("balanced");
 
   const allItems = [...loggedFoods, ...Object.values(mealLogs).flat()];
@@ -711,7 +738,7 @@ function Tab4({
   return (
     <div>
       <h2 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#fafafa", marginBottom: "1.25rem" }}>
-        Macronutrient Summary
+        {t("calories.tab.macroSummary")}
       </h2>
 
       {/* Preset selector */}
@@ -751,14 +778,14 @@ function Tab4({
           }}
         >
           <h3 style={{ margin: "0 0 1rem", fontWeight: 700, color: "#fafafa", fontSize: "0.95rem" }}>
-            Current Macros
+            {t("calories.macro.currentMacros")}
           </h3>
           <DonutChart fat={ratios.fat} carbs={ratios.carbs} protein={ratios.protein} />
           <div style={{ display: "flex", gap: "1rem", marginTop: "1rem", flexWrap: "wrap", justifyContent: "center" }}>
             {[
-              { label: "Fat", pct: ratios.fat, color: "#f87171" },
-              { label: "Carbs", pct: ratios.carbs, color: "#facc15" },
-              { label: "Protein", pct: ratios.protein, color: "#60a5fa" },
+              { label: t("calories.macro.fat"), pct: ratios.fat, color: "#f87171" },
+              { label: t("calories.macro.carbs"), pct: ratios.carbs, color: "#facc15" },
+              { label: t("calories.macro.protein"), pct: ratios.protein, color: "#60a5fa" },
             ].map((item) => (
               <div key={item.label} style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.85rem" }}>
                 <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: item.color, display: "inline-block" }} />
@@ -779,12 +806,12 @@ function Tab4({
           }}
         >
           <h3 style={{ margin: "0 0 1.25rem", fontWeight: 700, color: "#fafafa", fontSize: "0.95rem" }}>
-            Current vs Target ({target.label})
+            {t("calories.macro.currentVsTarget")} ({target.label})
           </h3>
           {[
-            { label: "Fat", current: ratios.fat, target: target.fat, color: "#f87171" },
-            { label: "Carbs", current: ratios.carbs, target: target.carbs, color: "#facc15" },
-            { label: "Protein", current: ratios.protein, target: target.protein, color: "#60a5fa" },
+            { label: t("calories.macro.fat"), current: ratios.fat, target: target.fat, color: "#f87171" },
+            { label: t("calories.macro.carbs"), current: ratios.carbs, target: target.carbs, color: "#facc15" },
+            { label: t("calories.macro.protein"), current: ratios.protein, target: target.protein, color: "#60a5fa" },
           ].map((item) => {
             const diff = item.current - item.target;
             return (
@@ -807,8 +834,8 @@ function Tab4({
                   <div style={{ height: "100%", width: `${item.target}%`, borderRadius: "999px", background: `${item.color}55` }} />
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", marginTop: "2px" }}>
-                  <span style={{ fontSize: "0.7rem", color: "#52525b" }}>Current</span>
-                  <span style={{ fontSize: "0.7rem", color: "#52525b" }}>Target</span>
+                  <span style={{ fontSize: "0.7rem", color: "#52525b" }}>{t("calories.macro.current")}</span>
+                  <span style={{ fontSize: "0.7rem", color: "#52525b" }}>{t("calories.macro.target")}</span>
                 </div>
               </div>
             );
@@ -825,13 +852,13 @@ function Tab4({
           }}
         >
           <h3 style={{ margin: "0 0 1.25rem", fontWeight: 700, color: "#fafafa", fontSize: "0.95rem" }}>
-            Nutrient Totals
+            {t("calories.macro.nutrientTotals")}
           </h3>
           {[
-            { label: "Calories", value: `${Math.round(totals.calories)} kcal`, color: "#fbbf24" },
-            { label: "Fat", value: `${totals.fat.toFixed(1)}g`, sub: `${Math.round(totals.fat * 9)} kcal`, color: "#f87171" },
-            { label: "Carbohydrates", value: `${totals.carbs.toFixed(1)}g`, sub: `${Math.round(totals.carbs * 4)} kcal`, color: "#facc15" },
-            { label: "Protein", value: `${totals.protein.toFixed(1)}g`, sub: `${Math.round(totals.protein * 4)} kcal`, color: "#60a5fa" },
+            { label: t("calories.macro.calories"), value: `${Math.round(totals.calories)} kcal`, color: "#fbbf24" },
+            { label: t("calories.macro.fat"), value: `${totals.fat.toFixed(1)}g`, sub: `${Math.round(totals.fat * 9)} kcal`, color: "#f87171" },
+            { label: t("calories.macro.carbohydrates"), value: `${totals.carbs.toFixed(1)}g`, sub: `${Math.round(totals.carbs * 4)} kcal`, color: "#facc15" },
+            { label: t("calories.macro.protein"), value: `${totals.protein.toFixed(1)}g`, sub: `${Math.round(totals.protein * 4)} kcal`, color: "#60a5fa" },
           ].map((item) => (
             <div key={item.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.6rem 0", borderBottom: "1px solid #27272a" }}>
               <span style={{ color: "#a1a1aa", fontSize: "0.875rem" }}>{item.label}</span>
@@ -846,7 +873,7 @@ function Tab4({
 
       {allItems.length === 0 && (
         <div style={{ textAlign: "center", color: "#52525b", border: "1px dashed #3f3f46", borderRadius: "0.75rem", padding: "2.5rem", marginTop: "1rem" }}>
-          Add foods in Food Search or Meal Planner to see your macro breakdown.
+          {t("calories.msg.addFoodsForMacro")}
         </div>
       )}
     </div>
@@ -854,9 +881,6 @@ function Tab4({
 }
 
 // ── Main Page ──────────────────────────────────────────────────────────────────
-const TABS = ["Food Search & Log", "Meal Planner", "Custom Food", "Macro Summary"] as const;
-type TabName = (typeof TABS)[number];
-
 const emptyMealLogs: Record<MealType, LoggedFood[]> = {
   Breakfast: [],
   Lunch: [],
@@ -865,7 +889,16 @@ const emptyMealLogs: Record<MealType, LoggedFood[]> = {
 };
 
 export default function CaloriesPage() {
-  const [activeTab, setActiveTab] = useState<TabName>("Food Search & Log");
+  const { t } = useLanguage();
+  const TABS = [
+    t("calories.tab.foodSearch"),
+    t("calories.tab.mealPlanner"),
+    t("calories.tab.customFood"),
+    t("calories.tab.macroSummary"),
+  ] as const;
+  type TabName = (typeof TABS)[number];
+
+  const [activeTab, setActiveTab] = useState<TabName>(TABS[0]);
   const [loggedFoods, setLoggedFoods] = useState<LoggedFood[]>([]);
   const [mealLogs, setMealLogs] = useState<Record<MealType, LoggedFood[]>>(emptyMealLogs);
   const [customFoods, setCustomFoods] = useState<FoodItem[]>([]);
@@ -910,10 +943,10 @@ export default function CaloriesPage() {
               marginBottom: "0.5rem",
             }}
           >
-            Food Calorie Calculator
+            {t("calories.title")}
           </h1>
           <p style={{ color: "#71717a", fontSize: "0.9rem" }}>
-            Search 80+ foods, track calories & macros, plan meals, and visualize your nutritional breakdown.
+            {t("calories.subtitle")}
           </p>
         </div>
         <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.25rem" }}>
@@ -963,23 +996,23 @@ export default function CaloriesPage() {
           padding: "1.75rem",
         }}
       >
-        {activeTab === "Food Search & Log" && (
+        {activeTab === TABS[0] && (
           <Tab1 customFoods={customFoods} loggedFoods={loggedFoods} setLoggedFoods={setLoggedFoods} />
         )}
-        {activeTab === "Meal Planner" && (
+        {activeTab === TABS[1] && (
           <Tab2 customFoods={customFoods} mealLogs={mealLogs} setMealLogs={setMealLogs} />
         )}
-        {activeTab === "Custom Food" && (
+        {activeTab === TABS[2] && (
           <Tab3 customFoods={customFoods} setCustomFoods={setCustomFoods} />
         )}
-        {activeTab === "Macro Summary" && (
+        {activeTab === TABS[3] && (
           <Tab4 loggedFoods={loggedFoods} mealLogs={mealLogs} />
         )}
       </div>
 
       {/* Info footer */}
       <p style={{ fontSize: "0.78rem", color: "#52525b", marginTop: "1.25rem", textAlign: "center" }}>
-        Nutritional values are estimates based on standard serving sizes. Consult a dietitian for personalized advice.
+        {t("calories.footer")}
       </p>
     </div>
   );

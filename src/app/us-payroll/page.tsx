@@ -17,6 +17,7 @@ import {
 import ExportButton from "@/components/ui/ExportButton";
 import PrintButton from "@/components/ui/PrintButton";
 import type { ExportRow } from "@/lib/export";
+import { useLanguage } from "@/context/LanguageContext";
 
 const fmt = (n: number) =>
   n.toLocaleString("en-US", { style: "currency", currency: "USD" });
@@ -158,6 +159,8 @@ function USParamsPanel({
     marginBottom: "0.75rem",
   };
 
+  const { t } = useLanguage();
+
   return (
     <div
       style={{
@@ -184,7 +187,7 @@ function USParamsPanel({
       >
         <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
           <span style={{ color: "#fafafa", fontWeight: 600, fontSize: "0.95rem" }}>
-            Customize Parameters
+            {t("usPayroll.params.title")}
           </span>
           <span
             style={{
@@ -196,7 +199,7 @@ function USParamsPanel({
               fontWeight: 600,
             }}
           >
-            {isCustom ? "(custom)" : "(2025 defaults)"}
+            {isCustom ? t("usPayroll.params.custom") : t("usPayroll.params.defaults")}
           </span>
         </div>
         <svg
@@ -232,7 +235,7 @@ function USParamsPanel({
 
           {/* ── Standard Deductions ── */}
           <div style={{ marginBottom: "1.5rem" }}>
-            <p style={sectionLabel}>Standard Deduction ($)</p>
+            <p style={sectionLabel}>{t("usPayroll.params.standardDeduction")}</p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "0.75rem" }}>
               {(
                 [
@@ -270,7 +273,7 @@ function USParamsPanel({
           {/* ── Federal Tax Brackets ── */}
           <div style={{ marginBottom: "1.5rem" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
-              <p style={{ ...sectionLabel, marginBottom: 0 }}>Federal Tax Brackets</p>
+              <p style={{ ...sectionLabel, marginBottom: 0 }}>{t("usPayroll.params.federalBrackets")}</p>
               <div style={{ display: "flex", gap: "0.25rem" }}>
                 {(["single", "mfj", "hoh"] as const).map((t) => (
                   <button key={t} style={bracketTabStyle(t)} onClick={() => setActiveBracketTab(t)}>
@@ -360,7 +363,7 @@ function USParamsPanel({
                   padding: "0.35rem 0.875rem",
                 }}
               >
-                + Add bracket
+                {t("usPayroll.params.addBracket")}
               </button>
               <button
                 onClick={() => removeFederalBracket(activeBracketTab)}
@@ -374,14 +377,14 @@ function USParamsPanel({
                   opacity: params.federalBrackets[activeBracketTab].length <= 1 ? 0.4 : 1,
                 }}
               >
-                Remove last
+                {t("usPayroll.params.removeLast")}
               </button>
             </div>
           </div>
 
           {/* ── FICA ── */}
           <div style={{ marginBottom: "1.5rem" }}>
-            <p style={sectionLabel}>FICA Settings</p>
+            <p style={sectionLabel}>{t("usPayroll.params.ficaSettings")}</p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(220px,1fr))", gap: "0.75rem" }}>
               {[
                 {
@@ -438,7 +441,7 @@ function USParamsPanel({
             {/* Additional Medicare Threshold */}
             <div style={{ marginTop: "0.75rem" }}>
               <p style={{ color: "#a1a1aa", fontSize: "0.78rem", marginBottom: "0.4rem" }}>
-                Additional Medicare Threshold ($)
+                {t("usPayroll.params.additionalMedicareThreshold")}
               </p>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", maxWidth: "460px" }}>
                 {(["single", "mfj"] as const).map((key) => (
@@ -465,14 +468,14 @@ function USParamsPanel({
 
           {/* ── State Tax ── */}
           <div style={{ marginBottom: "1.25rem" }}>
-            <p style={sectionLabel}>State Tax Settings — {selectedState}</p>
+            <p style={sectionLabel}>{t("usPayroll.params.stateTaxSettings")} — {selectedState}</p>
             {stateConfig?.type === "none" ? (
               <p style={{ color: "#52525b", fontSize: "0.875rem" }}>
-                {selectedState} has no state income tax.
+                {selectedState} {t("usPayroll.params.noStateTax")}
               </p>
             ) : stateConfig?.type === "flat" ? (
               <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                <label style={{ color: "#a1a1aa", fontSize: "0.85rem" }}>Flat Rate (%)</label>
+                <label style={{ color: "#a1a1aa", fontSize: "0.85rem" }}>{t("usPayroll.params.flatRate")}</label>
                 <input
                   type="number"
                   step="0.01"
@@ -574,7 +577,7 @@ function USParamsPanel({
               (e.currentTarget as HTMLButtonElement).style.background = "transparent";
             }}
           >
-            Reset to 2025 Defaults
+            {t("usPayroll.params.resetDefaults")}
           </button>
         </div>
       </div>
@@ -617,13 +620,15 @@ export default function USPayrollPage() {
   const sToH = salaryToHourly(salaryNum);
   const ot = calculateOvertime(hoursNum, hourlyNum);
 
+  const { t } = useLanguage();
+
   const FILING_LABELS: Record<FilingStatus, string> = {
-    single: "Single",
-    mfj: "Married Filing Jointly",
-    hoh: "Head of Household",
+    single: t("usPayroll.filing.single"),
+    mfj: t("usPayroll.filing.mfj"),
+    hoh: t("usPayroll.filing.hoh"),
   };
 
-  const tabs = ["Federal Tax", "State Tax", "Hourly ↔ Salary"];
+  const tabs = [t("usPayroll.tab.federal"), t("usPayroll.tab.state"), t("usPayroll.tab.hourly")];
 
   function getExportData(): ExportRow[] {
     if (activeTab === 0) {
@@ -676,14 +681,14 @@ export default function USPayrollPage() {
           marginBottom: "0.5rem",
         }}
       >
-        <h1 style={{ fontSize: "2rem", fontWeight: 800 }}>US Payroll Calculator</h1>
+        <h1 style={{ fontSize: "2rem", fontWeight: 800 }}>{t("usPayroll.title")}</h1>
         <div style={{ display: "flex", gap: "0.5rem" }}>
           <ExportButton getData={getExportData} filename="calmatic-us-payroll" sheetName="US Payroll" />
           <PrintButton />
         </div>
       </div>
       <p style={{ color: "#71717a", marginBottom: "2rem" }}>
-        Federal income tax, FICA, state tax, and take-home pay — 2025 brackets.
+        {t("usPayroll.subtitle")}
       </p>
 
       {/* Customize Parameters */}
@@ -738,7 +743,7 @@ export default function USPayrollPage() {
                   marginBottom: "0.4rem",
                 }}
               >
-                Annual Gross Salary
+                {t("usPayroll.label.annualGross")}
               </label>
               <input
                 type="number"
@@ -765,7 +770,7 @@ export default function USPayrollPage() {
                   marginBottom: "0.4rem",
                 }}
               >
-                Filing Status
+                {t("usPayroll.label.filingStatus")}
               </label>
               <select
                 value={filing}
@@ -780,9 +785,9 @@ export default function USPayrollPage() {
                   fontSize: "0.95rem",
                 }}
               >
-                <option value="single">Single</option>
-                <option value="mfj">Married Filing Jointly</option>
-                <option value="hoh">Head of Household</option>
+                <option value="single">{t("usPayroll.filing.single")}</option>
+                <option value="mfj">{t("usPayroll.filing.mfj")}</option>
+                <option value="hoh">{t("usPayroll.filing.hoh")}</option>
               </select>
             </div>
 
@@ -807,25 +812,25 @@ export default function USPayrollPage() {
                 2025 Summary — {FILING_LABELS[filing]}
               </div>
               {[
-                ["Gross Salary", fmt(fedResult.grossSalary)],
-                ["Standard Deduction", `−${fmt(fedResult.standardDeduction)}`],
-                ["Taxable Income", fmt(fedResult.taxableIncome)],
-                ["Federal Income Tax", `−${fmt(fedResult.totalFederalTax)}`],
-                ["Effective Rate", fmtPct(fedResult.effectiveRate)],
+                [t("usPayroll.result.grossSalary"), fmt(fedResult.grossSalary)],
+                [t("usPayroll.result.standardDeduction"), `−${fmt(fedResult.standardDeduction)}`],
+                [t("usPayroll.result.taxableIncome"), fmt(fedResult.taxableIncome)],
+                [t("usPayroll.result.federalIncomeTax"), `−${fmt(fedResult.totalFederalTax)}`],
+                [t("usPayroll.result.effectiveRate"), fmtPct(fedResult.effectiveRate)],
                 [
-                  `Social Security (${fmtPct(params.socialSecurityRate)})`,
+                  `${t("usPayroll.result.socialSecurity")} (${fmtPct(params.socialSecurityRate)})`,
                   `−${fmt(fedResult.socialSecurity)}`,
                 ],
-                [`Medicare (${fmtPct(params.medicareRate)})`, `−${fmt(fedResult.medicare)}`],
+                [`${t("usPayroll.result.medicare")} (${fmtPct(params.medicareRate)})`, `−${fmt(fedResult.medicare)}`],
                 ...(fedResult.additionalMedicare > 0
                   ? [
                       [
-                        `Additional Medicare (${fmtPct(params.additionalMedicareRate)})`,
+                        `${t("usPayroll.result.additionalMedicare")} (${fmtPct(params.additionalMedicareRate)})`,
                         `−${fmt(fedResult.additionalMedicare)}`,
                       ],
                     ]
                   : []),
-                ["Total FICA", `−${fmt(fedResult.totalFICA)}`],
+                [t("usPayroll.result.totalFICA"), `−${fmt(fedResult.totalFICA)}`],
               ].map(([label, value]) => (
                 <div
                   key={label}
@@ -850,7 +855,7 @@ export default function USPayrollPage() {
                   fontWeight: 700,
                 }}
               >
-                <span style={{ color: "#a78bfa" }}>Net Annual</span>
+                <span style={{ color: "#a78bfa" }}>{t("usPayroll.result.netAnnual")}</span>
                 <span style={{ color: "#22c55e" }}>{fmt(fedResult.netAnnual)}</span>
               </div>
               <div
@@ -861,7 +866,7 @@ export default function USPayrollPage() {
                   fontSize: "0.875rem",
                 }}
               >
-                <span style={{ color: "#71717a" }}>Net Monthly</span>
+                <span style={{ color: "#71717a" }}>{t("usPayroll.result.netMonthly")}</span>
                 <span style={{ color: "#86efac" }}>{fmt(fedResult.netMonthly)}</span>
               </div>
               <div
@@ -872,7 +877,7 @@ export default function USPayrollPage() {
                   fontSize: "0.875rem",
                 }}
               >
-                <span style={{ color: "#71717a" }}>Net Biweekly</span>
+                <span style={{ color: "#71717a" }}>{t("usPayroll.result.netBiweekly")}</span>
                 <span style={{ color: "#86efac" }}>{fmt(fedResult.netBiweekly)}</span>
               </div>
             </div>
@@ -896,7 +901,7 @@ export default function USPayrollPage() {
                   letterSpacing: "0.05em",
                 }}
               >
-                Tax Bracket Breakdown
+                {t("usPayroll.result.bracketBreakdown")}
               </div>
               {fedResult.brackets
                 .filter((b) => showAllBrackets || b.taxableIncome > 0)
@@ -937,7 +942,7 @@ export default function USPayrollPage() {
                   padding: 0,
                 }}
               >
-                {showAllBrackets ? "Show active only" : "Show all brackets"}
+                {showAllBrackets ? t("usPayroll.btn.showActiveOnly") : t("usPayroll.btn.showAllBrackets")}
               </button>
             </div>
           </div>
@@ -957,7 +962,7 @@ export default function USPayrollPage() {
                   marginBottom: "0.4rem",
                 }}
               >
-                Annual Gross Salary
+                {t("usPayroll.label.annualGross")}
               </label>
               <input
                 type="number"
@@ -983,7 +988,7 @@ export default function USPayrollPage() {
                   marginBottom: "0.4rem",
                 }}
               >
-                Filing Status
+                {t("usPayroll.label.filingStatus")}
               </label>
               <select
                 value={filing}
@@ -998,9 +1003,9 @@ export default function USPayrollPage() {
                   fontSize: "0.95rem",
                 }}
               >
-                <option value="single">Single</option>
-                <option value="mfj">Married Filing Jointly</option>
-                <option value="hoh">Head of Household</option>
+                <option value="single">{t("usPayroll.filing.single")}</option>
+                <option value="mfj">{t("usPayroll.filing.mfj")}</option>
+                <option value="hoh">{t("usPayroll.filing.hoh")}</option>
               </select>
             </div>
             <div style={{ marginBottom: "1.25rem" }}>
@@ -1012,7 +1017,7 @@ export default function USPayrollPage() {
                   marginBottom: "0.4rem",
                 }}
               >
-                State
+                {t("usPayroll.label.state")}
               </label>
               <select
                 value={selectedState}
@@ -1054,18 +1059,18 @@ export default function USPayrollPage() {
                   letterSpacing: "0.05em",
                 }}
               >
-                Combined Tax Summary
+                {t("usPayroll.result.combinedTaxSummary")}
               </div>
               {[
-                ["Gross Salary", fmt(grossNum)],
-                ["Federal Income Tax", `−${fmt(fedResult.totalFederalTax)}`],
-                ["Federal Eff. Rate", fmtPct(fedResult.effectiveRate)],
-                [`${stateResult.stateName} State Tax`, `−${fmt(stateResult.stateTax)}`],
-                ["State Eff. Rate", fmtPct(stateResult.stateEffectiveRate)],
-                ["FICA (SS + Medicare)", `−${fmt(fedResult.totalFICA)}`],
-                ["Total Tax", `−${fmt(combinedTax)}`],
+                [t("usPayroll.result.grossSalary"), fmt(grossNum)],
+                [t("usPayroll.result.federalIncomeTax"), `−${fmt(fedResult.totalFederalTax)}`],
+                [t("usPayroll.result.federalEffRate"), fmtPct(fedResult.effectiveRate)],
+                [`${stateResult.stateName} ${t("usPayroll.result.stateTax")}`, `−${fmt(stateResult.stateTax)}`],
+                [t("usPayroll.result.stateEffRate"), fmtPct(stateResult.stateEffectiveRate)],
+                [t("usPayroll.result.ficaSsMedicare"), `−${fmt(fedResult.totalFICA)}`],
+                [t("usPayroll.result.totalTax"), `−${fmt(combinedTax)}`],
                 [
-                  "Combined Eff. Rate",
+                  t("usPayroll.result.combinedEffRate"),
                   grossNum > 0 ? fmtPct(combinedTax / grossNum) : "0%",
                 ],
               ].map(([label, value]) => (
@@ -1092,7 +1097,7 @@ export default function USPayrollPage() {
                   fontWeight: 700,
                 }}
               >
-                <span style={{ color: "#a78bfa" }}>Net Annual</span>
+                <span style={{ color: "#a78bfa" }}>{t("usPayroll.result.netAnnual")}</span>
                 <span style={{ color: "#22c55e" }}>{fmt(combinedNet)}</span>
               </div>
               <div
@@ -1103,7 +1108,7 @@ export default function USPayrollPage() {
                   fontSize: "0.875rem",
                 }}
               >
-                <span style={{ color: "#71717a" }}>Net Monthly</span>
+                <span style={{ color: "#71717a" }}>{t("usPayroll.result.netMonthly")}</span>
                 <span style={{ color: "#86efac" }}>{fmt(combinedNet / 12)}</span>
               </div>
               <div
@@ -1114,7 +1119,7 @@ export default function USPayrollPage() {
                   fontSize: "0.875rem",
                 }}
               >
-                <span style={{ color: "#71717a" }}>Net Biweekly</span>
+                <span style={{ color: "#71717a" }}>{t("usPayroll.result.netBiweekly")}</span>
                 <span style={{ color: "#86efac" }}>{fmt(combinedNet / 26)}</span>
               </div>
             </div>
@@ -1143,7 +1148,7 @@ export default function USPayrollPage() {
                   marginBottom: "1rem",
                 }}
               >
-                Hourly Rate → Annual
+                {t("usPayroll.section.hourlyToAnnual")}
               </div>
               <div style={{ marginBottom: "1rem" }}>
                 <label
@@ -1154,7 +1159,7 @@ export default function USPayrollPage() {
                     marginBottom: "0.4rem",
                   }}
                 >
-                  Hourly Rate ($)
+                  {t("usPayroll.label.hourlyRate")}
                 </label>
                 <input
                   type="number"
@@ -1172,11 +1177,11 @@ export default function USPayrollPage() {
                 />
               </div>
               {[
-                ["Annual (2080h)", fmt(hToS.annualSalary)],
-                ["Monthly", fmt(hToS.monthly)],
-                ["Biweekly", fmt(hToS.biweekly)],
-                ["Semi-Monthly", fmt(hToS.semiMonthly)],
-                ["Weekly", fmt(hToS.weekly)],
+                [t("usPayroll.result.annual2080h"), fmt(hToS.annualSalary)],
+                [t("usPayroll.result.monthly"), fmt(hToS.monthly)],
+                [t("usPayroll.result.biweekly"), fmt(hToS.biweekly)],
+                [t("usPayroll.result.semiMonthly"), fmt(hToS.semiMonthly)],
+                [t("usPayroll.result.weekly"), fmt(hToS.weekly)],
               ].map(([label, value]) => (
                 <div
                   key={label}
@@ -1209,7 +1214,7 @@ export default function USPayrollPage() {
                   marginBottom: "1rem",
                 }}
               >
-                Annual Salary → Hourly
+                {t("usPayroll.section.annualToHourly")}
               </div>
               <div style={{ marginBottom: "1rem" }}>
                 <label
@@ -1220,7 +1225,7 @@ export default function USPayrollPage() {
                     marginBottom: "0.4rem",
                   }}
                 >
-                  Annual Salary ($)
+                  {t("usPayroll.label.annualSalary")}
                 </label>
                 <input
                   type="number"
@@ -1238,11 +1243,11 @@ export default function USPayrollPage() {
                 />
               </div>
               {[
-                ["Hourly Rate", fmt(sToH.hourlyRate) + "/hr"],
-                ["Monthly", fmt(sToH.monthly)],
-                ["Biweekly", fmt(sToH.biweekly)],
-                ["Semi-Monthly", fmt(sToH.semiMonthly)],
-                ["Weekly", fmt(sToH.weekly)],
+                [t("usPayroll.result.hourlyRate"), fmt(sToH.hourlyRate) + "/hr"],
+                [t("usPayroll.result.monthly"), fmt(sToH.monthly)],
+                [t("usPayroll.result.biweekly"), fmt(sToH.biweekly)],
+                [t("usPayroll.result.semiMonthly"), fmt(sToH.semiMonthly)],
+                [t("usPayroll.result.weekly"), fmt(sToH.weekly)],
               ].map(([label, value]) => (
                 <div
                   key={label}
@@ -1277,7 +1282,7 @@ export default function USPayrollPage() {
                   marginBottom: "1rem",
                 }}
               >
-                Overtime Calculator
+                {t("usPayroll.section.overtimeCalc")}
               </div>
               <div style={{ marginBottom: "1rem" }}>
                 <label
@@ -1288,7 +1293,7 @@ export default function USPayrollPage() {
                     marginBottom: "0.4rem",
                   }}
                 >
-                  Hours Worked This Week
+                  {t("usPayroll.label.hoursWorked")}
                 </label>
                 <input
                   type="number"
@@ -1308,19 +1313,19 @@ export default function USPayrollPage() {
               <div
                 style={{ marginBottom: "1rem", fontSize: "0.85rem", color: "#71717a" }}
               >
-                Hourly rate from above: {fmt(hourlyNum)}/hr
+                {t("usPayroll.label.hourlyRateAbove")}: {fmt(hourlyNum)}/hr
               </div>
               {[
                 [
-                  "Regular Hours (≤40)",
+                  t("usPayroll.result.regularHours"),
                   `${Math.min(hoursNum, 40)}h @ ${fmt(hourlyNum)}`,
                 ],
                 [
-                  "Overtime Hours (>40)",
+                  t("usPayroll.result.overtimeHours"),
                   `${ot.overtimeHours}h @ ${fmt(hourlyNum * 1.5)} (1.5x)`,
                 ],
-                ["Regular Pay", fmt(ot.regularPay)],
-                ["Overtime Pay", fmt(ot.overtimePay)],
+                [t("usPayroll.result.regularPay"), fmt(ot.regularPay)],
+                [t("usPayroll.result.overtimePay"), fmt(ot.overtimePay)],
               ].map(([label, value]) => (
                 <div
                   key={label}
@@ -1344,7 +1349,7 @@ export default function USPayrollPage() {
                   fontWeight: 700,
                 }}
               >
-                <span style={{ color: "#a78bfa" }}>Weekly Total Pay</span>
+                <span style={{ color: "#a78bfa" }}>{t("usPayroll.result.weeklyTotalPay")}</span>
                 <span style={{ color: "#22c55e" }}>{fmt(ot.totalPay)}</span>
               </div>
             </div>
@@ -1361,8 +1366,7 @@ export default function USPayrollPage() {
           paddingTop: "1rem",
         }}
       >
-        Results are for informational purposes only. Consult a qualified professional for official
-        decisions.
+        {t("usPayroll.disclaimer")}
       </p>
     </div>
   );

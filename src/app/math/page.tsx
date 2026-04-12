@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   calcDeterminant,
   calcInverse,
@@ -176,6 +177,7 @@ function Field({
 // ─── Tab: Matrix ─────────────────────────────────────────────────────────────
 
 function MatrixTab() {
+  const { t } = useLanguage();
   const [size, setSize] = useState(2);
   const [matA, setMatA] = useState<Matrix2D>(emptyMatrix(2));
   const [matB, setMatB] = useState<Matrix2D>(emptyMatrix(2));
@@ -209,19 +211,19 @@ function MatrixTab() {
       switch (op) {
         case "det": {
           const d = calcDeterminant(matA);
-          setResult({ label: "Determinant", scalar: d });
+          setResult({ label: t("math.matrix.determinant"), scalar: d });
           break;
         }
         case "inv": {
           if (Math.abs(calcDeterminant(matA)) < 1e-10) {
-            setResult({ label: "Inverse", error: "Singular matrix — inverse does not exist." });
+            setResult({ label: t("math.matrix.inverse"), error: t("math.matrix.singularError") });
             return;
           }
-          setResult({ label: "Inverse (A⁻¹)", matrix: calcInverse(matA) });
+          setResult({ label: t("math.matrix.inverseLabel"), matrix: calcInverse(matA) });
           break;
         }
         case "transpose":
-          setResult({ label: "Transpose (Aᵀ)", matrix: calcTranspose(matA) });
+          setResult({ label: t("math.matrix.transposeLabel"), matrix: calcTranspose(matA) });
           break;
         case "add":
           setResult({ label: "A + B", matrix: calcMatrixAdd(matA, matB) });
@@ -231,13 +233,13 @@ function MatrixTab() {
           break;
       }
     } catch {
-      setResult({ label: op, error: "Calculation error." });
+      setResult({ label: op, error: t("math.error.calculation") });
     }
   }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-      <Field label="Matrix size">
+      <Field label={t("math.matrix.size")}>
         <select
           value={size}
           onChange={(e) => changeSize(Number(e.target.value))}
@@ -250,17 +252,17 @@ function MatrixTab() {
       </Field>
 
       <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap" }}>
-        <MatrixGrid size={size} values={matA} onChange={updateA} label="Matrix A" />
-        <MatrixGrid size={size} values={matB} onChange={updateB} label="Matrix B (for Add/Multiply)" />
+        <MatrixGrid size={size} values={matA} onChange={updateA} label={t("math.matrix.matrixA")} />
+        <MatrixGrid size={size} values={matB} onChange={updateB} label={t("math.matrix.matrixB")} />
       </div>
 
       <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
         {["det", "inv", "transpose", "add", "multiply"].map((op) => (
           <button key={op} style={btnStyle} onClick={() => run(op)}>
             {{
-              det: "Determinant",
-              inv: "Inverse",
-              transpose: "Transpose",
+              det: t("math.matrix.determinant"),
+              inv: t("math.matrix.inverse"),
+              transpose: t("math.matrix.transpose"),
               add: "A + B",
               multiply: "A × B",
             }[op]}
@@ -287,6 +289,7 @@ function MatrixTab() {
 // ─── Tab: Equations ──────────────────────────────────────────────────────────
 
 function EquationsTab() {
+  const { t } = useLanguage();
   const [mode, setMode] = useState<"quad" | "linear2" | "linear3">("quad");
 
   // quadratic
@@ -316,7 +319,11 @@ function EquationsTab() {
             style={mode === m ? btnPrimary : btnStyle}
             onClick={() => setMode(m)}
           >
-            {{ quad: "Quadratic", linear2: "Linear 2×2", linear3: "Linear 3×3" }[m]}
+            {{
+              quad: t("math.eq.quadratic"),
+              linear2: t("math.eq.linear2"),
+              linear3: t("math.eq.linear3"),
+            }[m]}
           </button>
         ))}
       </div>
@@ -344,25 +351,25 @@ function EquationsTab() {
               setQResult(solveQuadratic(a, b, c));
             }}
           >
-            Solve
+            {t("math.btn.solve")}
           </button>
           {qResult && (
             <div style={resultBox}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
                 <div>
-                  <div style={labelStyle}>Root 1</div>
+                  <div style={labelStyle}>{t("math.eq.root1")}</div>
                   <div style={{ color: "#a78bfa", fontFamily: "monospace" }}>{qResult.root1}</div>
                 </div>
                 <div>
-                  <div style={labelStyle}>Root 2</div>
+                  <div style={labelStyle}>{t("math.eq.root2")}</div>
                   <div style={{ color: "#a78bfa", fontFamily: "monospace" }}>{qResult.root2}</div>
                 </div>
                 <div>
-                  <div style={labelStyle}>Discriminant</div>
+                  <div style={labelStyle}>{t("math.eq.discriminant")}</div>
                   <div style={{ color: "#71717a", fontFamily: "monospace" }}>{fmt(qResult.discriminant)}</div>
                 </div>
                 <div>
-                  <div style={labelStyle}>Vertex</div>
+                  <div style={labelStyle}>{t("math.eq.vertex")}</div>
                   <div style={{ color: "#71717a", fontFamily: "monospace" }}>
                     ({fmt(qResult.vertex.x, 4)}, {fmt(qResult.vertex.y, 4)})
                   </div>
@@ -406,7 +413,7 @@ function EquationsTab() {
               setL2Result(solveLinear2(n("a1"), n("b1"), n("c1"), n("a2"), n("b2"), n("c2")));
             }}
           >
-            Solve
+            {t("math.btn.solve")}
           </button>
           {l2Result && (
             <div style={resultBox}>
@@ -455,7 +462,7 @@ function EquationsTab() {
               );
             }}
           >
-            Solve
+            {t("math.btn.solve")}
           </button>
           {l3Result && (
             <div style={resultBox}>
@@ -480,6 +487,7 @@ function EquationsTab() {
 // ─── Tab: Derivative ─────────────────────────────────────────────────────────
 
 function DerivativeTab() {
+  const { t } = useLanguage();
   const [expr, setExpr] = useState("x^3 + 2*x^2 - 5*x + 3");
   const [xVal, setXVal] = useState("1");
   const [result, setResult] = useState<ReturnType<typeof calcDerivative> | null>(null);
@@ -490,25 +498,25 @@ function DerivativeTab() {
       setError("");
       setResult(calcDerivative(expr, parseFloat(xVal) || 0));
     } catch {
-      setError("Invalid expression. Use * for multiplication, ^ for power.");
+      setError(t("math.derivative.invalidExpr"));
     }
   }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-      <Field label="f(x) — use * for multiply, ^ for power">
+      <Field label={t("math.derivative.fxLabel")}>
         <input style={inputStyle} value={expr} onChange={(e) => setExpr(e.target.value)} />
       </Field>
-      <Field label="Evaluate at x =">
+      <Field label={t("math.derivative.evaluateAt")}>
         <input style={{ ...inputStyle, width: "120px" }} type="number" value={xVal} onChange={(e) => setXVal(e.target.value)} />
       </Field>
-      <button style={btnPrimary} onClick={solve}>Calculate Derivative</button>
+      <button style={btnPrimary} onClick={solve}>{t("math.derivative.btn")}</button>
       {error && <div style={{ color: "#f87171", fontSize: "0.85rem" }}>{error}</div>}
       {result && (
         <div style={resultBox}>
           <div style={{ display: "grid", gap: "0.75rem" }}>
             <div>
-              <div style={labelStyle}>f′(x) — symbolic</div>
+              <div style={labelStyle}>{t("math.derivative.symbolic")}</div>
               <div style={{ color: "#a78bfa", fontFamily: "monospace", fontSize: "1rem" }}>{result.symbolicDerivative}</div>
             </div>
             <div style={{ display: "flex", gap: "2rem" }}>
@@ -531,6 +539,7 @@ function DerivativeTab() {
 // ─── Tab: Integral ────────────────────────────────────────────────────────────
 
 function IntegralTab() {
+  const { t } = useLanguage();
   const [expr, setExpr] = useState("x^2");
   const [a, setA] = useState("0");
   const [b, setB] = useState("1");
@@ -544,7 +553,7 @@ function IntegralTab() {
       if (isNaN(aNum) || isNaN(bNum)) throw new Error("bounds");
       setResult(calcIntegral(expr, aNum, bNum, 100));
     } catch {
-      setError("Invalid expression or bounds.");
+      setError(t("math.integral.invalidExpr"));
     }
   }
 
@@ -574,14 +583,14 @@ function IntegralTab() {
         <input style={inputStyle} value={expr} onChange={(e) => setExpr(e.target.value)} />
       </Field>
       <div style={{ display: "flex", gap: "1rem" }}>
-        <Field label="Lower bound (a)">
+        <Field label={t("math.integral.lowerBound")}>
           <input style={{ ...inputStyle, width: "100px" }} type="number" value={a} onChange={(e) => setA(e.target.value)} />
         </Field>
-        <Field label="Upper bound (b)">
+        <Field label={t("math.integral.upperBound")}>
           <input style={{ ...inputStyle, width: "100px" }} type="number" value={b} onChange={(e) => setB(e.target.value)} />
         </Field>
       </div>
-      <button style={btnPrimary} onClick={solve}>Integrate (Simpson)</button>
+      <button style={btnPrimary} onClick={solve}>{t("math.integral.btn")}</button>
       {error && <div style={{ color: "#f87171", fontSize: "0.85rem" }}>{error}</div>}
       {result && (
         <div style={resultBox}>
@@ -605,6 +614,7 @@ function IntegralTab() {
 // ─── Tab: Perm & Comb ─────────────────────────────────────────────────────────
 
 function PermCombTab() {
+  const { t } = useLanguage();
   const [n, setN] = useState("5");
   const [r, setR] = useState("2");
   const [result, setResult] = useState<{ P: number; C: number; nFact: number } | null>(null);
@@ -613,7 +623,7 @@ function PermCombTab() {
   function solve() {
     const nv = parseInt(n), rv = parseInt(r);
     if (isNaN(nv) || isNaN(rv) || nv < 0 || rv < 0 || rv > nv) {
-      setError("Ensure 0 ≤ r ≤ n");
+      setError(t("math.permcomb.constraintError"));
       setResult(null);
       return;
     }
@@ -625,21 +635,21 @@ function PermCombTab() {
         nFact: calcFactorial(nv),
       });
     } catch {
-      setError("Values too large to compute.");
+      setError(t("math.permcomb.tooLargeError"));
     }
   }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <div style={{ display: "flex", gap: "1rem" }}>
-        <Field label="n (total)">
+        <Field label={t("math.permcomb.nTotal")}>
           <input style={{ ...inputStyle, width: "100px" }} type="number" min={0} value={n} onChange={(e) => setN(e.target.value)} />
         </Field>
-        <Field label="r (select)">
+        <Field label={t("math.permcomb.rSelect")}>
           <input style={{ ...inputStyle, width: "100px" }} type="number" min={0} value={r} onChange={(e) => setR(e.target.value)} />
         </Field>
       </div>
-      <button style={btnPrimary} onClick={solve}>Calculate</button>
+      <button style={btnPrimary} onClick={solve}>{t("math.btn.calculate")}</button>
       {error && <div style={{ color: "#f87171", fontSize: "0.85rem" }}>{error}</div>}
       {result && (
         <div style={resultBox}>
@@ -669,6 +679,7 @@ function PermCombTab() {
 // ─── Tab: Complex ─────────────────────────────────────────────────────────────
 
 function ComplexTab() {
+  const { t } = useLanguage();
   const [z1Re, setZ1Re] = useState("3");
   const [z1Im, setZ1Im] = useState("4");
   const [z2Re, setZ2Re] = useState("1");
@@ -717,29 +728,36 @@ function ComplexTab() {
         </div>
       </div>
 
-      <Field label="Operation">
+      <Field label={t("math.complex.operation")}>
         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
           {ops.map((o) => (
             <button key={o} style={op === o ? btnPrimary : btnStyle} onClick={() => setOp(o)}>
-              {{ add: "Add", subtract: "Subtract", multiply: "Multiply", divide: "Divide", modulus: "Modulus", conjugate: "Conjugate" }[o]}
+              {{
+                add: t("math.complex.add"),
+                subtract: t("math.complex.subtract"),
+                multiply: t("math.complex.multiply"),
+                divide: t("math.complex.divide"),
+                modulus: t("math.complex.modulus"),
+                conjugate: t("math.complex.conjugate"),
+              }[o]}
             </button>
           ))}
         </div>
       </Field>
 
-      <button style={btnPrimary} onClick={solve}>Calculate</button>
+      <button style={btnPrimary} onClick={solve}>{t("math.btn.calculate")}</button>
 
       {result && (
         <div style={resultBox}>
           <div>
-            <div style={labelStyle}>Result (rectangular)</div>
+            <div style={labelStyle}>{t("math.complex.resultRectangular")}</div>
             <div style={{ color: "#a78bfa", fontSize: "1.25rem", fontFamily: "monospace", fontWeight: 700 }}>
               {fmtComplex(result.re, result.im)}
             </div>
           </div>
           {(op !== "modulus") && (
             <div style={{ marginTop: "0.75rem" }}>
-              <div style={labelStyle}>Polar form</div>
+              <div style={labelStyle}>{t("math.complex.polarForm")}</div>
               <div style={{ color: "#71717a", fontFamily: "monospace" }}>
                 r = {fmt(result.modulus, 4)} &nbsp;|&nbsp; θ = {fmt((result.angle * 180) / Math.PI, 4)}°
               </div>
@@ -754,14 +772,24 @@ function ComplexTab() {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function MathPage() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<Tab>("Matrix");
+
+  const TAB_LABELS: Record<Tab, string> = {
+    "Matrix": t("math.tab.matrix"),
+    "Equations": t("math.tab.equations"),
+    "Derivative": t("math.tab.derivative"),
+    "Integral": t("math.tab.integral"),
+    "Perm & Comb": t("math.tab.permComb"),
+    "Complex": t("math.tab.complex"),
+  };
 
   return (
     <div>
       {/* Back */}
       <div style={{ marginBottom: "1.5rem" }}>
         <Link href="/" style={{ color: "#71717a", textDecoration: "none", fontSize: "0.875rem" }}>
-          ← Back
+          ← {t("common.back")}
         </Link>
       </div>
 
@@ -776,7 +804,7 @@ export default function MathPage() {
           backgroundClip: "text",
         }}
       >
-        Advanced Math
+        {t("math.title")}
       </h1>
 
       {/* Tabs */}
@@ -790,23 +818,23 @@ export default function MathPage() {
           paddingBottom: "0",
         }}
       >
-        {TABS.map((t) => (
+        {TABS.map((tab) => (
           <button
-            key={t}
-            onClick={() => setActiveTab(t)}
+            key={tab}
+            onClick={() => setActiveTab(tab)}
             style={{
               padding: "0.625rem 1rem",
               border: "none",
-              borderBottom: activeTab === t ? "2px solid #7c3aed" : "2px solid transparent",
+              borderBottom: activeTab === tab ? "2px solid #7c3aed" : "2px solid transparent",
               background: "transparent",
-              color: activeTab === t ? "#a78bfa" : "#71717a",
+              color: activeTab === tab ? "#a78bfa" : "#71717a",
               cursor: "pointer",
               fontSize: "0.85rem",
-              fontWeight: activeTab === t ? 600 : 400,
+              fontWeight: activeTab === tab ? 600 : 400,
               transition: "all 0.15s",
             }}
           >
-            {t}
+            {TAB_LABELS[tab]}
           </button>
         ))}
       </div>
@@ -829,7 +857,7 @@ export default function MathPage() {
       </div>
 
       <p style={{ marginTop: "2rem", color: "#3f3f46", fontSize: "0.8rem" }}>
-        Results are for informational purposes only.
+        {t("common.disclaimer")}
       </p>
     </div>
   );

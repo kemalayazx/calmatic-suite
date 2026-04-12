@@ -3,20 +3,21 @@
 import { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, ArrowLeftRight, RefreshCw } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/context/LanguageContext";
 
 const CURRENCIES = [
-  { code: "USD", name: "US Dollar",         symbol: "$",  flag: "🇺🇸" },
-  { code: "EUR", name: "Euro",              symbol: "€",  flag: "🇪🇺" },
-  { code: "TRY", name: "Turkish Lira",      symbol: "₺",  flag: "🇹🇷" },
-  { code: "GBP", name: "British Pound",     symbol: "£",  flag: "🇬🇧" },
-  { code: "JPY", name: "Japanese Yen",      symbol: "¥",  flag: "🇯🇵" },
-  { code: "CHF", name: "Swiss Franc",       symbol: "Fr", flag: "🇨🇭" },
-  { code: "CAD", name: "Canadian Dollar",   symbol: "C$", flag: "🇨🇦" },
-  { code: "AUD", name: "Australian Dollar", symbol: "A$", flag: "🇦🇺" },
-  { code: "SAR", name: "Saudi Riyal",       symbol: "﷼",  flag: "🇸🇦" },
-  { code: "AED", name: "UAE Dirham",        symbol: "د.إ",flag: "🇦🇪" },
-  { code: "CNY", name: "Chinese Yuan",      symbol: "¥",  flag: "🇨🇳" },
-  { code: "INR", name: "Indian Rupee",      symbol: "₹",  flag: "🇮🇳" },
+  { code: "USD", nameKey: "currency.name.usd",         symbol: "$",  flag: "🇺🇸" },
+  { code: "EUR", nameKey: "currency.name.eur",          symbol: "€",  flag: "🇪🇺" },
+  { code: "TRY", nameKey: "currency.name.try",          symbol: "₺",  flag: "🇹🇷" },
+  { code: "GBP", nameKey: "currency.name.gbp",          symbol: "£",  flag: "🇬🇧" },
+  { code: "JPY", nameKey: "currency.name.jpy",          symbol: "¥",  flag: "🇯🇵" },
+  { code: "CHF", nameKey: "currency.name.chf",          symbol: "Fr", flag: "🇨🇭" },
+  { code: "CAD", nameKey: "currency.name.cad",          symbol: "C$", flag: "🇨🇦" },
+  { code: "AUD", nameKey: "currency.name.aud",          symbol: "A$", flag: "🇦🇺" },
+  { code: "SAR", nameKey: "currency.name.sar",          symbol: "﷼",  flag: "🇸🇦" },
+  { code: "AED", nameKey: "currency.name.aed",          symbol: "د.إ",flag: "🇦🇪" },
+  { code: "CNY", nameKey: "currency.name.cny",          symbol: "¥",  flag: "🇨🇳" },
+  { code: "INR", nameKey: "currency.name.inr",          symbol: "₹",  flag: "🇮🇳" },
 ];
 
 const FALLBACK_RATES: Record<string, number> = {
@@ -50,6 +51,7 @@ function getSymbol(code: string) {
 }
 
 export default function CurrencyPage() {
+  const { t } = useLanguage();
   const [from, setFrom] = useState("USD");
   const [to, setTo] = useState("TRY");
   const [amount, setAmount] = useState("1");
@@ -81,11 +83,11 @@ export default function CurrencyPage() {
       setRates(fallback);
       setUpdatedAt("cached");
       setUsedCache(true);
-      setError("API unreachable");
+      setError(t("currency.error.apiUnreachable"));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => { fetchRates(from); }, [from, fetchRates]);
 
@@ -101,8 +103,6 @@ export default function CurrencyPage() {
   const numAmount = parseFloat(amount) || 0;
   const converted = rates && rates[to] ? numAmount * rates[to] : null;
 
-  const otherCurrencies = CURRENCIES.filter((c) => c.code !== from && c.code !== to);
-
   return (
     <div style={{ maxWidth: "760px", margin: "0 auto" }}>
       {/* Header */}
@@ -110,16 +110,16 @@ export default function CurrencyPage() {
         <Link href="/" style={{ color: "#71717a", display: "flex", alignItems: "center" }}>
           <ArrowLeft size={18} />
         </Link>
-        <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>Currency Converter</h1>
+        <h1 style={{ fontWeight: 700, fontSize: "1.35rem", color: "#fafafa" }}>{t("currency.title")}</h1>
         <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "0.75rem" }}>
           {usedCache && (
             <span style={{ fontSize: "0.75rem", color: "#fb923c", background: "#fb923c11", border: "1px solid #fb923c33", borderRadius: "0.375rem", padding: "0.2rem 0.5rem" }}>
-              Using cached rates
+              {t("currency.badge.cachedRates")}
             </span>
           )}
           {updatedAt && !usedCache && (
             <span style={{ fontSize: "0.75rem", color: "#52525b" }}>
-              Last updated: {updatedAt}
+              {t("currency.label.lastUpdated")}: {updatedAt}
             </span>
           )}
           <button
@@ -146,7 +146,7 @@ export default function CurrencyPage() {
         {/* Amount */}
         <div style={{ marginBottom: "1.25rem" }}>
           <label style={{ fontSize: "0.8rem", color: "#a1a1aa", display: "block", marginBottom: "0.375rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            Amount
+            {t("currency.label.amount")}
           </label>
           <input
             type="number"
@@ -171,11 +171,11 @@ export default function CurrencyPage() {
         {/* From ⇄ To */}
         <div style={{ display: "flex", alignItems: "flex-end", gap: "0.75rem" }}>
           <div style={{ flex: 1 }}>
-            <label style={{ fontSize: "0.8rem", color: "#a1a1aa", display: "block", marginBottom: "0.375rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>From</label>
+            <label style={{ fontSize: "0.8rem", color: "#a1a1aa", display: "block", marginBottom: "0.375rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>{t("currency.label.from")}</label>
             <select style={selectStyle()} value={from} onChange={(e) => setFrom(e.target.value)}>
               {CURRENCIES.map((c) => (
                 <option key={c.code} value={c.code}>
-                  {c.flag} {c.code} — {c.name}
+                  {c.flag} {c.code} — {t(c.nameKey)}
                 </option>
               ))}
             </select>
@@ -204,11 +204,11 @@ export default function CurrencyPage() {
           </button>
 
           <div style={{ flex: 1 }}>
-            <label style={{ fontSize: "0.8rem", color: "#a1a1aa", display: "block", marginBottom: "0.375rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>To</label>
+            <label style={{ fontSize: "0.8rem", color: "#a1a1aa", display: "block", marginBottom: "0.375rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>{t("currency.label.to")}</label>
             <select style={selectStyle()} value={to} onChange={(e) => setTo(e.target.value)}>
               {CURRENCIES.map((c) => (
                 <option key={c.code} value={c.code}>
-                  {c.flag} {c.code} — {c.name}
+                  {c.flag} {c.code} — {t(c.nameKey)}
                 </option>
               ))}
             </select>
@@ -244,7 +244,7 @@ export default function CurrencyPage() {
       {rates && (
         <div style={{ background: "#18181b", borderRadius: "1rem", border: "1px solid #27272a", padding: "1.5rem" }}>
           <p style={{ fontSize: "0.85rem", color: "#a1a1aa", fontWeight: 600, marginBottom: "1rem" }}>
-            1 {from} in all currencies
+            {`1 ${from} ${t("currency.allRates.inAllCurrencies")}`}
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
             {CURRENCIES.filter((c) => c.code !== from).map((c) => (
@@ -275,7 +275,7 @@ export default function CurrencyPage() {
       )}
 
       <p style={{ textAlign: "center", color: "#3f3f46", fontSize: "0.75rem", marginTop: "1.25rem" }}>
-        Results are for informational purposes only.
+        {t("currency.desc.disclaimer")}
       </p>
 
       <style>{`

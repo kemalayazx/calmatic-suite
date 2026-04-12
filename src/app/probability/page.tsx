@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   calcBasicProb,
   calcConditional,
@@ -60,6 +61,7 @@ function ResultRow({ label, value }: { label: string; value: string }) {
 
 // --- Tab 1: Basic Probability ---
 function TabBasic() {
+  const { t } = useLanguage();
   const [pA, setPa] = useState("40");
   const [pB, setPb] = useState("30");
   const [pAB, setPab] = useState("12");
@@ -76,25 +78,25 @@ function TabBasic() {
 
   return (
     <div>
-      <p style={{ fontSize: "0.8rem", color: "#71717a", marginBottom: "1rem" }}>Independent events</p>
+      <p style={{ fontSize: "0.8rem", color: "#71717a", marginBottom: "1rem" }}>{t("probability.basic.independentEvents")}</p>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", marginBottom: "1rem" }}>
         <Field label="P(A) %" value={pA} onChange={setPa} suffix="%" />
         <Field label="P(B) %" value={pB} onChange={setPb} suffix="%" />
       </div>
-      <p style={{ fontSize: "0.8rem", color: "#71717a", marginBottom: "0.5rem" }}>Conditional P(A|B)</p>
+      <p style={{ fontSize: "0.8rem", color: "#71717a", marginBottom: "0.5rem" }}>{t("probability.basic.conditionalLabel")}</p>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", marginBottom: "1rem" }}>
         <Field label="P(A∩B) %" value={pAB} onChange={setPab} suffix="%" />
         <Field label="P(B) %" value={condPB} onChange={setCondPB} suffix="%" />
       </div>
       <button onClick={calculate} style={{ background: "#b45309", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1.5rem", fontWeight: 700, cursor: "pointer" }}>
-        Calculate
+        {t("probability.btn.calculate")}
       </button>
       {result && (
         <div style={{ background: "#0a0a0b", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1rem", marginTop: "1rem" }}>
-          <ResultRow label="P(A and B) — Independent" value={pct(result.pAandB)} />
-          <ResultRow label="P(A or B)" value={pct(result.pAorB)} />
-          <ResultRow label="P(not A)" value={pct(result.pNotA)} />
-          {conditional !== null && <ResultRow label="P(A|B) — Conditional" value={pct(conditional)} />}
+          <ResultRow label={t("probability.basic.pAandB")} value={pct(result.pAandB)} />
+          <ResultRow label={t("probability.basic.pAorB")} value={pct(result.pAorB)} />
+          <ResultRow label={t("probability.basic.pNotA")} value={pct(result.pNotA)} />
+          {conditional !== null && <ResultRow label={t("probability.basic.pConditional")} value={pct(conditional)} />}
         </div>
       )}
     </div>
@@ -103,6 +105,7 @@ function TabBasic() {
 
 // --- Tab 2: Dice & Coins ---
 function TabDiceCoin() {
+  const { t } = useLanguage();
   const [numDice, setNumDice] = useState("2");
   const [diceSum, setDiceSum] = useState("7");
   const [numCoins, setNumCoins] = useState("10");
@@ -125,17 +128,17 @@ function TabDiceCoin() {
   return (
     <div>
       <div style={{ background: "#0a0a0b", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1rem", marginBottom: "1rem" }}>
-        <p style={{ fontWeight: 700, color: "#fbbf24", marginBottom: "0.75rem", fontSize: "0.9rem" }}>Dice Probability</p>
+        <p style={{ fontWeight: 700, color: "#fbbf24", marginBottom: "0.75rem", fontSize: "0.9rem" }}>{t("probability.dice.title")}</p>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", marginBottom: "0.75rem" }}>
-          <Field label="Number of Dice" value={numDice} onChange={setNumDice} />
-          <Field label="Target Sum" value={diceSum} onChange={setDiceSum} />
+          <Field label={t("probability.dice.numDice")} value={numDice} onChange={setNumDice} />
+          <Field label={t("probability.dice.targetSum")} value={diceSum} onChange={setDiceSum} />
         </div>
         <button onClick={calcDice} style={{ background: "#78350f", color: "#fde68a", border: "1px solid #92400e", borderRadius: "0.5rem", padding: "0.4rem 1rem", fontWeight: 700, cursor: "pointer", fontSize: "0.85rem" }}>
-          Calculate
+          {t("probability.btn.calculate")}
         </button>
         {diceResult !== null && (
           <div style={{ marginTop: "0.75rem" }}>
-            <div style={{ fontSize: "0.85rem", color: "#a1a1aa" }}>P(sum = {diceSum}) with {numDice} dice:</div>
+            <div style={{ fontSize: "0.85rem", color: "#a1a1aa" }}>{t("probability.dice.result").replace("{sum}", diceSum).replace("{dice}", numDice)}</div>
             <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#fbbf24", fontFamily: "monospace" }}>{pct(diceResult)}</div>
             <div style={{ background: "#27272a", height: "8px", borderRadius: "4px", marginTop: "0.5rem" }}>
               <div style={{ width: `${Math.min(diceResult * 100 * 5, 100)}%`, background: "#fbbf24", height: "100%", borderRadius: "4px", transition: "width 0.3s" }} />
@@ -145,17 +148,17 @@ function TabDiceCoin() {
       </div>
 
       <div style={{ background: "#0a0a0b", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1rem" }}>
-        <p style={{ fontWeight: 700, color: "#60a5fa", marginBottom: "0.75rem", fontSize: "0.9rem" }}>Coin Flip Probability</p>
+        <p style={{ fontWeight: 700, color: "#60a5fa", marginBottom: "0.75rem", fontSize: "0.9rem" }}>{t("probability.coin.title")}</p>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", marginBottom: "0.75rem" }}>
-          <Field label="Number of Flips" value={numCoins} onChange={setNumCoins} />
-          <Field label="Target Heads" value={targetHeads} onChange={setTargetHeads} />
+          <Field label={t("probability.coin.numFlips")} value={numCoins} onChange={setNumCoins} />
+          <Field label={t("probability.coin.targetHeads")} value={targetHeads} onChange={setTargetHeads} />
         </div>
         <button onClick={calcCoin} style={{ background: "#1e3a5f", color: "#93c5fd", border: "1px solid #1e40af", borderRadius: "0.5rem", padding: "0.4rem 1rem", fontWeight: 700, cursor: "pointer", fontSize: "0.85rem" }}>
-          Calculate
+          {t("probability.btn.calculate")}
         </button>
         {coinResult !== null && (
           <div style={{ marginTop: "0.75rem" }}>
-            <div style={{ fontSize: "0.85rem", color: "#a1a1aa" }}>P(exactly {targetHeads} heads in {numCoins} flips):</div>
+            <div style={{ fontSize: "0.85rem", color: "#a1a1aa" }}>{t("probability.coin.result").replace("{heads}", targetHeads).replace("{flips}", numCoins)}</div>
             <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#60a5fa", fontFamily: "monospace" }}>{pct(coinResult)}</div>
             <div style={{ background: "#27272a", height: "8px", borderRadius: "4px", marginTop: "0.5rem" }}>
               <div style={{ width: `${Math.min(coinResult * 100 * 10, 100)}%`, background: "#60a5fa", height: "100%", borderRadius: "4px", transition: "width 0.3s" }} />
@@ -169,6 +172,7 @@ function TabDiceCoin() {
 
 // --- Tab 3: Binomial Distribution ---
 function TabBinomial() {
+  const { t } = useLanguage();
   const [n, setN] = useState("20");
   const [p, setP] = useState("0.5");
   const [k, setK] = useState("10");
@@ -178,10 +182,10 @@ function TabBinomial() {
   function calculate() {
     try {
       const nv = parseInt(n), pv = parseFloat(p), kv = parseInt(k);
-      if (isNaN(nv) || isNaN(pv) || isNaN(kv)) throw new Error("Enter valid numbers");
-      if (pv < 0 || pv > 1) throw new Error("p must be between 0 and 1");
-      if (kv < 0 || kv > nv) throw new Error("k must be between 0 and n");
-      if (nv > 500) throw new Error("n must be ≤ 500");
+      if (isNaN(nv) || isNaN(pv) || isNaN(kv)) throw new Error(t("probability.binomial.invalidNumbers"));
+      if (pv < 0 || pv > 1) throw new Error(t("probability.binomial.pRangeError"));
+      if (kv < 0 || kv > nv) throw new Error(t("probability.binomial.kRangeError"));
+      if (nv > 500) throw new Error(t("probability.binomial.nMaxError"));
       setResult(calcBinomial(nv, pv, kv));
       setError("");
     } catch (e) { setError((e as Error).message); setResult(null); }
@@ -193,12 +197,12 @@ function TabBinomial() {
   return (
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "0.75rem", marginBottom: "1rem" }}>
-        <Field label="n (trials)" value={n} onChange={setN} />
-        <Field label="p (success prob)" value={p} onChange={setP} />
-        <Field label="k (successes)" value={k} onChange={setK} />
+        <Field label={t("probability.binomial.nTrials")} value={n} onChange={setN} />
+        <Field label={t("probability.binomial.pSuccess")} value={p} onChange={setP} />
+        <Field label={t("probability.binomial.kSuccesses")} value={k} onChange={setK} />
       </div>
       <button onClick={calculate} style={{ background: "#b45309", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1.5rem", fontWeight: 700, cursor: "pointer" }}>
-        Calculate
+        {t("probability.btn.calculate")}
       </button>
       {error && <p style={{ color: "#f87171", marginTop: "0.5rem", fontSize: "0.85rem" }}>{error}</p>}
       {result && (
@@ -207,15 +211,15 @@ function TabBinomial() {
             <ResultRow label={`P(X = ${k})`} value={pct(result.pExactly)} />
             <ResultRow label={`P(X ≤ ${k})`} value={pct(result.pAtMost)} />
             <ResultRow label={`P(X ≥ ${k})`} value={pct(result.pAtLeast)} />
-            <ResultRow label="Expected value E(X)" value={result.expected.toFixed(4)} />
-            <ResultRow label="Variance" value={result.variance.toFixed(4)} />
-            <ResultRow label="Std Deviation" value={result.stdDev.toFixed(4)} />
+            <ResultRow label={t("probability.binomial.expectedValue")} value={result.expected.toFixed(4)} />
+            <ResultRow label={t("probability.binomial.variance")} value={result.variance.toFixed(4)} />
+            <ResultRow label={t("probability.binomial.stdDev")} value={result.stdDev.toFixed(4)} />
           </div>
 
           {/* SVG Bar Chart */}
           <div style={{ overflowX: "auto" }}>
             <p style={{ fontSize: "0.75rem", color: "#52525b", marginBottom: "0.5rem" }}>
-              Distribution (n={n}, p={p}) — k={k} highlighted
+              {t("probability.binomial.chartLabel").replace("{n}", n).replace("{p}", p).replace("{k}", k)}
             </p>
             <svg
               viewBox={`0 0 ${result.distribution.length * 14 + 10} ${chartH + 20}`}
@@ -246,17 +250,18 @@ function TabBinomial() {
 
 // --- Main ---
 export default function ProbabilityPage() {
+  const { t } = useLanguage();
   const [tab, setTab] = useState<"basic" | "dice" | "binomial">("basic");
 
   return (
     <div style={{ maxWidth: "48rem", margin: "0 auto", padding: "1.5rem 1rem" }}>
       <h1 style={{ textAlign: "center", fontSize: "1.5rem", fontWeight: 800, color: "#fbbf24", marginBottom: "1.5rem" }}>
-        Probability Calculator
+        {t("probability.title")}
       </h1>
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
-        <button style={TAB_STYLE(tab === "basic")} onClick={() => setTab("basic")}>Basic Probability</button>
-        <button style={TAB_STYLE(tab === "dice")} onClick={() => setTab("dice")}>Dice &amp; Coins</button>
-        <button style={TAB_STYLE(tab === "binomial")} onClick={() => setTab("binomial")}>Binomial Distribution</button>
+        <button style={TAB_STYLE(tab === "basic")} onClick={() => setTab("basic")}>{t("probability.tab.basic")}</button>
+        <button style={TAB_STYLE(tab === "dice")} onClick={() => setTab("dice")}>{t("probability.tab.dice")}</button>
+        <button style={TAB_STYLE(tab === "binomial")} onClick={() => setTab("binomial")}>{t("probability.tab.binomial")}</button>
       </div>
       <div style={{ background: "#111113", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1.5rem" }}>
         {tab === "basic" && <TabBasic />}
@@ -264,7 +269,7 @@ export default function ProbabilityPage() {
         {tab === "binomial" && <TabBinomial />}
       </div>
       <p style={{ marginTop: "1.5rem", fontSize: "0.7rem", color: "#3f3f46", textAlign: "center" }}>
-        For educational use. Assumes fair, independent random events unless otherwise specified.
+        {t("probability.disclaimer")}
       </p>
     </div>
   );

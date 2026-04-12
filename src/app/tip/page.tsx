@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { calcTip, CURRENCY_SYMBOLS, type Currency } from "@/lib/calculations/tip";
+import { useLanguage } from "@/context/LanguageContext";
 
 const PRESET_TIPS = [5, 10, 15, 20, 25];
 
@@ -23,6 +24,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 export default function TipPage() {
+  const { t } = useLanguage();
   const [bill, setBill] = useState("100");
   const [tipPercent, setTipPercent] = useState(15);
   const [customTip, setCustomTip] = useState("");
@@ -48,7 +50,7 @@ export default function TipPage() {
     <div>
       <div style={{ marginBottom: "1.5rem" }}>
         <Link href="/" style={{ color: "#71717a", textDecoration: "none", fontSize: "0.875rem" }}>
-          ← Back
+          {t("tip.btn.back")}
         </Link>
       </div>
 
@@ -63,7 +65,7 @@ export default function TipPage() {
           backgroundClip: "text",
         }}
       >
-        Tip Calculator
+        {t("tip.title")}
       </h1>
 
       <div
@@ -80,7 +82,7 @@ export default function TipPage() {
       >
         {/* Bill + Currency */}
         <div>
-          <label style={labelStyle}>Bill amount</label>
+          <label style={labelStyle}>{t("tip.label.bill_amount")}</label>
           <div style={{ display: "flex", gap: "0.5rem" }}>
             <input
               type="number"
@@ -104,7 +106,7 @@ export default function TipPage() {
 
         {/* Tip rate pills */}
         <div>
-          <label style={labelStyle}>Tip rate</label>
+          <label style={labelStyle}>{t("tip.label.tip_rate")}</label>
           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
             {PRESET_TIPS.map((p) => (
               <button
@@ -138,7 +140,7 @@ export default function TipPage() {
                 fontSize: "0.85rem",
               }}
             >
-              Custom
+              {t("tip.btn.custom")}
             </button>
           </div>
           {useCustom && (
@@ -148,7 +150,7 @@ export default function TipPage() {
               max={200}
               value={customTip}
               onChange={(e) => setCustomTip(e.target.value)}
-              placeholder="Enter %"
+              placeholder={t("tip.placeholder.enter_percent")}
               style={{ ...inputStyle, marginTop: "0.5rem", width: "120px" }}
             />
           )}
@@ -156,7 +158,7 @@ export default function TipPage() {
 
         {/* People stepper */}
         <div>
-          <label style={labelStyle}>Number of people</label>
+          <label style={labelStyle}>{t("tip.label.num_people")}</label>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
             <button
               onClick={() => setPeople((p) => Math.max(1, p - 1))}
@@ -195,9 +197,9 @@ export default function TipPage() {
             }}
           >
             {[
-              { label: "Tip amount", value: `${sym}${fmt(result.tipAmount)}` },
-              { label: "Total amount", value: `${sym}${fmt(result.totalAmount)}` },
-              { label: `Per person (${people})`, value: `${sym}${fmt(result.perPerson)}`, highlight: true },
+              { label: t("tip.result.tip_amount"), value: `${sym}${fmt(result.tipAmount)}` },
+              { label: t("tip.result.total_amount"), value: `${sym}${fmt(result.totalAmount)}` },
+              { label: `${t("tip.result.per_person")} (${people})`, value: `${sym}${fmt(result.perPerson)}`, highlight: true },
             ].map(({ label, value, highlight }) => (
               <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ color: "#71717a", fontSize: "0.875rem" }}>{label}</span>
@@ -218,7 +220,7 @@ export default function TipPage() {
       </div>
 
       <p style={{ marginTop: "2rem", color: "#3f3f46", fontSize: "0.8rem" }}>
-        Results are for informational purposes only.
+        {t("tip.footer.note")}
       </p>
     </div>
   );

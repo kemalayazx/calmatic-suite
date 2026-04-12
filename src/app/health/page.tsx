@@ -10,11 +10,9 @@ import {
   type Gender,
   type ActivityLevel,
 } from "@/lib/calculations/health";
+import { useLanguage } from "@/context/LanguageContext";
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
-
-const TABS = ["BMI", "Calorie (BMR)", "Ideal Weight"] as const;
-type Tab = (typeof TABS)[number];
 
 const inputStyle: React.CSSProperties = {
   background: "#18181b",
@@ -64,6 +62,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 // ─── Tab: BMI ─────────────────────────────────────────────────────────────────
 
 function BMITab() {
+  const { t } = useLanguage();
   const [height, setHeight] = useState("175");
   const [weight, setWeight] = useState("70");
   const [result, setResult] = useState<ReturnType<typeof calcBMI> | null>(null);
@@ -71,16 +70,16 @@ function BMITab() {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-        <Field label="Height (cm)">
+        <Field label={t("health.label.heightCm")}>
           <input style={{ ...inputStyle, width: "120px" }} type="number" min={50} max={250} value={height} onChange={(e) => setHeight(e.target.value)} />
         </Field>
-        <Field label="Weight (kg)">
+        <Field label={t("health.label.weightKg")}>
           <input style={{ ...inputStyle, width: "120px" }} type="number" min={10} max={500} value={weight} onChange={(e) => setWeight(e.target.value)} />
         </Field>
       </div>
 
       <button style={btnPrimary} onClick={() => setResult(calcBMI(parseFloat(weight), parseFloat(height)))}>
-        Calculate BMI
+        {t("health.btn.calculateBMI")}
       </button>
 
       {result && (
@@ -107,11 +106,14 @@ function BMITab() {
             />
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.7rem", color: "#52525b" }}>
-            <span>Underweight</span><span>Normal</span><span>Overweight</span><span>Obese</span>
+            <span>{t("health.bmi.underweight")}</span>
+            <span>{t("health.bmi.normal")}</span>
+            <span>{t("health.bmi.overweight")}</span>
+            <span>{t("health.bmi.obese")}</span>
           </div>
 
           <div style={{ marginTop: "0.75rem", fontSize: "0.8rem", color: "#71717a" }}>
-            Formula: weight (kg) / height (m)²
+            {t("health.bmi.formula")}
           </div>
         </div>
       )}
@@ -122,6 +124,7 @@ function BMITab() {
 // ─── Tab: BMR ─────────────────────────────────────────────────────────────────
 
 function BMRTab() {
+  const { t } = useLanguage();
   const [gender, setGender] = useState<Gender>("male");
   const [age, setAge] = useState("25");
   const [height, setHeight] = useState("175");
@@ -135,7 +138,7 @@ function BMRTab() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-      <Field label="Gender">
+      <Field label={t("health.label.gender")}>
         <div style={{ display: "flex", gap: "0.5rem" }}>
           {(["male", "female"] as Gender[]).map((g) => (
             <button
@@ -152,25 +155,25 @@ function BMRTab() {
                 fontWeight: gender === g ? 600 : 400,
               }}
             >
-              {g === "male" ? "Male" : "Female"}
+              {g === "male" ? t("health.gender.male") : t("health.gender.female")}
             </button>
           ))}
         </div>
       </Field>
 
       <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-        <Field label="Age">
+        <Field label={t("health.label.age")}>
           <input style={{ ...inputStyle, width: "80px" }} type="number" min={1} max={120} value={age} onChange={(e) => setAge(e.target.value)} />
         </Field>
-        <Field label="Height (cm)">
+        <Field label={t("health.label.heightCm")}>
           <input style={{ ...inputStyle, width: "100px" }} type="number" value={height} onChange={(e) => setHeight(e.target.value)} />
         </Field>
-        <Field label="Weight (kg)">
+        <Field label={t("health.label.weightKg")}>
           <input style={{ ...inputStyle, width: "100px" }} type="number" value={weight} onChange={(e) => setWeight(e.target.value)} />
         </Field>
       </div>
 
-      <Field label="Activity level">
+      <Field label={t("health.label.activityLevel")}>
         <select value={activity} onChange={(e) => setActivity(e.target.value as ActivityLevel)} style={inputStyle}>
           {(Object.keys(ACTIVITY_LABELS) as ActivityLevel[]).map((k) => (
             <option key={k} value={k}>{ACTIVITY_LABELS[k]}</option>
@@ -178,24 +181,24 @@ function BMRTab() {
         </select>
       </Field>
 
-      <button style={btnPrimary} onClick={solve}>Calculate</button>
+      <button style={btnPrimary} onClick={solve}>{t("health.btn.calculate")}</button>
 
       {result && (
         <div style={resultBox}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
             <div>
-              <div style={labelStyle}>BMR (Basal Metabolic Rate)</div>
+              <div style={labelStyle}>{t("health.result.bmrLabel")}</div>
               <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#4ade80" }}>{result.bmr.toLocaleString()}</div>
-              <div style={{ color: "#52525b", fontSize: "0.75rem" }}>kcal/day at rest</div>
+              <div style={{ color: "#52525b", fontSize: "0.75rem" }}>{t("health.result.kcalAtRest")}</div>
             </div>
             <div>
-              <div style={labelStyle}>Daily Calorie Need (TDEE)</div>
+              <div style={labelStyle}>{t("health.result.tdeeLabel")}</div>
               <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#86efac" }}>{result.tdee.toLocaleString()}</div>
-              <div style={{ color: "#52525b", fontSize: "0.75rem" }}>kcal/day with activity</div>
+              <div style={{ color: "#52525b", fontSize: "0.75rem" }}>{t("health.result.kcalWithActivity")}</div>
             </div>
           </div>
           <div style={{ marginTop: "0.75rem", fontSize: "0.75rem", color: "#52525b" }}>
-            Harris-Benedict Equation · Activity multiplier: ×{({ sedentary: "1.2", light: "1.375", moderate: "1.55", active: "1.725", very_active: "1.9" })[activity]}
+            {t("health.result.bmrNote")} ×{({ sedentary: "1.2", light: "1.375", moderate: "1.55", active: "1.725", very_active: "1.9" })[activity]}
           </div>
         </div>
       )}
@@ -206,13 +209,14 @@ function BMRTab() {
 // ─── Tab: Ideal Weight ────────────────────────────────────────────────────────
 
 function IdealWeightTab() {
+  const { t } = useLanguage();
   const [height, setHeight] = useState("175");
   const [gender, setGender] = useState<Gender>("male");
   const [result, setResult] = useState<ReturnType<typeof calcIdealWeight> | null>(null);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-      <Field label="Gender">
+      <Field label={t("health.label.gender")}>
         <div style={{ display: "flex", gap: "0.5rem" }}>
           {(["male", "female"] as Gender[]).map((g) => (
             <button
@@ -229,18 +233,18 @@ function IdealWeightTab() {
                 fontWeight: gender === g ? 600 : 400,
               }}
             >
-              {g === "male" ? "Male" : "Female"}
+              {g === "male" ? t("health.gender.male") : t("health.gender.female")}
             </button>
           ))}
         </div>
       </Field>
 
-      <Field label="Height (cm)">
+      <Field label={t("health.label.heightCm")}>
         <input style={{ ...inputStyle, width: "120px" }} type="number" min={100} max={250} value={height} onChange={(e) => setHeight(e.target.value)} />
       </Field>
 
       <button style={btnPrimary} onClick={() => setResult(calcIdealWeight(parseFloat(height), gender))}>
-        Calculate
+        {t("health.btn.calculate")}
       </button>
 
       {result && (
@@ -248,9 +252,9 @@ function IdealWeightTab() {
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.875rem" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid #3f3f46" }}>
-                <th style={{ textAlign: "left", padding: "0.5rem 0.25rem", color: "#71717a", fontWeight: 500 }}>Formula</th>
-                <th style={{ textAlign: "right", padding: "0.5rem 0.25rem", color: "#71717a", fontWeight: 500 }}>Weight (kg)</th>
-                <th style={{ textAlign: "left", padding: "0.5rem 0.5rem", color: "#71717a", fontWeight: 500 }}>Notes</th>
+                <th style={{ textAlign: "left", padding: "0.5rem 0.25rem", color: "#71717a", fontWeight: 500 }}>{t("health.table.formula")}</th>
+                <th style={{ textAlign: "right", padding: "0.5rem 0.25rem", color: "#71717a", fontWeight: 500 }}>{t("health.table.weightKg")}</th>
+                <th style={{ textAlign: "left", padding: "0.5rem 0.5rem", color: "#71717a", fontWeight: 500 }}>{t("health.table.notes")}</th>
               </tr>
             </thead>
             <tbody>
@@ -272,13 +276,16 @@ function IdealWeightTab() {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function HealthPage() {
-  const [activeTab, setActiveTab] = useState<Tab>("BMI");
+  const { t } = useLanguage();
+  const TABS = [t("health.tab.bmi"), t("health.tab.bmr"), t("health.tab.idealWeight")] as const;
+  type Tab = (typeof TABS)[number];
+  const [activeTab, setActiveTab] = useState<Tab>(TABS[0]);
 
   return (
     <div>
       <div style={{ marginBottom: "1.5rem" }}>
         <Link href="/" style={{ color: "#71717a", textDecoration: "none", fontSize: "0.875rem" }}>
-          ← Back
+          {t("common.back")}
         </Link>
       </div>
 
@@ -293,26 +300,26 @@ export default function HealthPage() {
           backgroundClip: "text",
         }}
       >
-        Health Calculators
+        {t("health.title")}
       </h1>
 
       <div style={{ display: "flex", gap: "0.25rem", flexWrap: "wrap", borderBottom: "1px solid #27272a", marginBottom: "1.75rem" }}>
-        {TABS.map((t) => (
+        {TABS.map((tab) => (
           <button
-            key={t}
-            onClick={() => setActiveTab(t)}
+            key={tab}
+            onClick={() => setActiveTab(tab)}
             style={{
               padding: "0.625rem 1rem",
               border: "none",
-              borderBottom: activeTab === t ? "2px solid #16a34a" : "2px solid transparent",
+              borderBottom: activeTab === tab ? "2px solid #16a34a" : "2px solid transparent",
               background: "transparent",
-              color: activeTab === t ? "#4ade80" : "#71717a",
+              color: activeTab === tab ? "#4ade80" : "#71717a",
               cursor: "pointer",
               fontSize: "0.85rem",
-              fontWeight: activeTab === t ? 600 : 400,
+              fontWeight: activeTab === tab ? 600 : 400,
             }}
           >
-            {t}
+            {tab}
           </button>
         ))}
       </div>
@@ -326,13 +333,13 @@ export default function HealthPage() {
           maxWidth: "600px",
         }}
       >
-        {activeTab === "BMI" && <BMITab />}
-        {activeTab === "Calorie (BMR)" && <BMRTab />}
-        {activeTab === "Ideal Weight" && <IdealWeightTab />}
+        {activeTab === TABS[0] && <BMITab />}
+        {activeTab === TABS[1] && <BMRTab />}
+        {activeTab === TABS[2] && <IdealWeightTab />}
       </div>
 
       <p style={{ marginTop: "2rem", color: "#3f3f46", fontSize: "0.8rem" }}>
-        Results are for informational purposes only.
+        {t("common.disclaimer")}
       </p>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/context/LanguageContext";
 import {
   grossToNet,
   netToGross,
@@ -16,7 +17,7 @@ import ExportButton from "@/components/ui/ExportButton";
 import PrintButton from "@/components/ui/PrintButton";
 import type { ExportRow } from "@/lib/export";
 
-const TABS = ["Gross → Net", "Net → Gross", "Overtime", "Employer Cost"];
+// TABS defined inside component using t()
 
 const card: React.CSSProperties = {
   background: "rgba(24,24,27,0.7)",
@@ -122,6 +123,8 @@ function ParamsPanel({
     width: "110px",
   };
 
+  const { t } = useLanguage();
+
   return (
     <div style={{ ...card, marginBottom: "1.75rem" }}>
       <button
@@ -139,7 +142,7 @@ function ParamsPanel({
       >
         <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
           <span style={{ color: "#fafafa", fontWeight: 600, fontSize: "0.95rem" }}>
-            Customize Parameters
+            {t("payroll.params.title")}
           </span>
           <span style={{
             fontSize: "0.7rem",
@@ -149,7 +152,7 @@ function ParamsPanel({
             color: isCustom ? "#eab308" : "#a78bfa",
             fontWeight: 600,
           }}>
-            {isCustom ? "(custom)" : "(2025 defaults)"}
+            {isCustom ? t("payroll.params.custom") : t("payroll.params.defaults")}
           </span>
         </div>
         <svg
@@ -278,7 +281,7 @@ function ParamsPanel({
             onMouseOver={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#27272a"; }}
             onMouseOut={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
           >
-            Reset to 2025 Defaults
+            {t("payroll.params.resetDefaults")}
           </button>
         </div>
       )}
@@ -490,9 +493,17 @@ function paramsAreDefault(params: PayrollParams): boolean {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function PayrollPage() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState(0);
   const [params, setParams] = useState<PayrollParams>(DEFAULT_2025_PARAMS);
   const isCustom = !paramsAreDefault(params);
+
+  const TABS = [
+    t("payroll.tab.grossToNet"),
+    t("payroll.tab.netToGross"),
+    t("payroll.tab.overtime"),
+    t("payroll.tab.employerCost"),
+  ];
 
   function getExportData(): ExportRow[] {
     // Export a snapshot of 2025 defaults summary
@@ -553,7 +564,7 @@ export default function PayrollPage() {
       {activeTab === 3 && <EmployerCostTab params={params} />}
 
       <p style={{ textAlign: "center", color: "#52525b", fontSize: "0.75rem", marginTop: "2rem" }}>
-        Results are for informational purposes only. Consult a professional for official calculations. (2025 parametreleri)
+        {t("payroll.disclaimer")}
       </p>
     </div>
   );

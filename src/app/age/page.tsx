@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { calculateAge, AgeResult } from "@/lib/calculations/age";
+import { useLanguage } from "@/context/LanguageContext";
 
 const INPUT_STYLE: React.CSSProperties = {
   background: "#0a0a0b",
@@ -32,13 +33,14 @@ function Stat({ label, value, sub }: { label: string; value: string | number; su
 }
 
 export default function AgePage() {
+  const { t } = useLanguage();
   const [birth, setBirth] = useState("");
   const [result, setResult] = useState<AgeResult | null>(null);
   const [error, setError] = useState("");
 
   function calculate() {
     try {
-      if (!birth) throw new Error("Please enter a birth date");
+      if (!birth) throw new Error(t("age.error.enterBirthDate"));
       const r = calculateAge(birth);
       setResult(r);
       setError("");
@@ -54,12 +56,12 @@ export default function AgePage() {
   return (
     <div style={{ maxWidth: "42rem", margin: "0 auto", padding: "1.5rem 1rem" }}>
       <h1 style={{ textAlign: "center", fontSize: "1.5rem", fontWeight: 800, color: "#f472b6", marginBottom: "1.5rem" }}>
-        Age Calculator
+        {t("age.title")}
       </h1>
 
       <div style={{ background: "#111113", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1.5rem", marginBottom: "1.5rem" }}>
         <label style={{ fontSize: "0.85rem", color: "#a1a1aa", display: "block", marginBottom: "0.5rem", fontWeight: 600 }}>
-          Date of Birth
+          {t("age.label.dateOfBirth")}
         </label>
         <input
           type="date"
@@ -73,7 +75,7 @@ export default function AgePage() {
           onClick={calculate}
           style={{ marginTop: "1rem", background: "#db2777", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.65rem 2rem", fontWeight: 700, cursor: "pointer", fontSize: "0.95rem" }}
         >
-          Calculate Age
+          {t("age.btn.calculate")}
         </button>
       </div>
 
@@ -81,42 +83,42 @@ export default function AgePage() {
         <>
           {/* Main age */}
           <div style={{ background: "linear-gradient(135deg, #831843 0%, #500724 100%)", border: "1px solid #9d174d", borderRadius: "0.75rem", padding: "1.5rem", textAlign: "center", marginBottom: "1.25rem" }}>
-            <div style={{ fontSize: "0.75rem", color: "#fbcfe8", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.5rem" }}>Your Age</div>
+            <div style={{ fontSize: "0.75rem", color: "#fbcfe8", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "0.5rem" }}>{t("age.result.yourAge")}</div>
             <div style={{ fontSize: "3rem", fontWeight: 900, color: "#fff", lineHeight: 1 }}>
               {result.years}
-              <span style={{ fontSize: "1.25rem", fontWeight: 500, color: "#fbcfe8", marginLeft: "0.25rem" }}>years</span>
+              <span style={{ fontSize: "1.25rem", fontWeight: 500, color: "#fbcfe8", marginLeft: "0.25rem" }}>{t("age.result.years")}</span>
             </div>
             <div style={{ fontSize: "1.1rem", color: "#fbcfe8", marginTop: "0.5rem" }}>
-              {result.months} months &amp; {result.days} days
+              {result.months} {t("age.result.months")} &amp; {result.days} {t("age.result.days")}
             </div>
           </div>
 
           {/* Stats grid */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: "0.75rem", marginBottom: "1.25rem" }}>
-            <Stat label="Total Days" value={result.totalDays.toLocaleString()} />
-            <Stat label="Total Weeks" value={result.totalWeeks.toLocaleString()} />
-            <Stat label="Total Hours" value={"~" + (result.totalHours / 1000).toFixed(0) + "k"} sub={result.totalHours.toLocaleString() + " hrs"} />
-            <Stat label="Next Birthday" value={result.daysUntilNextBirthday === 0 ? "Today!" : result.daysUntilNextBirthday + " days"} sub="days remaining" />
+            <Stat label={t("age.stat.totalDays")} value={result.totalDays.toLocaleString()} />
+            <Stat label={t("age.stat.totalWeeks")} value={result.totalWeeks.toLocaleString()} />
+            <Stat label={t("age.stat.totalHours")} value={"~" + (result.totalHours / 1000).toFixed(0) + "k"} sub={result.totalHours.toLocaleString() + " hrs"} />
+            <Stat label={t("age.stat.nextBirthday")} value={result.daysUntilNextBirthday === 0 ? t("age.stat.today") : result.daysUntilNextBirthday + " days"} sub={t("age.stat.daysRemaining")} />
           </div>
 
           {/* Days of week + zodiac */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", marginBottom: "1.25rem" }}>
             <div style={CARD}>
-              <div style={{ fontSize: "0.7rem", color: "#52525b", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>Born on</div>
+              <div style={{ fontSize: "0.7rem", color: "#52525b", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>{t("age.stat.bornOn")}</div>
               <div style={{ fontSize: "1rem", fontWeight: 700, color: "#f4f4f5" }}>{result.birthdayDOW}</div>
-              <div style={{ fontSize: "0.75rem", color: "#71717a", marginTop: "0.25rem" }}>This year falls on {result.thisBirthdayDOW}</div>
+              <div style={{ fontSize: "0.75rem", color: "#71717a", marginTop: "0.25rem" }}>{t("age.stat.thisBirthday")} {result.thisBirthdayDOW}</div>
             </div>
             <div style={CARD}>
-              <div style={{ fontSize: "0.7rem", color: "#52525b", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>Zodiac</div>
+              <div style={{ fontSize: "0.7rem", color: "#52525b", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>{t("age.stat.zodiac")}</div>
               <div style={{ fontSize: "1rem", fontWeight: 700, color: "#f4f4f5" }}>{result.zodiac}</div>
-              <div style={{ fontSize: "0.75rem", color: "#71717a", marginTop: "0.25rem" }}>Chinese: {result.chineseZodiac}</div>
+              <div style={{ fontSize: "0.75rem", color: "#71717a", marginTop: "0.25rem" }}>{t("age.stat.chinese")}: {result.chineseZodiac}</div>
             </div>
           </div>
         </>
       )}
 
       <p style={{ marginTop: "1.5rem", fontSize: "0.7rem", color: "#3f3f46", textAlign: "center" }}>
-        Calculations based on today&apos;s date. Zodiac signs based on Western astrology conventions.
+        {t("age.footer")}
       </p>
     </div>
   );

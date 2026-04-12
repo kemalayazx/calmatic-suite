@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { calcPayoff, calcMinimumTrap, calcBalanceTransfer } from "@/lib/calculations/credit-card";
+import { useLanguage } from "@/context/LanguageContext";
 
 const INPUT_STYLE: React.CSSProperties = {
   background: "#0a0a0b",
@@ -45,6 +46,7 @@ function Field({ label, value, onChange, prefix, suffix }: { label: string; valu
 
 // --- Tab 1: Payoff ---
 function TabPayoff() {
+  const { t } = useLanguage();
   const [balance, setBalance] = useState("5000");
   const [apr, setApr] = useState("22.99");
   const [payment, setPayment] = useState("200");
@@ -54,7 +56,7 @@ function TabPayoff() {
   function calculate() {
     try {
       const b = parseFloat(balance), a = parseFloat(apr), p = parseFloat(payment);
-      if (isNaN(b) || b <= 0 || isNaN(a) || isNaN(p) || p <= 0) throw new Error("Enter valid positive numbers");
+      if (isNaN(b) || b <= 0 || isNaN(a) || isNaN(p) || p <= 0) throw new Error(t("creditCard.error.invalidPositive"));
       const r = calcPayoff(b, a, p);
       setResult(r);
       setError("");
@@ -64,30 +66,29 @@ function TabPayoff() {
   return (
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "0.75rem", marginBottom: "1rem" }}>
-        <Field label="Current Balance" value={balance} onChange={setBalance} prefix="$" />
-        <Field label="APR (%)" value={apr} onChange={setApr} suffix="%" />
-        <Field label="Monthly Payment" value={payment} onChange={setPayment} prefix="$" />
+        <Field label={t("creditCard.label.currentBalance")} value={balance} onChange={setBalance} prefix="$" />
+        <Field label={t("creditCard.label.apr")} value={apr} onChange={setApr} suffix="%" />
+        <Field label={t("creditCard.label.monthlyPayment")} value={payment} onChange={setPayment} prefix="$" />
       </div>
       <button onClick={calculate} style={{ background: "#991b1b", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1.5rem", fontWeight: 700, cursor: "pointer" }}>
-        Calculate
+        {t("creditCard.btn.calculate")}
       </button>
       {error && <p style={{ color: "#f87171", marginTop: "0.5rem", fontSize: "0.85rem" }}>{error}</p>}
       {result && (
         <div style={{ marginTop: "1rem" }}>
           {result.minInterestWarning ? (
             <div style={{ background: "#450a0a", border: "1px solid #7f1d1d", borderRadius: "0.75rem", padding: "1rem" }}>
-              <p style={{ color: "#f87171", fontWeight: 700 }}>Warning: Payment too low!</p>
+              <p style={{ color: "#f87171", fontWeight: 700 }}>{t("creditCard.warn.paymentTooLow")}</p>
               <p style={{ color: "#fca5a5", fontSize: "0.85rem", marginTop: "0.5rem" }}>
-                Your monthly payment of {usd(parseFloat(payment))} does not cover the interest charged each month.
-                The balance will grow indefinitely. Increase your payment above the minimum interest amount.
+                {`${t("creditCard.warn.paymentTooLowDescPre")} ${usd(parseFloat(payment))} ${t("creditCard.warn.paymentTooLowDescPost")}`}
               </p>
             </div>
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "0.75rem" }}>
               {[
-                { label: "Months to Pay Off", value: `${result.months} months (${(result.months / 12).toFixed(1)} yrs)` },
-                { label: "Total Interest Paid", value: usd(result.totalInterest) },
-                { label: "Total Amount Paid", value: usd(result.totalPaid) },
+                { label: t("creditCard.result.monthsToPayOff"), value: `${result.months} ${t("creditCard.result.months")} (${(result.months / 12).toFixed(1)} ${t("creditCard.result.yrs")})` },
+                { label: t("creditCard.result.totalInterestPaid"), value: usd(result.totalInterest) },
+                { label: t("creditCard.result.totalAmountPaid"), value: usd(result.totalPaid) },
               ].map(({ label, value }) => (
                 <div key={label} style={{ background: "#1a0b0b", border: "1px solid #7f1d1d", borderRadius: "0.75rem", padding: "0.75rem 1rem" }}>
                   <div style={{ fontSize: "0.7rem", color: "#f87171", textTransform: "uppercase", letterSpacing: "0.08em" }}>{label}</div>
@@ -104,6 +105,7 @@ function TabPayoff() {
 
 // --- Tab 2: Minimum Payment Trap ---
 function TabMinimum() {
+  const { t } = useLanguage();
   const [balance, setBalance] = useState("5000");
   const [apr, setApr] = useState("22.99");
   const [method, setMethod] = useState<"percent" | "fixed">("percent");
@@ -114,7 +116,7 @@ function TabMinimum() {
   function calculate() {
     try {
       const b = parseFloat(balance), a = parseFloat(apr), v = parseFloat(minValue);
-      if (isNaN(b) || b <= 0 || isNaN(a) || isNaN(v) || v <= 0) throw new Error("Enter valid positive numbers");
+      if (isNaN(b) || b <= 0 || isNaN(a) || isNaN(v) || v <= 0) throw new Error(t("creditCard.error.invalidPositive"));
       setRows(calcMinimumTrap(b, a, method, v));
       setError("");
     } catch (e) { setError((e as Error).message); setRows(null); }
@@ -123,19 +125,19 @@ function TabMinimum() {
   return (
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "0.75rem", marginBottom: "1rem" }}>
-        <Field label="Current Balance" value={balance} onChange={setBalance} prefix="$" />
-        <Field label="APR (%)" value={apr} onChange={setApr} suffix="%" />
+        <Field label={t("creditCard.label.currentBalance")} value={balance} onChange={setBalance} prefix="$" />
+        <Field label={t("creditCard.label.apr")} value={apr} onChange={setApr} suffix="%" />
         <div>
-          <label style={{ fontSize: "0.8rem", color: "#a1a1aa", display: "block", marginBottom: "0.3rem" }}>Min Payment Method</label>
+          <label style={{ fontSize: "0.8rem", color: "#a1a1aa", display: "block", marginBottom: "0.3rem" }}>{t("creditCard.label.minPaymentMethod")}</label>
           <select value={method} onChange={(e) => setMethod(e.target.value as "percent"|"fixed")} style={INPUT_STYLE}>
-            <option value="percent">% of balance</option>
-            <option value="fixed">Fixed amount ($)</option>
+            <option value="percent">{t("creditCard.option.percentOfBalance")}</option>
+            <option value="fixed">{t("creditCard.option.fixedAmount")}</option>
           </select>
         </div>
-        <Field label={method === "percent" ? "Minimum %" : "Minimum $"} value={minValue} onChange={setMinValue} suffix={method === "percent" ? "%" : "$"} />
+        <Field label={method === "percent" ? t("creditCard.label.minimumPercent") : t("creditCard.label.minimumDollar")} value={minValue} onChange={setMinValue} suffix={method === "percent" ? "%" : "$"} />
       </div>
       <button onClick={calculate} style={{ background: "#991b1b", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1.5rem", fontWeight: 700, cursor: "pointer" }}>
-        Show Trap
+        {t("creditCard.btn.showTrap")}
       </button>
       {error && <p style={{ color: "#f87171", marginTop: "0.5rem", fontSize: "0.85rem" }}>{error}</p>}
       {rows && (
@@ -143,7 +145,14 @@ function TabMinimum() {
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
             <thead>
               <tr>
-                {["Payment", "Months", "Total Interest", "Total Paid", "Time Saved", "Interest Saved"].map((h) => (
+                {[
+                  t("creditCard.table.payment"),
+                  t("creditCard.table.months"),
+                  t("creditCard.table.totalInterest"),
+                  t("creditCard.table.totalPaid"),
+                  t("creditCard.table.timeSaved"),
+                  t("creditCard.table.interestSaved"),
+                ].map((h) => (
                   <th key={h} style={{ padding: "0.5rem 0.75rem", textAlign: "left", color: "#71717a", borderBottom: "1px solid #27272a", fontSize: "0.75rem", whiteSpace: "nowrap" }}>{h}</th>
                 ))}
               </tr>
@@ -152,10 +161,10 @@ function TabMinimum() {
               {rows.map((row, i) => (
                 <tr key={i} style={{ background: i === 0 ? "#1a0b0b" : i % 2 === 0 ? "#0a0a0b" : "#111113" }}>
                   <td style={{ padding: "0.5rem 0.75rem", color: i === 0 ? "#f87171" : "#4ade80", fontWeight: 700 }}>{row.label}</td>
-                  <td style={{ padding: "0.5rem 0.75rem", color: "#f4f4f5" }}>{row.months < 0 ? "Never" : row.months}</td>
+                  <td style={{ padding: "0.5rem 0.75rem", color: "#f4f4f5" }}>{row.months < 0 ? t("creditCard.result.never") : row.months}</td>
                   <td style={{ padding: "0.5rem 0.75rem", color: "#f4f4f5" }}>{row.totalInterest < 0 ? "∞" : usd(row.totalInterest)}</td>
                   <td style={{ padding: "0.5rem 0.75rem", color: "#f4f4f5" }}>{row.totalPaid < 0 ? "∞" : usd(row.totalPaid)}</td>
-                  <td style={{ padding: "0.5rem 0.75rem", color: row.timeSaved > 0 ? "#4ade80" : "#52525b" }}>{row.timeSaved > 0 ? `${row.timeSaved} mo` : "—"}</td>
+                  <td style={{ padding: "0.5rem 0.75rem", color: row.timeSaved > 0 ? "#4ade80" : "#52525b" }}>{row.timeSaved > 0 ? `${row.timeSaved} ${t("creditCard.result.mo")}` : "—"}</td>
                   <td style={{ padding: "0.5rem 0.75rem", color: row.interestSaved > 0 ? "#4ade80" : "#52525b" }}>{row.interestSaved > 0 ? usd(row.interestSaved) : "—"}</td>
                 </tr>
               ))}
@@ -169,6 +178,7 @@ function TabMinimum() {
 
 // --- Tab 3: Balance Transfer ---
 function TabTransfer() {
+  const { t } = useLanguage();
   const [balance, setBalance] = useState("5000");
   const [currentApr, setCurrentApr] = useState("22.99");
   const [introPeriod, setIntroPeriod] = useState("15");
@@ -182,7 +192,7 @@ function TabTransfer() {
     try {
       const b = parseFloat(balance), ca = parseFloat(currentApr), ip = parseInt(introPeriod);
       const ra = parseFloat(regularApr), tf = parseFloat(transferFee), p = parseFloat(payment);
-      if ([b, ca, ip, ra, tf, p].some(isNaN) || b <= 0 || p <= 0) throw new Error("Enter valid positive numbers");
+      if ([b, ca, ip, ra, tf, p].some(isNaN) || b <= 0 || p <= 0) throw new Error(t("creditCard.error.invalidPositive"));
       setResult(calcBalanceTransfer(b, ca, ip, ra, tf, p));
       setError("");
     } catch (e) { setError((e as Error).message); setResult(null); }
@@ -191,29 +201,29 @@ function TabTransfer() {
   return (
     <div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "0.75rem", marginBottom: "1rem" }}>
-        <Field label="Current Balance" value={balance} onChange={setBalance} prefix="$" />
-        <Field label="Current APR (%)" value={currentApr} onChange={setCurrentApr} suffix="%" />
-        <Field label="Intro Period (months)" value={introPeriod} onChange={setIntroPeriod} />
-        <Field label="Regular APR after (%)" value={regularApr} onChange={setRegularApr} suffix="%" />
-        <Field label="Transfer Fee (%)" value={transferFee} onChange={setTransferFee} suffix="%" />
-        <Field label="Monthly Payment" value={payment} onChange={setPayment} prefix="$" />
+        <Field label={t("creditCard.label.currentBalance")} value={balance} onChange={setBalance} prefix="$" />
+        <Field label={t("creditCard.label.currentAPR")} value={currentApr} onChange={setCurrentApr} suffix="%" />
+        <Field label={t("creditCard.label.introPeriodMonths")} value={introPeriod} onChange={setIntroPeriod} />
+        <Field label={t("creditCard.label.regularAPRAfter")} value={regularApr} onChange={setRegularApr} suffix="%" />
+        <Field label={t("creditCard.label.transferFee")} value={transferFee} onChange={setTransferFee} suffix="%" />
+        <Field label={t("creditCard.label.monthlyPayment")} value={payment} onChange={setPayment} prefix="$" />
       </div>
       <button onClick={calculate} style={{ background: "#991b1b", color: "#fff", border: "none", borderRadius: "0.5rem", padding: "0.6rem 1.5rem", fontWeight: 700, cursor: "pointer" }}>
-        Analyze
+        {t("creditCard.btn.analyze")}
       </button>
       {error && <p style={{ color: "#f87171", marginTop: "0.5rem", fontSize: "0.85rem" }}>{error}</p>}
       {result && (
         <div style={{ marginTop: "1rem" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", marginBottom: "0.75rem" }}>
             <div style={{ background: "#1a0b0b", border: "1px solid #7f1d1d", borderRadius: "0.75rem", padding: "1rem" }}>
-              <div style={{ fontSize: "0.75rem", color: "#f87171", marginBottom: "0.5rem" }}>Stay on Current Card</div>
+              <div style={{ fontSize: "0.75rem", color: "#f87171", marginBottom: "0.5rem" }}>{t("creditCard.transfer.stayOnCard")}</div>
               <div style={{ fontSize: "1.15rem", fontWeight: 700, color: "#f4f4f5" }}>{usd(result.stayTotalInterest)}</div>
-              <div style={{ fontSize: "0.8rem", color: "#71717a" }}>Total interest</div>
+              <div style={{ fontSize: "0.8rem", color: "#71717a" }}>{t("creditCard.transfer.totalInterest")}</div>
             </div>
             <div style={{ background: "#0f1f0a", border: "1px solid #166534", borderRadius: "0.75rem", padding: "1rem" }}>
-              <div style={{ fontSize: "0.75rem", color: "#4ade80", marginBottom: "0.5rem" }}>Balance Transfer</div>
+              <div style={{ fontSize: "0.75rem", color: "#4ade80", marginBottom: "0.5rem" }}>{t("creditCard.transfer.balanceTransfer")}</div>
               <div style={{ fontSize: "1.15rem", fontWeight: 700, color: "#f4f4f5" }}>{usd(result.transferTotalInterest + result.transferFee)}</div>
-              <div style={{ fontSize: "0.8rem", color: "#71717a" }}>Interest + fee ({usd(result.transferFee)} fee)</div>
+              <div style={{ fontSize: "0.8rem", color: "#71717a" }}>{t("creditCard.transfer.interestPlusFee")} ({usd(result.transferFee)} fee)</div>
             </div>
           </div>
           <div style={{ background: "#0a0a0b", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1rem" }}>
@@ -222,7 +232,7 @@ function TabTransfer() {
             </p>
             {result.breakEvenMonth > 0 && (
               <p style={{ color: "#71717a", fontSize: "0.8rem", marginTop: "0.25rem" }}>
-                Break-even: month {result.breakEvenMonth}
+                {t("creditCard.transfer.breakEven")}: {t("creditCard.transfer.month")} {result.breakEvenMonth}
               </p>
             )}
           </div>
@@ -234,17 +244,18 @@ function TabTransfer() {
 
 // --- Main ---
 export default function CreditCardPage() {
+  const { t } = useLanguage();
   const [tab, setTab] = useState<"payoff" | "minimum" | "transfer">("payoff");
 
   return (
     <div style={{ maxWidth: "52rem", margin: "0 auto", padding: "1.5rem 1rem" }}>
       <h1 style={{ textAlign: "center", fontSize: "1.5rem", fontWeight: 800, color: "#f87171", marginBottom: "1.5rem" }}>
-        Credit Card Payoff Calculator
+        {t("creditCard.title")}
       </h1>
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
-        <button style={TAB_STYLE(tab === "payoff")} onClick={() => setTab("payoff")}>Payoff Calculator</button>
-        <button style={TAB_STYLE(tab === "minimum")} onClick={() => setTab("minimum")}>Minimum Payment Trap</button>
-        <button style={TAB_STYLE(tab === "transfer")} onClick={() => setTab("transfer")}>Balance Transfer</button>
+        <button style={TAB_STYLE(tab === "payoff")} onClick={() => setTab("payoff")}>{t("creditCard.tab.payoff")}</button>
+        <button style={TAB_STYLE(tab === "minimum")} onClick={() => setTab("minimum")}>{t("creditCard.tab.minimumTrap")}</button>
+        <button style={TAB_STYLE(tab === "transfer")} onClick={() => setTab("transfer")}>{t("creditCard.tab.balanceTransfer")}</button>
       </div>
       <div style={{ background: "#111113", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1.5rem" }}>
         {tab === "payoff" && <TabPayoff />}
@@ -252,7 +263,7 @@ export default function CreditCardPage() {
         {tab === "transfer" && <TabTransfer />}
       </div>
       <p style={{ marginTop: "1.5rem", fontSize: "0.7rem", color: "#3f3f46", textAlign: "center" }}>
-        Estimates only. Actual rates and minimum payments vary by issuer. (2025 rates)
+        {t("creditCard.desc.disclaimer")}
       </p>
     </div>
   );

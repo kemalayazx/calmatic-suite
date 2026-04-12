@@ -7,6 +7,7 @@ import {
   calculateStrength,
   type PasswordOptions,
 } from "@/lib/calculations/password";
+import { useLanguage } from "@/context/LanguageContext";
 
 const DEFAULT_OPTS: PasswordOptions = {
   length: 16,
@@ -41,6 +42,7 @@ function Toggle({ label, checked, onChange }: { label: string; checked: boolean;
 }
 
 export default function PasswordPage() {
+  const { t } = useLanguage();
   const [opts, setOpts] = useState<PasswordOptions>(DEFAULT_OPTS);
   const [password, setPassword] = useState("");
   const [bulk, setBulk] = useState<string[]>([]);
@@ -82,10 +84,10 @@ export default function PasswordPage() {
   return (
     <div style={{ maxWidth: "640px", margin: "0 auto" }}>
       <h1 style={{ fontSize: "2rem", fontWeight: 800, marginBottom: "0.5rem", color: "#fafafa" }}>
-        Password Generator
+        {t("password.title")}
       </h1>
       <p style={{ color: "#71717a", marginBottom: "2rem" }}>
-        Generate cryptographically secure random passwords.
+        {t("password.subtitle")}
       </p>
 
       {/* Generated Password Display */}
@@ -105,7 +107,7 @@ export default function PasswordPage() {
             {/* Strength Meter */}
             <div style={{ marginBottom: "1rem" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.4rem" }}>
-                <span style={{ fontSize: "0.8rem", color: "#71717a" }}>Strength</span>
+                <span style={{ fontSize: "0.8rem", color: "#71717a" }}>{t("password.label.strength")}</span>
                 <span style={{ fontSize: "0.8rem", fontWeight: 600, color: strength.color }}>{strength.label}</span>
               </div>
               <div style={{ background: "#27272a", borderRadius: "4px", height: "6px", overflow: "hidden" }}>
@@ -116,7 +118,7 @@ export default function PasswordPage() {
                 }} />
               </div>
               <div style={{ fontSize: "0.75rem", color: "#52525b", marginTop: "0.3rem" }}>
-                Entropy: {strength.entropy.toFixed(1)} bits
+                {t("password.label.entropy")}: {strength.entropy.toFixed(1)} bits
               </div>
             </div>
             <button
@@ -127,11 +129,11 @@ export default function PasswordPage() {
                 color: "#fff", border: "none", cursor: "pointer", fontWeight: 600, fontSize: "0.875rem",
               }}
             >
-              {copied ? "Copied!" : "Copy Password"}
+              {copied ? t("common.copied") : t("password.btn.copyPassword")}
             </button>
           </>
         ) : (
-          <div style={{ color: "#52525b", fontStyle: "italic" }}>Enable at least one character type to generate.</div>
+          <div style={{ color: "#52525b", fontStyle: "italic" }}>{t("password.msg.enableCharType")}</div>
         )}
       </div>
 
@@ -143,7 +145,7 @@ export default function PasswordPage() {
         {/* Length Slider */}
         <div style={{ marginBottom: "1.5rem" }}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-            <span style={{ color: "#d4d4d8", fontWeight: 600 }}>Password Length</span>
+            <span style={{ color: "#d4d4d8", fontWeight: 600 }}>{t("password.label.length")}</span>
             <span style={{
               background: "#7c3aed", color: "#fff", borderRadius: "0.375rem",
               padding: "0.1rem 0.6rem", fontSize: "0.9rem", fontWeight: 700, minWidth: "3rem", textAlign: "center",
@@ -161,11 +163,11 @@ export default function PasswordPage() {
 
         {/* Toggles */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.875rem" }}>
-          <Toggle label="Uppercase (A-Z)" checked={opts.uppercase} onChange={(v) => setOpt("uppercase", v)} />
-          <Toggle label="Lowercase (a-z)" checked={opts.lowercase} onChange={(v) => setOpt("lowercase", v)} />
-          <Toggle label="Numbers (0-9)" checked={opts.numbers} onChange={(v) => setOpt("numbers", v)} />
-          <Toggle label="Symbols (!@#…)" checked={opts.symbols} onChange={(v) => setOpt("symbols", v)} />
-          <Toggle label="Exclude Ambiguous (0O1Ill)" checked={opts.excludeAmbiguous} onChange={(v) => setOpt("excludeAmbiguous", v)} />
+          <Toggle label={t("password.toggle.uppercase")} checked={opts.uppercase} onChange={(v) => setOpt("uppercase", v)} />
+          <Toggle label={t("password.toggle.lowercase")} checked={opts.lowercase} onChange={(v) => setOpt("lowercase", v)} />
+          <Toggle label={t("password.toggle.numbers")} checked={opts.numbers} onChange={(v) => setOpt("numbers", v)} />
+          <Toggle label={t("password.toggle.symbols")} checked={opts.symbols} onChange={(v) => setOpt("symbols", v)} />
+          <Toggle label={t("password.toggle.excludeAmbiguous")} checked={opts.excludeAmbiguous} onChange={(v) => setOpt("excludeAmbiguous", v)} />
         </div>
       </div>
 
@@ -179,7 +181,7 @@ export default function PasswordPage() {
             color: "#fff", border: "none", cursor: "pointer", fontWeight: 700, fontSize: "1rem",
           }}
         >
-          Generate
+          {t("password.btn.generate")}
         </button>
         <button
           onClick={generateBulk}
@@ -189,7 +191,7 @@ export default function PasswordPage() {
             border: "1px solid #7c3aed", cursor: "pointer", fontWeight: 600, fontSize: "0.9rem",
           }}
         >
-          Generate 5 Passwords
+          {t("password.btn.generate5")}
         </button>
       </div>
 
@@ -200,7 +202,7 @@ export default function PasswordPage() {
           padding: "1.25rem", marginBottom: "1.5rem",
         }}>
           <h3 style={{ color: "#a1a1aa", fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1rem" }}>
-            5 Generated Passwords
+            {t("password.label.generated5")}
           </h3>
           {bulk.map((pw, i) => (
             <div key={i} style={{
@@ -219,7 +221,7 @@ export default function PasswordPage() {
                   flexShrink: 0,
                 }}
               >
-                {copiedIdx === i ? "Copied!" : "Copy"}
+                {copiedIdx === i ? t("common.copied") : t("common.copy")}
               </button>
             </div>
           ))}
@@ -227,7 +229,7 @@ export default function PasswordPage() {
       )}
 
       <p style={{ color: "#52525b", fontSize: "0.8rem", textAlign: "center", marginTop: "1rem" }}>
-        All passwords are generated in your browser using crypto.getRandomValues. Nothing is sent to any server.
+        {t("password.footer")}
       </p>
     </div>
   );

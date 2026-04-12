@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { calculateRentVsBuy, type RentBuyInputs, type YearlyPoint } from "@/lib/calculations/rent-buy";
+import { useLanguage } from "@/context/LanguageContext";
 
 const fmt = (n: number) => n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
@@ -26,6 +27,7 @@ function Field({ label, value, onChange, min, max, step, prefix, suffix }: {
 }
 
 function LineChart({ data, crossover }: { data: YearlyPoint[]; crossover: number | null }) {
+  const { t } = useLanguage();
   if (!data.length) return null;
   const W = 560, H = 260, PAD = { top: 20, right: 20, bottom: 40, left: 70 };
   const innerW = W - PAD.left - PAD.right;
@@ -79,11 +81,11 @@ function LineChart({ data, crossover }: { data: YearlyPoint[]; crossover: number
       <path d={equityPath} fill="none" stroke="#22c55e" strokeWidth={1.5} strokeDasharray="5 3" />
       {/* Legend */}
       <circle cx={PAD.left + 8} cy={PAD.top - 6} r={5} fill="#3b82f6" />
-      <text x={PAD.left + 18} y={PAD.top - 2} fill="#a1a1aa" fontSize={10}>Rent Cost</text>
+      <text x={PAD.left + 18} y={PAD.top - 2} fill="#a1a1aa" fontSize={10}>{t("rentBuy.legend.rentCost")}</text>
       <circle cx={PAD.left + 80} cy={PAD.top - 6} r={5} fill="#f97316" />
-      <text x={PAD.left + 90} y={PAD.top - 2} fill="#a1a1aa" fontSize={10}>Buy Cost</text>
+      <text x={PAD.left + 90} y={PAD.top - 2} fill="#a1a1aa" fontSize={10}>{t("rentBuy.legend.buyCost")}</text>
       <circle cx={PAD.left + 155} cy={PAD.top - 6} r={5} fill="#22c55e" />
-      <text x={PAD.left + 165} y={PAD.top - 2} fill="#a1a1aa" fontSize={10}>Equity</text>
+      <text x={PAD.left + 165} y={PAD.top - 2} fill="#a1a1aa" fontSize={10}>{t("rentBuy.legend.equity")}</text>
     </svg>
   );
 }
@@ -106,6 +108,7 @@ const DEFAULTS: RentBuyInputs = {
 };
 
 export default function RentBuyPage() {
+  const { t } = useLanguage();
   const [inputs, setInputs] = useState<RentBuyInputs>(DEFAULTS);
   const set = <K extends keyof RentBuyInputs>(k: K, v: RentBuyInputs[K]) =>
     setInputs((p) => ({ ...p, [k]: v }));
@@ -117,43 +120,43 @@ export default function RentBuyPage() {
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto" }}>
       <h1 style={{ fontSize: "2rem", fontWeight: 800, marginBottom: "0.5rem", color: "#fafafa" }}>
-        Rent vs Buy Calculator
+        {t("rentBuy.title")}
       </h1>
       <p style={{ color: "#71717a", marginBottom: "2rem" }}>
-        Compare the true cost of renting vs buying over your time horizon.
+        {t("rentBuy.subtitle")}
       </p>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem", marginBottom: "1.5rem" }}>
         {/* Rent Side */}
         <div style={{ background: "#18181b", border: "1px solid #3b82f633", borderRadius: "0.75rem", padding: "1.25rem" }}>
-          <h2 style={{ color: "#3b82f6", fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1rem" }}>Renting</h2>
-          <Field label="Monthly Rent ($)" value={inputs.monthlyRent} onChange={(v) => set("monthlyRent", v)} min={0} prefix="$" />
-          <Field label="Annual Rent Increase (%)" value={inputs.annualRentIncrease} onChange={(v) => set("annualRentIncrease", v)} min={0} max={20} suffix="%" />
-          <Field label="Renters Insurance ($/mo)" value={inputs.rentersInsurance} onChange={(v) => set("rentersInsurance", v)} min={0} prefix="$" />
+          <h2 style={{ color: "#3b82f6", fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1rem" }}>{t("rentBuy.section.renting")}</h2>
+          <Field label={t("rentBuy.label.monthlyRent")} value={inputs.monthlyRent} onChange={(v) => set("monthlyRent", v)} min={0} prefix="$" />
+          <Field label={t("rentBuy.label.annualRentIncrease")} value={inputs.annualRentIncrease} onChange={(v) => set("annualRentIncrease", v)} min={0} max={20} suffix="%" />
+          <Field label={t("rentBuy.label.rentersInsurance")} value={inputs.rentersInsurance} onChange={(v) => set("rentersInsurance", v)} min={0} prefix="$" />
         </div>
 
         {/* Buy Side */}
         <div style={{ background: "#18181b", border: "1px solid #f9731633", borderRadius: "0.75rem", padding: "1.25rem" }}>
-          <h2 style={{ color: "#f97316", fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1rem" }}>Buying</h2>
-          <Field label="Home Price ($)" value={inputs.homePrice} onChange={(v) => set("homePrice", v)} min={0} prefix="$" />
-          <Field label="Down Payment (%)" value={inputs.downPaymentPct} onChange={(v) => set("downPaymentPct", v)} min={0} max={100} suffix="%" />
-          <Field label="Mortgage Rate (%)" value={inputs.mortgageRate} onChange={(v) => set("mortgageRate", v)} min={0} max={30} suffix="%" />
-          <Field label="Loan Term (years)" value={inputs.loanTermYears} onChange={(v) => set("loanTermYears", v)} min={1} max={30} step={1} />
-          <Field label="Property Tax Rate (%/yr)" value={inputs.propertyTaxRate} onChange={(v) => set("propertyTaxRate", v)} min={0} max={5} suffix="%" />
-          <Field label="Homeowners Insurance ($/yr)" value={inputs.homeownersInsurance} onChange={(v) => set("homeownersInsurance", v)} min={0} prefix="$" />
-          <Field label="Maintenance (%/yr)" value={inputs.maintenancePct} onChange={(v) => set("maintenancePct", v)} min={0} max={5} suffix="%" />
-          <Field label="Home Appreciation (%/yr)" value={inputs.appreciationRate} onChange={(v) => set("appreciationRate", v)} min={0} max={20} suffix="%" />
-          <Field label="Closing Costs (%)" value={inputs.closingCostsPct} onChange={(v) => set("closingCostsPct", v)} min={0} max={10} suffix="%" />
+          <h2 style={{ color: "#f97316", fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1rem" }}>{t("rentBuy.section.buying")}</h2>
+          <Field label={t("rentBuy.label.homePrice")} value={inputs.homePrice} onChange={(v) => set("homePrice", v)} min={0} prefix="$" />
+          <Field label={t("rentBuy.label.downPayment")} value={inputs.downPaymentPct} onChange={(v) => set("downPaymentPct", v)} min={0} max={100} suffix="%" />
+          <Field label={t("rentBuy.label.mortgageRate")} value={inputs.mortgageRate} onChange={(v) => set("mortgageRate", v)} min={0} max={30} suffix="%" />
+          <Field label={t("rentBuy.label.loanTerm")} value={inputs.loanTermYears} onChange={(v) => set("loanTermYears", v)} min={1} max={30} step={1} />
+          <Field label={t("rentBuy.label.propertyTaxRate")} value={inputs.propertyTaxRate} onChange={(v) => set("propertyTaxRate", v)} min={0} max={5} suffix="%" />
+          <Field label={t("rentBuy.label.homeownersInsurance")} value={inputs.homeownersInsurance} onChange={(v) => set("homeownersInsurance", v)} min={0} prefix="$" />
+          <Field label={t("rentBuy.label.maintenance")} value={inputs.maintenancePct} onChange={(v) => set("maintenancePct", v)} min={0} max={5} suffix="%" />
+          <Field label={t("rentBuy.label.homeAppreciation")} value={inputs.appreciationRate} onChange={(v) => set("appreciationRate", v)} min={0} max={20} suffix="%" />
+          <Field label={t("rentBuy.label.closingCosts")} value={inputs.closingCostsPct} onChange={(v) => set("closingCostsPct", v)} min={0} max={10} suffix="%" />
         </div>
       </div>
 
       {/* Shared */}
       <div style={{ background: "#18181b", border: "1px solid #3f3f46", borderRadius: "0.75rem", padding: "1.25rem", marginBottom: "1.5rem" }}>
-        <h2 style={{ color: "#a1a1aa", fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1rem" }}>Shared Settings</h2>
+        <h2 style={{ color: "#a1a1aa", fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1rem" }}>{t("rentBuy.section.sharedSettings")}</h2>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
           <div>
             <label style={{ display: "block", fontSize: "0.8rem", color: "#a1a1aa", marginBottom: "0.4rem" }}>
-              Time Horizon: <strong style={{ color: "#fafafa" }}>{inputs.timeHorizonYears} years</strong>
+              {t("rentBuy.label.timeHorizon")}: <strong style={{ color: "#fafafa" }}>{inputs.timeHorizonYears} {t("rentBuy.label.years")}</strong>
             </label>
             <input
               type="range" min={1} max={30} value={inputs.timeHorizonYears}
@@ -161,7 +164,7 @@ export default function RentBuyPage() {
               style={{ width: "100%", accentColor: "#7c3aed" }}
             />
           </div>
-          <Field label="Investment Return (%/yr)" value={inputs.investmentReturn} onChange={(v) => set("investmentReturn", v)} min={0} max={20} suffix="%" />
+          <Field label={t("rentBuy.label.investmentReturn")} value={inputs.investmentReturn} onChange={(v) => set("investmentReturn", v)} min={0} max={20} suffix="%" />
         </div>
       </div>
 
@@ -171,25 +174,25 @@ export default function RentBuyPage() {
           textAlign: "center", padding: "1rem", borderRadius: "0.5rem",
           background: `${winColor}15`, marginBottom: "1.5rem",
         }}>
-          <div style={{ fontSize: "0.85rem", color: "#a1a1aa", marginBottom: "0.25rem" }}>Winner over {inputs.timeHorizonYears} years</div>
+          <div style={{ fontSize: "0.85rem", color: "#a1a1aa", marginBottom: "0.25rem" }}>{t("rentBuy.result.winnerOver")} {inputs.timeHorizonYears} {t("rentBuy.label.years")}</div>
           <div style={{ fontSize: "1.75rem", fontWeight: 800, color: winColor }}>
-            {result.winner === "rent" ? "Renting" : "Buying"} saves {fmt(result.savingsAmount)}
+            {result.winner === "rent" ? t("rentBuy.section.renting") : t("rentBuy.section.buying")} {t("rentBuy.result.saves")} {fmt(result.savingsAmount)}
           </div>
           {result.crossoverYear && (
             <div style={{ fontSize: "0.875rem", color: "#a1a1aa", marginTop: "0.25rem" }}>
-              Crossover at year {result.crossoverYear}
+              {t("rentBuy.result.crossoverAt")} {result.crossoverYear}
             </div>
           )}
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem", marginBottom: "1.5rem" }}>
           {[
-            { label: "Total Rent Cost", value: fmt(result.totalRentCost), color: "#3b82f6" },
-            { label: "Total Buy Cost", value: fmt(result.totalBuyCost), color: "#f97316" },
-            { label: "Monthly Mortgage", value: fmt(result.monthlyMortgage), color: "#a78bfa" },
-            { label: "Down Payment", value: fmt(result.downPayment), color: "#facc15" },
-            { label: "Closing Costs", value: fmt(result.closingCosts), color: "#f472b6" },
-            { label: "Final Equity", value: fmt(result.yearlyData[result.yearlyData.length - 1]?.equity ?? 0), color: "#22c55e" },
+            { label: t("rentBuy.result.totalRentCost"), value: fmt(result.totalRentCost), color: "#3b82f6" },
+            { label: t("rentBuy.result.totalBuyCost"), value: fmt(result.totalBuyCost), color: "#f97316" },
+            { label: t("rentBuy.result.monthlyMortgage"), value: fmt(result.monthlyMortgage), color: "#a78bfa" },
+            { label: t("rentBuy.result.downPayment"), value: fmt(result.downPayment), color: "#facc15" },
+            { label: t("rentBuy.result.closingCosts"), value: fmt(result.closingCosts), color: "#f472b6" },
+            { label: t("rentBuy.result.finalEquity"), value: fmt(result.yearlyData[result.yearlyData.length - 1]?.equity ?? 0), color: "#22c55e" },
           ].map(({ label, value, color }) => (
             <div key={label} style={{ textAlign: "center", padding: "0.75rem", background: "#1c1c1f", borderRadius: "0.5rem" }}>
               <div style={{ fontSize: "0.75rem", color: "#71717a", marginBottom: "0.3rem" }}>{label}</div>
@@ -202,7 +205,7 @@ export default function RentBuyPage() {
       </div>
 
       <p style={{ color: "#52525b", fontSize: "0.8rem", textAlign: "center" }}>
-        For informational purposes only. Consult a financial advisor before making real estate decisions. Results depend on assumptions that may not reflect your actual situation.
+        {t("rentBuy.disclaimer")}
       </p>
     </div>
   );

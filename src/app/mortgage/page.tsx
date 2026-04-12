@@ -11,11 +11,12 @@ import {
 import ExportButton from "@/components/ui/ExportButton";
 import PrintButton from "@/components/ui/PrintButton";
 import type { ExportRow } from "@/lib/export";
+import { useLanguage } from "@/context/LanguageContext";
 
 const fmt = (n: number) =>
   n.toLocaleString("en-US", { style: "currency", currency: "USD" });
 
-function PieChart({ principal, interest }: { principal: number; interest: number }) {
+function PieChart({ principal, interest, labelPrincipal, labelInterest }: { principal: number; interest: number; labelPrincipal: string; labelInterest: string }) {
   const total = principal + interest;
   if (total === 0) return null;
   const principalPct = principal / total;
@@ -41,17 +42,17 @@ function PieChart({ principal, interest }: { principal: number; interest: number
           {(principalPct * 100).toFixed(0)}%
         </text>
         <text x={cx} y={cy + 10} textAnchor="middle" fill="#a1a1aa" fontSize="9">
-          Principal
+          {labelPrincipal}
         </text>
       </svg>
       <div>
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
           <div style={{ width: 12, height: 12, borderRadius: 2, background: "#22c55e" }} />
-          <span style={{ fontSize: "0.85rem", color: "#a1a1aa" }}>Principal: {fmt(principal)}</span>
+          <span style={{ fontSize: "0.85rem", color: "#a1a1aa" }}>{labelPrincipal}: {fmt(principal)}</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <div style={{ width: 12, height: 12, borderRadius: 2, background: "#7c3aed" }} />
-          <span style={{ fontSize: "0.85rem", color: "#a1a1aa" }}>Interest: {fmt(interest)}</span>
+          <span style={{ fontSize: "0.85rem", color: "#a1a1aa" }}>{labelInterest}: {fmt(interest)}</span>
         </div>
       </div>
     </div>
@@ -59,8 +60,14 @@ function PieChart({ principal, interest }: { principal: number; interest: number
 }
 
 export default function MortgagePage() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState(0);
-  const tabs = ["Monthly Payment", "Amortization", "Affordability", "Refinance"];
+  const tabs = [
+    t("mortgage.tab.monthlyPayment"),
+    t("mortgage.tab.amortization"),
+    t("mortgage.tab.affordability"),
+    t("mortgage.tab.refinance"),
+  ];
 
   // Tab 1
   const [homePrice, setHomePrice] = useState("400000");
@@ -163,19 +170,19 @@ export default function MortgagePage() {
   }
 
   return (
-    <RetroWindow title="Mortgage Calculator">
+    <RetroWindow title={t("mortgage.title")}>
     <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-        <h1 style={{ fontSize: "2rem", fontWeight: 800 }}>Mortgage Calculator</h1>
+        <h1 style={{ fontSize: "2rem", fontWeight: 800 }}>{t("mortgage.title")}</h1>
         <div style={{ display: "flex", gap: "0.5rem" }}>
           <ExportButton getData={getMortgageExportData} filename="calmatic-mortgage" sheetName="Mortgage" />
           <PrintButton />
         </div>
       </div>
-      <p style={{ color: "#71717a", marginBottom: "2rem" }}>Monthly payment, amortization, affordability, and refinance analysis.</p>
+      <p style={{ color: "#71717a", marginBottom: "2rem" }}>{t("mortgage.desc.intro")}</p>
 
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "2rem", borderBottom: "1px solid #27272a" }}>
-        {tabs.map((t, i) => (
+        {tabs.map((tab, i) => (
           <button
             key={i}
             onClick={() => setActiveTab(i)}
@@ -190,7 +197,7 @@ export default function MortgagePage() {
               borderBottom: activeTab === i ? "2px solid #7c3aed" : "2px solid transparent",
             }}
           >
-            {t}
+            {tab}
           </button>
         ))}
       </div>
@@ -199,13 +206,13 @@ export default function MortgagePage() {
       {(activeTab === 0 || activeTab === 1) && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
           <div>
-            <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.8rem", marginBottom: "0.3rem" }}>Home Price</label>
+            <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.8rem", marginBottom: "0.3rem" }}>{t("mortgage.label.homePrice")}</label>
             <input type="number" value={homePrice} onChange={(e) => setHomePrice(e.target.value)}
               style={{ width: "100%", padding: "0.5rem 0.75rem", borderRadius: "0.5rem", border: "1px solid #3f3f46", background: "#18181b", color: "#fafafa", fontSize: "0.9rem" }} />
           </div>
           <div>
             <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.8rem", marginBottom: "0.3rem" }}>
-              Down Payment {" "}
+              {t("mortgage.label.downPayment")}{" "}
               <button onClick={() => setDpIsPercent(!dpIsPercent)} style={{ fontSize: "0.7rem", color: "#7c3aed", background: "none", border: "1px solid #3f3f46", borderRadius: "0.25rem", padding: "0.1rem 0.4rem", cursor: "pointer" }}>
                 {dpIsPercent ? "%" : "$"}
               </button>
@@ -214,16 +221,16 @@ export default function MortgagePage() {
               style={{ width: "100%", padding: "0.5rem 0.75rem", borderRadius: "0.5rem", border: "1px solid #3f3f46", background: "#18181b", color: "#fafafa", fontSize: "0.9rem" }} />
           </div>
           <div>
-            <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.8rem", marginBottom: "0.3rem" }}>Loan Term</label>
+            <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.8rem", marginBottom: "0.3rem" }}>{t("mortgage.label.loanTerm")}</label>
             <select value={loanTerm} onChange={(e) => setLoanTerm(e.target.value)}
               style={{ width: "100%", padding: "0.5rem 0.75rem", borderRadius: "0.5rem", border: "1px solid #3f3f46", background: "#18181b", color: "#fafafa", fontSize: "0.9rem" }}>
-              <option value="15">15 years</option>
-              <option value="20">20 years</option>
-              <option value="30">30 years</option>
+              <option value="15">{t("mortgage.option.15years")}</option>
+              <option value="20">{t("mortgage.option.20years")}</option>
+              <option value="30">{t("mortgage.option.30years")}</option>
             </select>
           </div>
           <div>
-            <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.8rem", marginBottom: "0.3rem" }}>Interest Rate (%)</label>
+            <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.8rem", marginBottom: "0.3rem" }}>{t("mortgage.label.interestRate")}</label>
             <input type="number" value={interestRate} onChange={(e) => setInterestRate(e.target.value)} step="0.1"
               style={{ width: "100%", padding: "0.5rem 0.75rem", borderRadius: "0.5rem", border: "1px solid #3f3f46", background: "#18181b", color: "#fafafa", fontSize: "0.9rem" }} />
           </div>
@@ -234,16 +241,16 @@ export default function MortgagePage() {
       {activeTab === 0 && (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
           <div style={{ background: "#18181b", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1.5rem" }}>
-            <div style={{ fontSize: "0.75rem", color: "#71717a", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1rem" }}>Results</div>
+            <div style={{ fontSize: "0.75rem", color: "#71717a", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1rem" }}>{t("mortgage.result.results")}</div>
             <div style={{ fontSize: "2.5rem", fontWeight: 800, color: "#22c55e", marginBottom: "0.25rem" }}>
               {fmt(paymentResult.monthlyPayment)}
             </div>
-            <div style={{ fontSize: "0.85rem", color: "#71717a", marginBottom: "1.5rem" }}>per month (P&I)</div>
+            <div style={{ fontSize: "0.85rem", color: "#71717a", marginBottom: "1.5rem" }}>{t("mortgage.result.perMonth")}</div>
             {[
-              ["Loan Amount", fmt(paymentResult.loanAmount)],
-              ["Down Payment", fmt(paymentResult.downPaymentAmount)],
-              ["Total Interest", fmt(paymentResult.totalInterest)],
-              ["Total Cost", fmt(paymentResult.totalCost)],
+              [t("mortgage.result.loanAmount"), fmt(paymentResult.loanAmount)],
+              [t("mortgage.result.downPayment"), fmt(paymentResult.downPaymentAmount)],
+              [t("mortgage.result.totalInterest"), fmt(paymentResult.totalInterest)],
+              [t("mortgage.result.totalCost"), fmt(paymentResult.totalCost)],
             ].map(([l, v]) => (
               <div key={l} style={{ display: "flex", justifyContent: "space-between", padding: "0.4rem 0", borderBottom: "1px solid #27272a", fontSize: "0.875rem" }}>
                 <span style={{ color: "#a1a1aa" }}>{l}</span>
@@ -252,7 +259,12 @@ export default function MortgagePage() {
             ))}
           </div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <PieChart principal={paymentResult.loanAmount} interest={paymentResult.totalInterest} />
+            <PieChart
+              principal={paymentResult.loanAmount}
+              interest={paymentResult.totalInterest}
+              labelPrincipal={t("mortgage.chart.principal")}
+              labelInterest={t("mortgage.chart.interest")}
+            />
           </div>
         </div>
       )}
@@ -264,7 +276,13 @@ export default function MortgagePage() {
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid #3f3f46" }}>
-                  {["Month", "Payment", "Principal", "Interest", "Balance"].map((h) => (
+                  {[
+                    t("mortgage.table.month"),
+                    t("mortgage.table.payment"),
+                    t("mortgage.table.principal"),
+                    t("mortgage.table.interest"),
+                    t("mortgage.table.balance"),
+                  ].map((h) => (
                     <th key={h} style={{ padding: "0.625rem 0.75rem", textAlign: "right", color: "#71717a", fontWeight: 600, fontSize: "0.8rem" }}>{h}</th>
                   ))}
                 </tr>
@@ -283,16 +301,20 @@ export default function MortgagePage() {
           {schedule.length > 12 && (
             <button onClick={() => setShowAllRows(!showAllRows)}
               style={{ marginTop: "1rem", padding: "0.5rem 1.25rem", background: "#27272a", border: "none", borderRadius: "0.5rem", color: "#a1a1aa", cursor: "pointer", fontSize: "0.875rem" }}>
-              {showAllRows ? "Show less" : `Show all ${schedule.length} months`}
+              {showAllRows ? t("mortgage.btn.showLess") : `${t("mortgage.btn.showAll")} ${schedule.length} months`}
             </button>
           )}
           <div style={{ marginTop: "2rem" }}>
-            <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "#a78bfa", marginBottom: "1rem" }}>Yearly Summary</div>
+            <div style={{ fontSize: "0.9rem", fontWeight: 700, color: "#a78bfa", marginBottom: "1rem" }}>{t("mortgage.amort.yearlySummary")}</div>
             <div style={{ overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid #3f3f46" }}>
-                    {["Year", "Principal Paid", "Interest Paid"].map((h) => (
+                    {[
+                      t("mortgage.table.year"),
+                      t("mortgage.table.principalPaid"),
+                      t("mortgage.table.interestPaid"),
+                    ].map((h) => (
                       <th key={h} style={{ padding: "0.5rem 0.75rem", textAlign: "right", color: "#71717a", fontWeight: 600 }}>{h}</th>
                     ))}
                   </tr>
@@ -300,7 +322,7 @@ export default function MortgagePage() {
                 <tbody>
                   {yearlyAmort.slice(0, 5).map((row) => (
                     <tr key={row.year} style={{ borderBottom: "1px solid #27272a" }}>
-                      <td style={{ padding: "0.4rem 0.75rem", textAlign: "right", color: "#fafafa" }}>Year {row.year}</td>
+                      <td style={{ padding: "0.4rem 0.75rem", textAlign: "right", color: "#fafafa" }}>{t("mortgage.table.year")} {row.year}</td>
                       <td style={{ padding: "0.4rem 0.75rem", textAlign: "right", color: "#22c55e" }}>{fmt(row.principalPaid)}</td>
                       <td style={{ padding: "0.4rem 0.75rem", textAlign: "right", color: "#f87171" }}>{fmt(row.interestPaid)}</td>
                     </tr>
@@ -317,10 +339,10 @@ export default function MortgagePage() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
           <div>
             {[
-              { label: "Annual Income ($)", value: annualIncome, set: setAnnualIncome },
-              { label: "Monthly Debts ($)", value: monthlyDebts, set: setMonthlyDebts },
-              { label: "Down Payment ($)", value: affordDP, set: setAffordDP },
-              { label: "Interest Rate (%)", value: interestRate, set: setInterestRate },
+              { label: t("mortgage.label.annualIncome"), value: annualIncome, set: setAnnualIncome },
+              { label: t("mortgage.label.monthlyDebts"), value: monthlyDebts, set: setMonthlyDebts },
+              { label: t("mortgage.label.downPaymentDollar"), value: affordDP, set: setAffordDP },
+              { label: t("mortgage.label.interestRate"), value: interestRate, set: setInterestRate },
             ].map(({ label, value, set }) => (
               <div key={label} style={{ marginBottom: "1rem" }}>
                 <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.85rem", marginBottom: "0.3rem" }}>{label}</label>
@@ -329,35 +351,35 @@ export default function MortgagePage() {
               </div>
             ))}
             <div style={{ marginBottom: "1rem" }}>
-              <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.85rem", marginBottom: "0.3rem" }}>Loan Term</label>
+              <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.85rem", marginBottom: "0.3rem" }}>{t("mortgage.label.loanTerm")}</label>
               <select value={loanTerm} onChange={(e) => setLoanTerm(e.target.value)}
                 style={{ width: "100%", padding: "0.5rem 0.75rem", borderRadius: "0.5rem", border: "1px solid #3f3f46", background: "#18181b", color: "#fafafa", fontSize: "0.9rem" }}>
-                <option value="15">15 years</option>
-                <option value="20">20 years</option>
-                <option value="30">30 years</option>
+                <option value="15">{t("mortgage.option.15years")}</option>
+                <option value="20">{t("mortgage.option.20years")}</option>
+                <option value="30">{t("mortgage.option.30years")}</option>
               </select>
             </div>
           </div>
           <div style={{ background: "#18181b", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1.5rem" }}>
-            <div style={{ fontSize: "0.75rem", color: "#71717a", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1rem" }}>28/36 Rule Analysis</div>
+            <div style={{ fontSize: "0.75rem", color: "#71717a", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1rem" }}>{t("mortgage.afford.ruleTitle")}</div>
             <div style={{ fontSize: "2rem", fontWeight: 800, color: "#22c55e", marginBottom: "0.25rem" }}>
               {fmt(affordResult.maxHomePrice)}
             </div>
-            <div style={{ fontSize: "0.85rem", color: "#71717a", marginBottom: "1.5rem" }}>Maximum home price you can afford</div>
+            <div style={{ fontSize: "0.85rem", color: "#71717a", marginBottom: "1.5rem" }}>{t("mortgage.afford.maxDesc")}</div>
             <div style={{ padding: "0.625rem 0.75rem", borderRadius: "0.5rem", marginBottom: "1rem",
               background: affordResult.limitingFactor === "debt" ? "rgba(239,68,68,0.1)" : "rgba(34,197,94,0.1)",
               border: `1px solid ${affordResult.limitingFactor === "debt" ? "#ef4444" : "#22c55e"}` }}>
-              <div style={{ fontSize: "0.8rem", color: "#a1a1aa" }}>Limiting factor</div>
+              <div style={{ fontSize: "0.8rem", color: "#a1a1aa" }}>{t("mortgage.afford.limitingFactor")}</div>
               <div style={{ fontWeight: 700, color: affordResult.limitingFactor === "debt" ? "#f87171" : "#22c55e" }}>
-                {affordResult.limitingFactor === "debt" ? "Debt-to-Income (36% rule)" : "Housing Ratio (28% rule)"}
+                {affordResult.limitingFactor === "debt" ? t("mortgage.afford.dtiRule") : t("mortgage.afford.housingRule")}
               </div>
             </div>
             {[
-              ["Gross Monthly Income", fmt(affordResult.grossMonthlyIncome)],
-              ["Max Monthly Housing (28%)", fmt(affordResult.maxMonthlyHousing)],
-              ["Max Total Debt (36%)", fmt(affordResult.maxTotalDebt)],
-              ["Existing Monthly Debts", fmt(affordResult.monthlyDebtPayment)],
-              ["DTI Ratio", (affordResult.debtToIncomeRatio * 100).toFixed(1) + "%"],
+              [t("mortgage.afford.grossMonthlyIncome"), fmt(affordResult.grossMonthlyIncome)],
+              [t("mortgage.afford.maxMonthlyHousing"), fmt(affordResult.maxMonthlyHousing)],
+              [t("mortgage.afford.maxTotalDebt"), fmt(affordResult.maxTotalDebt)],
+              [t("mortgage.afford.existingDebts"), fmt(affordResult.monthlyDebtPayment)],
+              [t("mortgage.afford.dtiRatio"), (affordResult.debtToIncomeRatio * 100).toFixed(1) + "%"],
             ].map(([l, v]) => (
               <div key={l} style={{ display: "flex", justifyContent: "space-between", padding: "0.3rem 0", borderBottom: "1px solid #27272a", fontSize: "0.875rem" }}>
                 <span style={{ color: "#a1a1aa" }}>{l}</span>
@@ -372,11 +394,11 @@ export default function MortgagePage() {
       {activeTab === 3 && (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
           <div>
-            <div style={{ fontWeight: 700, color: "#71717a", marginBottom: "1rem", textTransform: "uppercase", fontSize: "0.75rem", letterSpacing: "0.05em" }}>Current Loan</div>
+            <div style={{ fontWeight: 700, color: "#71717a", marginBottom: "1rem", textTransform: "uppercase", fontSize: "0.75rem", letterSpacing: "0.05em" }}>{t("mortgage.refi.currentLoan")}</div>
             {[
-              { label: "Current Balance ($)", value: curBalance, set: setCurBalance },
-              { label: "Current Rate (%)", value: curRate, set: setCurRate },
-              { label: "Remaining Term (years)", value: curRemainingYears, set: setCurRemainingYears },
+              { label: t("mortgage.label.currentBalance"), value: curBalance, set: setCurBalance },
+              { label: t("mortgage.label.currentRate"), value: curRate, set: setCurRate },
+              { label: t("mortgage.label.remainingTerm"), value: curRemainingYears, set: setCurRemainingYears },
             ].map(({ label, value, set }) => (
               <div key={label} style={{ marginBottom: "1rem" }}>
                 <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.85rem", marginBottom: "0.3rem" }}>{label}</label>
@@ -384,11 +406,11 @@ export default function MortgagePage() {
                   style={{ width: "100%", padding: "0.5rem 0.75rem", borderRadius: "0.5rem", border: "1px solid #3f3f46", background: "#18181b", color: "#fafafa", fontSize: "0.9rem" }} />
               </div>
             ))}
-            <div style={{ fontSize: "0.75rem", color: "#71717a", textTransform: "uppercase", letterSpacing: "0.05em", margin: "1.25rem 0 0.75rem" }}>New Loan</div>
+            <div style={{ fontSize: "0.75rem", color: "#71717a", textTransform: "uppercase", letterSpacing: "0.05em", margin: "1.25rem 0 0.75rem" }}>{t("mortgage.refi.newLoan")}</div>
             {[
-              { label: "New Rate (%)", value: newRate, set: setNewRate },
-              { label: "New Term (years)", value: newTerm, set: setNewTerm },
-              { label: "Closing Costs ($)", value: closingCosts, set: setClosingCosts },
+              { label: t("mortgage.label.newRate"), value: newRate, set: setNewRate },
+              { label: t("mortgage.label.newTerm"), value: newTerm, set: setNewTerm },
+              { label: t("mortgage.label.closingCosts"), value: closingCosts, set: setClosingCosts },
             ].map(({ label, value, set }) => (
               <div key={label} style={{ marginBottom: "1rem" }}>
                 <label style={{ display: "block", color: "#a1a1aa", fontSize: "0.85rem", marginBottom: "0.3rem" }}>{label}</label>
@@ -398,29 +420,29 @@ export default function MortgagePage() {
             ))}
           </div>
           <div style={{ background: "#18181b", border: "1px solid #27272a", borderRadius: "0.75rem", padding: "1.5rem" }}>
-            <div style={{ fontSize: "0.75rem", color: "#71717a", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1rem" }}>Refinance Analysis</div>
+            <div style={{ fontSize: "0.75rem", color: "#71717a", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "1rem" }}>{t("mortgage.refi.analysisTitle")}</div>
             {[
-              ["Current Monthly Payment", fmt(refiResult.currentMonthlyPayment)],
-              ["New Monthly Payment", fmt(refiResult.newMonthlyPayment)],
-              ["Monthly Savings", fmt(refiResult.monthlySavings)],
-              ["Break-Even Point", refiResult.breakEvenMonths === Infinity ? "Never" : `${refiResult.breakEvenMonths} months`],
-              ["Total Current Cost Remaining", fmt(refiResult.currentTotalRemaining)],
-              ["New Total Cost", fmt(refiResult.newTotalCost)],
-              ["Total Savings", fmt(refiResult.totalSavings)],
+              [t("mortgage.refi.currentMonthlyPayment"), fmt(refiResult.currentMonthlyPayment)],
+              [t("mortgage.refi.newMonthlyPayment"), fmt(refiResult.newMonthlyPayment)],
+              [t("mortgage.refi.monthlySavings"), fmt(refiResult.monthlySavings)],
+              [t("mortgage.refi.breakEven"), refiResult.breakEvenMonths === Infinity ? t("mortgage.refi.never") : `${refiResult.breakEvenMonths} ${t("mortgage.refi.months")}`],
+              [t("mortgage.refi.currentTotalRemaining"), fmt(refiResult.currentTotalRemaining)],
+              [t("mortgage.refi.newTotalCost"), fmt(refiResult.newTotalCost)],
+              [t("mortgage.refi.totalSavings"), fmt(refiResult.totalSavings)],
             ].map(([l, v]) => (
               <div key={l} style={{ display: "flex", justifyContent: "space-between", padding: "0.4rem 0", borderBottom: "1px solid #27272a", fontSize: "0.875rem" }}>
                 <span style={{ color: "#a1a1aa" }}>{l}</span>
-                <span style={{ color: l === "Monthly Savings" || l === "Total Savings" ? (refiResult.monthlySavings > 0 ? "#22c55e" : "#f87171") : "#fafafa", fontWeight: 600 }}>{v}</span>
+                <span style={{ color: l === t("mortgage.refi.monthlySavings") || l === t("mortgage.refi.totalSavings") ? (refiResult.monthlySavings > 0 ? "#22c55e" : "#f87171") : "#fafafa", fontWeight: 600 }}>{v}</span>
               </div>
             ))}
             {refiResult.monthlySavings > 0 && (
               <div style={{ marginTop: "1rem", padding: "0.75rem", background: "rgba(34,197,94,0.1)", borderRadius: "0.5rem", border: "1px solid #22c55e", fontSize: "0.875rem", color: "#86efac" }}>
-                Refinancing saves {fmt(refiResult.monthlySavings)}/month. Break-even in {refiResult.breakEvenMonths} months.
+                {`${t("mortgage.refi.savingsMsg.prefix")} ${fmt(refiResult.monthlySavings)}/month. ${t("mortgage.refi.savingsMsg.breakEven")} ${refiResult.breakEvenMonths} months.`}
               </div>
             )}
             {refiResult.monthlySavings <= 0 && (
               <div style={{ marginTop: "1rem", padding: "0.75rem", background: "rgba(239,68,68,0.1)", borderRadius: "0.5rem", border: "1px solid #ef4444", fontSize: "0.875rem", color: "#f87171" }}>
-                Refinancing does not reduce your monthly payment at this rate.
+                {t("mortgage.refi.noSavingsMsg")}
               </div>
             )}
           </div>
@@ -428,7 +450,7 @@ export default function MortgagePage() {
       )}
 
       <p style={{ marginTop: "3rem", fontSize: "0.8rem", color: "#52525b", borderTop: "1px solid #27272a", paddingTop: "1rem" }}>
-        Results are for informational purposes only. Consult a qualified professional for official decisions.
+        {t("mortgage.desc.disclaimer")}
       </p>
     </div>
     </RetroWindow>

@@ -22,6 +22,7 @@ import {
   type HSL,
   type PaletteColor,
 } from "@/lib/calculations/colors";
+import { useLanguage } from "@/context/LanguageContext";
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
@@ -51,6 +52,7 @@ const cardStyle: React.CSSProperties = {
 // ─── CopyRow ─────────────────────────────────────────────────────────────────
 
 function CopyRow({ label, value }: { label: string; value: string }) {
+  const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
 
   function copy() {
@@ -89,7 +91,7 @@ function CopyRow({ label, value }: { label: string; value: string }) {
           whiteSpace: "nowrap",
         }}
       >
-        {copied ? "Copied!" : "Copy"}
+        {copied ? t("common.copied") : t("common.copy")}
       </button>
     </div>
   );
@@ -125,6 +127,7 @@ function PaletteRow({ colors, title }: { colors: PaletteColor[]; title: string }
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function ColorsPage() {
+  const { t } = useLanguage();
   const [hex, setHex] = useState("#ff5733");
   const [rgb, setRgb] = useState<RGB>({ r: 255, g: 87, b: 51 });
   const [hsl, setHsl] = useState<HSL>({ h: 11, s: 100, l: 60 });
@@ -176,11 +179,11 @@ export default function ColorsPage() {
       : hex;
 
   return (
-    <RetroWindow title="Color Picker">
+    <RetroWindow title={t("colors.title")}>
     <div>
       <div style={{ marginBottom: "1.5rem" }}>
         <Link href="/" style={{ color: "#71717a", textDecoration: "none", fontSize: "0.875rem" }}>
-          ← Back
+          {t("common.back")}
         </Link>
       </div>
 
@@ -195,14 +198,14 @@ export default function ColorsPage() {
           backgroundClip: "text",
         }}
       >
-        Color Converter
+        {t("colors.title")}
       </h1>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(320px,1fr))", gap: "1.25rem", maxWidth: "900px" }}>
 
         {/* Preview */}
         <div style={cardStyle}>
-          <div style={{ ...labelStyle, marginBottom: "0.75rem" }}>Preview</div>
+          <div style={{ ...labelStyle, marginBottom: "0.75rem" }}>{t("colors.label.preview")}</div>
           <div
             style={{
               width: "100%",
@@ -213,7 +216,7 @@ export default function ColorsPage() {
             }}
           />
           <div style={{ marginTop: "0.75rem" }}>
-            <label style={labelStyle}>Opacity: {alpha}%</label>
+            <label style={labelStyle}>{t("colors.label.opacity")}: {alpha}%</label>
             <input
               type="range"
               min={0}
@@ -305,7 +308,7 @@ export default function ColorsPage() {
 
         {/* CSS output */}
         <div style={{ ...cardStyle, gridColumn: "1 / -1" }}>
-          <div style={{ ...labelStyle, marginBottom: "0.75rem" }}>CSS Output</div>
+          <div style={{ ...labelStyle, marginBottom: "0.75rem" }}>{t("colors.label.cssOutput")}</div>
           <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
             <CopyRow label="hex" value={hex} />
             <CopyRow label="rgb" value={toCssRgb(rgb)} />
@@ -317,18 +320,18 @@ export default function ColorsPage() {
 
         {/* Palette suggestions */}
         <div style={{ ...cardStyle, gridColumn: "1 / -1" }}>
-          <div style={{ ...labelStyle, marginBottom: "1rem" }}>Palette Suggestions</div>
+          <div style={{ ...labelStyle, marginBottom: "1rem" }}>{t("colors.label.paletteSuggestions")}</div>
           <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-            <PaletteRow colors={getComplementary(hex)} title="Complementary" />
-            <PaletteRow colors={getAnalogous(hex)} title="Analogous" />
-            <PaletteRow colors={getTriadic(hex)} title="Triadic" />
+            <PaletteRow colors={getComplementary(hex)} title={t("colors.palette.complementary")} />
+            <PaletteRow colors={getAnalogous(hex)} title={t("colors.palette.analogous")} />
+            <PaletteRow colors={getTriadic(hex)} title={t("colors.palette.triadic")} />
           </div>
         </div>
 
       </div>
 
       <p style={{ marginTop: "2rem", color: "#3f3f46", fontSize: "0.8rem" }}>
-        Results are for informational purposes only.
+        {t("common.disclaimer")}
       </p>
     </div>
     </RetroWindow>

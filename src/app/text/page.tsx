@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import {
   analyzeText, toUpperCase, toLowerCase, toTitleCase, toSentenceCase, formatTime,
 } from "@/lib/calculations/text";
+import { useLanguage } from "@/context/LanguageContext";
 
 function StatBox({ label, value, sub, color }: { label: string; value: string | number; sub?: string; color?: string }) {
   return (
@@ -16,6 +17,7 @@ function StatBox({ label, value, sub, color }: { label: string; value: string | 
 }
 
 export default function TextPage() {
+  const { t } = useLanguage();
   const [text, setText] = useState("");
   const [copied, setCopied] = useState(false);
 
@@ -32,10 +34,10 @@ export default function TextPage() {
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto" }}>
       <h1 style={{ fontSize: "2rem", fontWeight: 800, marginBottom: "0.5rem", color: "#fafafa" }}>
-        Text / Word Counter
+        {t("text.title")}
       </h1>
       <p style={{ color: "#71717a", marginBottom: "1.5rem" }}>
-        Real-time word, character, and reading time analysis.
+        {t("text.subtitle")}
       </p>
 
       {/* Textarea */}
@@ -43,7 +45,7 @@ export default function TextPage() {
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Type or paste your text here..."
+          placeholder={t("text.placeholder")}
           rows={12}
           style={{
             width: "100%", background: "#18181b", border: "1px solid #3f3f46",
@@ -53,17 +55,17 @@ export default function TextPage() {
           }}
         />
         <div style={{ position: "absolute", bottom: "0.75rem", right: "1rem", fontSize: "0.75rem", color: "#3f3f46" }}>
-          {stats.characters} chars
+          {stats.characters} {t("text.stat.chars")}
         </div>
       </div>
 
       {/* Case Converter + Copy */}
       <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
         {[
-          { label: "UPPERCASE", fn: toUpperCase },
-          { label: "lowercase", fn: toLowerCase },
-          { label: "Title Case", fn: toTitleCase },
-          { label: "Sentence case", fn: toSentenceCase },
+          { label: t("text.case.upper"), fn: toUpperCase },
+          { label: t("text.case.lower"), fn: toLowerCase },
+          { label: t("text.case.title"), fn: toTitleCase },
+          { label: t("text.case.sentence"), fn: toSentenceCase },
         ].map(({ label, fn }) => (
           <button key={label} onClick={() => apply(fn)}
             style={{ padding: "0.45rem 0.875rem", background: "#27272a", color: "#d4d4d8", border: "1px solid #3f3f46", borderRadius: "0.375rem", cursor: "pointer", fontSize: "0.8rem", fontWeight: 600 }}>
@@ -72,27 +74,27 @@ export default function TextPage() {
         ))}
         <button onClick={copy}
           style={{ padding: "0.45rem 0.875rem", background: copied ? "#16a34a" : "#7c3aed", color: "#fff", border: "none", borderRadius: "0.375rem", cursor: "pointer", fontSize: "0.8rem", fontWeight: 600, marginLeft: "auto" }}>
-          {copied ? "Copied!" : "Copy Text"}
+          {copied ? t("common.copied") : t("text.btn.copyText")}
         </button>
       </div>
 
       {/* Stats Grid */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))", gap: "0.75rem", marginBottom: "1.5rem" }}>
-        <StatBox label="Characters" value={stats.characters} color="#a78bfa" />
-        <StatBox label="Chars (no spaces)" value={stats.charactersNoSpaces} color="#7c3aed" />
-        <StatBox label="Words" value={stats.words} color="#3b82f6" />
-        <StatBox label="Sentences" value={stats.sentences} color="#22c55e" />
-        <StatBox label="Paragraphs" value={stats.paragraphs} color="#f97316" />
-        <StatBox label="Lines" value={stats.lines} color="#eab308" />
-        <StatBox label="Reading Time" value={formatTime(stats.readingTimeSeconds)} sub="~200 wpm" color="#ec4899" />
-        <StatBox label="Speaking Time" value={formatTime(stats.speakingTimeSeconds)} sub="~130 wpm" color="#14b8a6" />
+        <StatBox label={t("text.stat.characters")} value={stats.characters} color="#a78bfa" />
+        <StatBox label={t("text.stat.charsNoSpaces")} value={stats.charactersNoSpaces} color="#7c3aed" />
+        <StatBox label={t("text.stat.words")} value={stats.words} color="#3b82f6" />
+        <StatBox label={t("text.stat.sentences")} value={stats.sentences} color="#22c55e" />
+        <StatBox label={t("text.stat.paragraphs")} value={stats.paragraphs} color="#f97316" />
+        <StatBox label={t("text.stat.lines")} value={stats.lines} color="#eab308" />
+        <StatBox label={t("text.stat.readingTime")} value={formatTime(stats.readingTimeSeconds)} sub={t("text.stat.readingTimeSub")} color="#ec4899" />
+        <StatBox label={t("text.stat.speakingTime")} value={formatTime(stats.speakingTimeSeconds)} sub={t("text.stat.speakingTimeSub")} color="#14b8a6" />
       </div>
 
       {/* Keyword Density */}
       {stats.topKeywords.length > 0 && (
         <div style={{ background: "#18181b", border: "1px solid #3f3f46", borderRadius: "0.75rem", padding: "1.25rem" }}>
           <h2 style={{ fontWeight: 700, fontSize: "0.85rem", color: "#a1a1aa", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1rem" }}>
-            Top Keywords (stopword filtered)
+            {t("text.label.topKeywords")}
           </h2>
           <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
             {stats.topKeywords.map(({ word, count, pct }) => (
@@ -111,7 +113,7 @@ export default function TextPage() {
       )}
 
       <p style={{ color: "#52525b", fontSize: "0.8rem", textAlign: "center", marginTop: "1.5rem" }}>
-        All text processing happens locally in your browser. No text is sent to any server.
+        {t("text.footer")}
       </p>
     </div>
   );
