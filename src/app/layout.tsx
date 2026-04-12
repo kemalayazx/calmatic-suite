@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import { Sun, Moon, Monitor, Home } from "lucide-react";
 import { ThemeProvider, useTheme } from "@/context/ThemeContext";
 import RetroDesktop from "@/components/RetroDesktop";
+import RetroBoot from "@/components/RetroBoot";
 import { LanguageProvider, useLanguage, type Locale } from "@/context/LanguageContext";
 import { LOCALE_NAMES, LOCALE_FLAGS } from "@/i18n/translations";
 import WelcomeModal from "@/components/WelcomeModal";
@@ -422,6 +423,7 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
   return (
     <>
       {theme !== "retro" && <Navbar />}
+      <RetroBoot />
       <RetroDesktop />
       <main
         style={{

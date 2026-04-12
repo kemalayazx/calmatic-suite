@@ -26,6 +26,10 @@
   --accent: #000080;
   --card-bg: #c0c0c0;
   --header-bg: #c0c0c0;
+
+  /* Base font */
+  font-family: 'Segoe UI', Tahoma, 'MS Sans Serif', Geneva, Verdana, sans-serif;
+  font-size: 13px;
 }
 
 /* Retro 3D button effect */
@@ -34,8 +38,8 @@
   background: #c0c0c0;
   border: 2px outset #c0c0c0;
   color: #000;
-  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', 'Segoe UI', Tahoma, sans-serif;
-  font-size: 11px;
+  font-family: 'Segoe UI', 'MS Sans Serif', 'Microsoft Sans Serif', Tahoma, sans-serif;
+  font-size: 13px;
   padding: 2px 8px;
   cursor: pointer;
 }
@@ -54,15 +58,15 @@
 .retro-title-bar {
   background: linear-gradient(90deg, #000080, #1084d0);
   color: white;
-  font-family: 'MS Sans Serif', Tahoma, sans-serif;
-  font-size: 11px;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  font-size: 13px;
   font-weight: bold;
-  padding: 2px 4px;
+  padding: 2px 6px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   user-select: none;
-  height: 20px;
+  height: 26px;
 }
 
 .retro-title-bar-buttons {
@@ -71,12 +75,12 @@
 }
 
 .retro-title-bar-btn {
-  width: 16px;
-  height: 14px;
+  width: 20px;
+  height: 18px;
   background: #c0c0c0;
   border: 1px outset #c0c0c0;
-  font-size: 9px;
-  line-height: 12px;
+  font-size: 12px;
+  line-height: 16px;
   text-align: center;
   cursor: pointer;
   padding: 0;
@@ -102,8 +106,8 @@
 [data-theme="retro"] textarea {
   background: #ffffff;
   border: 2px inset #c0c0c0;
-  font-family: 'MS Sans Serif', Tahoma, sans-serif;
-  font-size: 11px;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  font-size: 13px;
   padding: 2px 4px;
   color: #000;
 }
@@ -114,7 +118,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 32px;
+  height: 36px;
   background: #c0c0c0;
   border-top: 2px outset #c0c0c0;
   display: flex;
@@ -122,20 +126,21 @@
   padding: 2px 4px;
   gap: 2px;
   z-index: 9999;
-  font-family: 'MS Sans Serif', Tahoma, sans-serif;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  font-size: 13px;
 }
 
 .retro-start-btn {
   background: #c0c0c0;
   border: 2px outset #c0c0c0;
   font-weight: bold;
-  font-size: 11px;
-  padding: 1px 6px;
+  font-size: 13px;
+  padding: 2px 10px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 4px;
-  height: 24px;
+  height: 26px;
 }
 
 .retro-start-btn:active {
@@ -168,16 +173,18 @@
   background: #c0c0c0;
   border: 2px outset #c0c0c0;
   box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
-  font-family: 'MS Sans Serif', Tahoma, sans-serif;
-  font-size: 11px;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  font-size: 13px;
 }
 
 .retro-menu-item {
-  padding: 4px 24px 4px 8px;
+  padding: 6px 24px 6px 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
+  min-height: 28px;
+  font-size: 13px;
 }
 
 .retro-menu-item:hover {
@@ -188,31 +195,51 @@
 .retro-menu-divider {
   height: 1px;
   background: #808080;
-  margin: 2px 4px;
+  margin: 4px 4px;
   border-bottom: 1px solid #ffffff;
 }
 
 /* Desktop icons */
 .retro-desktop-icon {
-  width: 64px;
+  width: 80px;
+  min-height: 76px;
   text-align: center;
   cursor: pointer;
-  padding: 4px;
+  padding: 6px;
   color: #ffffff;
-  text-shadow: 1px 1px 1px #000;
-  font-family: 'MS Sans Serif', Tahoma, sans-serif;
-  font-size: 10px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  border-radius: 2px;
+  transition: background 0.1s;
 }
 
 .retro-desktop-icon:hover {
-  background: rgba(0,0,128,0.3);
+  background: rgba(0,0,128,0.4);
+}
+
+.retro-desktop-icon:active {
+  background: rgba(0,0,128,0.6);
+}
+
+.retro-desktop-icon .retro-icon-box {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .retro-desktop-icon svg {
-  width: 32px;
-  height: 32px;
-  margin: 0 auto 2px;
   display: block;
+  margin: 0 auto;
 }
 
 /* Retro tab */
@@ -221,7 +248,7 @@
   border: 1px solid #808080;
   border-bottom: none;
   padding: 2px 8px;
-  font-size: 11px;
+  font-size: 13px;
   cursor: pointer;
 }
 
@@ -244,7 +271,7 @@
   border: 2px outset #c0c0c0 !important;
   color: #000 !important;
   border-radius: 0 !important;
-  font-family: 'MS Sans Serif', Tahoma, sans-serif !important;
+  font-family: 'Segoe UI', Tahoma, sans-serif !important;
 }
 
 [data-theme="retro"] .calc-btn:active {
@@ -270,35 +297,36 @@
 /* Folder window */
 .retro-folder-window {
   position: absolute;
-  min-width: 350px;
-  max-width: 600px;
+  min-width: 420px;
+  max-width: 640px;
   background: #c0c0c0;
   border: 2px outset #c0c0c0;
   box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
 }
 
 .retro-folder-content {
-  padding: 8px;
+  padding: 12px;
   border: 2px inset #c0c0c0;
   margin: 2px 4px 4px;
   background: #ffffff;
-  min-height: 150px;
-  max-height: 300px;
+  min-height: 180px;
+  max-height: 320px;
   overflow: auto;
   display: grid;
-  grid-template-columns: repeat(auto-fill, 80px);
-  gap: 4px;
+  grid-template-columns: repeat(auto-fill, 96px);
+  gap: 8px;
 }
 
 .retro-folder-item {
-  width: 72px;
+  width: 90px;
   text-align: center;
-  padding: 4px;
+  padding: 6px;
   cursor: pointer;
-  font-size: 10px;
-  font-family: 'MS Sans Serif', Tahoma, sans-serif;
+  font-size: 12px;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
   color: #000;
   border: 1px solid transparent;
+  line-height: 1.3;
 }
 
 .retro-folder-item:hover {
@@ -312,19 +340,31 @@
   margin: 0 auto 4px;
 }
 
+/* Toolbar strip in folder window */
+.retro-folder-window .retro-toolbar {
+  font-size: 13px;
+  padding: 3px 8px;
+}
+
+/* Status bar in folder window */
+.retro-folder-window .retro-status-bar {
+  font-size: 12px;
+  padding: 3px 8px;
+}
+
 /* Taskbar open window buttons */
 .retro-taskbar-window-btn {
   background: #c0c0c0;
   border: 2px outset #c0c0c0;
-  font-size: 11px;
-  padding: 1px 8px;
+  font-size: 12px;
+  padding: 2px 10px;
   cursor: pointer;
-  max-width: 140px;
+  max-width: 160px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  height: 22px;
-  font-family: 'MS Sans Serif', Tahoma, sans-serif;
+  height: 26px;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
 }
 
 .retro-taskbar-window-btn.active {
@@ -336,12 +376,12 @@
 .retro-systray {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 0 8px;
-  height: 24px;
+  gap: 8px;
+  padding: 0 10px;
+  height: 26px;
   border: 1px inset #c0c0c0;
-  font-size: 11px;
-  font-family: 'MS Sans Serif', Tahoma, sans-serif;
+  font-size: 13px;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
   color: #000;
   margin-left: auto;
 }
@@ -356,8 +396,43 @@
   align-items: center;
   justify-content: center;
   color: #ff8c00;
-  font-family: 'MS Sans Serif', Tahoma, sans-serif;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
   font-size: 22px;
   text-align: center;
   line-height: 1.8;
+}
+
+/* Desktop background with subtle scanline effect */
+[data-theme="retro"] .retro-desktop-bg {
+  background: #008080;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+}
+
+/* Start menu category headers (accordion style) */
+.retro-menu-category-header {
+  padding: 6px 12px;
+  font-weight: bold;
+  font-size: 13px;
+  color: #000080;
+  background: #c0c0c0;
+  border-bottom: 1px solid #808080;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+}
+
+.retro-menu-category-header:hover {
+  background: #d4d0c8;
+}
+
+.retro-menu-category-header.open {
+  background: #d4d0c8;
 }

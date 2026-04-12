@@ -19,7 +19,7 @@ import {
 type AppItem = {
   label: string;
   href: string;
-  icon: React.ComponentType<{ size?: number; color?: string }>;
+  icon: React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>;
 };
 
 interface FolderWindow {
@@ -231,10 +231,10 @@ function FolderWindowComponent({
 
       {/* Toolbar strip */}
       <div style={{
-        padding: "2px 4px",
+        padding: "3px 8px",
         borderBottom: "1px solid #808080",
-        fontSize: "11px",
-        fontFamily: "'MS Sans Serif', Tahoma, sans-serif",
+        fontSize: "13px",
+        fontFamily: "'Segoe UI', Tahoma, sans-serif",
         background: "#c0c0c0",
       }}>
         File&nbsp;&nbsp;Edit&nbsp;&nbsp;View&nbsp;&nbsp;Help
@@ -250,7 +250,7 @@ function FolderWindowComponent({
               className="retro-folder-item"
               onClick={() => router.push(item.href)}
             >
-              <Icon size={24} color="#000080" />
+              <Icon size={28} color="#000080" />
               <span>{item.label}</span>
             </div>
           );
@@ -259,9 +259,9 @@ function FolderWindowComponent({
 
       {/* Status bar */}
       <div style={{
-        padding: "1px 4px",
-        fontSize: "10px",
-        fontFamily: "'MS Sans Serif', Tahoma, sans-serif",
+        padding: "3px 8px",
+        fontSize: "12px",
+        fontFamily: "'Segoe UI', Tahoma, sans-serif",
         borderTop: "1px inset #c0c0c0",
         background: "#c0c0c0",
       }}>
@@ -299,8 +299,8 @@ function TaskbarLanguageSelector() {
           display: "flex",
           alignItems: "center",
           gap: "2px",
-          fontSize: "11px",
-          fontFamily: "'MS Sans Serif', Tahoma, sans-serif",
+          fontSize: "13px",
+          fontFamily: "'Segoe UI', Tahoma, sans-serif",
           color: "#000",
           padding: "0 4px",
         }}
@@ -313,10 +313,10 @@ function TaskbarLanguageSelector() {
           className="retro-menu"
           style={{
             position: "absolute",
-            bottom: "28px",
+            bottom: "32px",
             right: 0,
-            width: "180px",
-            maxHeight: "300px",
+            width: "200px",
+            maxHeight: "320px",
             overflowY: "auto",
             zIndex: 99999,
           }}
@@ -401,7 +401,6 @@ export default function RetroDesktop() {
   function openFolder(folder: (typeof FOLDERS)[0]) {
     const existing = openFolders.find((w) => w.id === folder.id);
     if (existing) {
-      // bring to front
       bringToFront(folder.id);
       return;
     }
@@ -438,23 +437,23 @@ export default function RetroDesktop() {
     <>
       {/* ── Desktop ─────────────────────────────────────────────── */}
       <div
+        className="retro-desktop-bg"
         style={{
           position: "fixed",
           inset: 0,
-          bottom: "32px",
-          background: "#008080",
+          bottom: "36px",
           zIndex: 0,
           overflow: "hidden",
         }}
         onClick={() => { setStartOpen(false); setOpenStartSub(null); }}
       >
-        {/* Desktop icon column — folders first, then direct shortcuts */}
+        {/* Desktop icon grid — 2 columns, folders first then direct shortcuts */}
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(1, 72px)",
-            gridAutoRows: "80px",
-            gap: "4px",
+            gridTemplateColumns: "repeat(2, 80px)",
+            gridAutoRows: "84px",
+            gap: "6px",
             padding: "16px",
             alignContent: "start",
           }}
@@ -465,33 +464,26 @@ export default function RetroDesktop() {
               key={folder.id}
               className="retro-desktop-icon"
               onClick={(e) => { e.stopPropagation(); openFolder(folder); }}
+              style={{ cursor: "pointer" }}
             >
-              <div style={{
-                width: "32px", height: "32px", margin: "0 auto 4px",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <Folder size={28} color="#ffcc00" />
+              <div className="retro-icon-box">
+                <Folder size={36} color="#ffcc00" strokeWidth={1.5} />
               </div>
-              <span style={{ fontSize: "10px", wordBreak: "break-word", lineHeight: 1.2 }}>
-                {folder.label}
-              </span>
+              <span style={{ wordBreak: "break-word" }}>{folder.label}</span>
             </div>
           ))}
 
           {/* Direct shortcut icons */}
           {DIRECT_ICONS.map(({ href, label, icon: Icon }) => (
             <Link key={href} href={href} style={{ textDecoration: "none" }}>
-              <div className="retro-desktop-icon">
-                <div style={{
-                  width: "32px", height: "32px", margin: "0 auto 4px",
-                  background: "#c0c0c0", border: "1px solid #808080",
-                  display: "flex", alignItems: "center", justifyContent: "center",
+              <div className="retro-desktop-icon" style={{ cursor: "pointer" }}>
+                <div className="retro-icon-box" style={{
+                  background: "#c0c0c0",
+                  border: "1px solid #808080",
                 }}>
-                  <Icon size={20} color="#000080" />
+                  <Icon size={28} color="#000080" />
                 </div>
-                <span style={{ fontSize: "10px", wordBreak: "break-word", lineHeight: 1.2 }}>
-                  {label}
-                </span>
+                <span style={{ wordBreak: "break-word" }}>{label}</span>
               </div>
             </Link>
           ))}
@@ -519,7 +511,7 @@ export default function RetroDesktop() {
           <span>Start</span>
         </button>
 
-        <div style={{ width: "1px", height: "20px", background: "#808080", margin: "0 2px" }} />
+        <div style={{ width: "1px", height: "22px", background: "#808080", margin: "0 2px" }} />
 
         {/* Open folder window buttons */}
         {openFolders.map((win) => (
@@ -548,10 +540,10 @@ export default function RetroDesktop() {
             className="retro-menu"
             style={{
               position: "absolute",
-              bottom: "32px",
+              bottom: "36px",
               left: "0",
-              width: "260px",
-              maxHeight: "420px",
+              width: "280px",
+              maxHeight: "480px",
               overflowY: "auto",
               zIndex: 99999,
             }}
@@ -561,14 +553,14 @@ export default function RetroDesktop() {
             <div
               style={{
                 position: "absolute",
-                left: 0, top: 0, bottom: 0, width: "24px",
+                left: 0, top: 0, bottom: 0, width: "26px",
                 background: "linear-gradient(180deg, #000080, #1084d0)",
                 display: "flex", alignItems: "flex-end",
                 justifyContent: "center", paddingBottom: "8px",
               }}
             >
               <span style={{
-                color: "white", fontWeight: "bold", fontSize: "11px",
+                color: "white", fontWeight: "bold", fontSize: "12px",
                 writingMode: "vertical-rl", transform: "rotate(180deg)", letterSpacing: "2px",
               }}>
                 Calmatic Suite
@@ -576,44 +568,38 @@ export default function RetroDesktop() {
             </div>
 
             {/* Menu items */}
-            <div style={{ marginLeft: "24px" }}>
-              {/* Programs submenu header */}
+            <div style={{ marginLeft: "26px" }}>
+              {/* Programs header */}
               <div style={{
-                padding: "4px 8px",
+                padding: "6px 12px",
                 fontWeight: "bold",
-                fontSize: "11px",
+                fontSize: "13px",
                 color: "#000080",
                 background: "#d4d0c8",
                 borderBottom: "1px solid #808080",
               }}>
-                📁 Programs ▶
+                📁 Programs
               </div>
 
-              {/* Category submenus */}
+              {/* Category submenus — accordion style (click to expand) */}
               {START_MENU_CATEGORIES.map((cat) => (
-                <div
-                  key={cat.title}
-                  style={{ position: "relative" }}
-                  onMouseEnter={() => setOpenStartSub(cat.title)}
-                  onMouseLeave={() => setOpenStartSub(null)}
-                >
-                  <div className="retro-menu-item" style={{ justifyContent: "space-between" }}>
-                    <span>📁 {cat.title}</span>
-                    <span>▶</span>
+                <div key={cat.title}>
+                  <div
+                    className={`retro-menu-category-header${openStartSub === cat.title ? " open" : ""}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenStartSub(openStartSub === cat.title ? null : cat.title);
+                    }}
+                  >
+                    <span>📁</span>
+                    <span style={{ flex: 1 }}>{cat.title}</span>
+                    <span style={{ fontSize: "11px" }}>
+                      {openStartSub === cat.title ? "▾" : "▸"}
+                    </span>
                   </div>
 
-                  {/* Flyout submenu */}
                   {openStartSub === cat.title && (
-                    <div
-                      className="retro-menu"
-                      style={{
-                        position: "absolute",
-                        left: "100%",
-                        top: 0,
-                        width: "200px",
-                        zIndex: 100000,
-                      }}
-                    >
+                    <div style={{ background: "#d4d0c8" }}>
                       {cat.items.map((item) => (
                         <Link
                           key={item.href}
@@ -622,9 +608,10 @@ export default function RetroDesktop() {
                         >
                           <div
                             className="retro-menu-item"
+                            style={{ paddingLeft: "28px", fontSize: "12px", minHeight: "26px" }}
                             onClick={() => { setStartOpen(false); setOpenStartSub(null); }}
                           >
-                            <span style={{ fontSize: "11px" }}>📄</span>
+                            <span style={{ fontSize: "12px" }}>📄</span>
                             {item.label}
                           </div>
                         </Link>
@@ -646,22 +633,22 @@ export default function RetroDesktop() {
                 </div>
               </Link>
 
+              <div className="retro-menu-divider" />
+
               {/* Settings — switch theme */}
               <div
                 className="retro-menu-item"
                 onClick={() => { setTheme("dark"); setStartOpen(false); }}
               >
-                <Settings size={12} /> Switch to Modern
+                <Settings size={14} /> Switch to Modern Theme
               </div>
-
-              <div className="retro-menu-divider" />
 
               {/* Shut Down */}
               <div
                 className="retro-menu-item"
                 onClick={() => { setStartOpen(false); setShutDown(true); }}
               >
-                <LogOut size={12} /> Shut Down...
+                <LogOut size={14} /> Shut Down...
               </div>
             </div>
           </div>
