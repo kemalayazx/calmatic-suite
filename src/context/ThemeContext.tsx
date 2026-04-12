@@ -36,7 +36,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [theme, mounted]);
 
   const toggleTheme = () =>
-    setTheme((t) => (t === "dark" || t === "retro" ? "light" : "dark"));
+    setTheme((t) => (t === "dark" ? "light" : "dark"));
 
   if (!mounted) return <div style={{ visibility: "hidden" }}>{children}</div>;
 

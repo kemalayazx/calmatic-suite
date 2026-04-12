@@ -113,7 +113,7 @@ function ThemeToggle() {
         (e.currentTarget as HTMLButtonElement).style.color = "var(--text-secondary)";
       }}
     >
-      {theme === "dark" ? <Moon size={16} /> : theme === "light" ? <Sun size={16} /> : <Monitor size={16} />}
+      {theme === "dark" ? <Moon size={16} /> : <Sun size={16} />}
     </button>
   );
 }
@@ -217,6 +217,8 @@ function LanguageSelector() {
 function Navbar() {
   const [open, setOpen] = useState(false);
   const { t } = useLanguage();
+  const { setTheme } = useTheme();
+  const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -253,8 +255,12 @@ function Navbar() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
-          <Link
-            href="/"
+          <button
+            onClick={() => {
+              localStorage.removeItem("calmatic-retro-welcomed");
+              setTheme("retro");
+              router.push("/");
+            }}
             style={{
               display: "flex",
               alignItems: "center",
@@ -264,14 +270,15 @@ function Navbar() {
               borderRadius: "0.5rem",
               background: "linear-gradient(135deg, #7c3aed, #6d28d9)",
               color: "#fff",
-              textDecoration: "none",
+              border: "none",
+              cursor: "pointer",
               flexShrink: 0,
               transition: "all 0.15s",
             }}
-            title="Home"
+            title="Retro Mode"
           >
             <Home size={18} />
-          </Link>
+          </button>
           <Link href="/" style={{ textDecoration: "none", flexShrink: 0 }}>
             <span
               style={{
@@ -581,6 +588,12 @@ function RetroCalcWindow({ children }: { children: React.ReactNode }) {
 function LayoutInner({ children }: { children: React.ReactNode }) {
   const { theme } = useTheme();
   const pathname = usePathname();
+
+  useEffect(() => {
+    const block = (e: MouseEvent) => e.preventDefault();
+    document.addEventListener("contextmenu", block);
+    return () => document.removeEventListener("contextmenu", block);
+  }, []);
 
   const isRetroCalcPage =
     theme === "retro" &&
