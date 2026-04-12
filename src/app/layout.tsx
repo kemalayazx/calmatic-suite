@@ -3,7 +3,7 @@
 import "./globals.css";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon, Home } from "lucide-react";
 import { ThemeProvider, useTheme } from "@/context/ThemeContext";
 import { LanguageProvider, useLanguage, type Locale } from "@/context/LanguageContext";
 import { LOCALE_NAMES, LOCALE_FLAGS } from "@/i18n/translations";
@@ -249,20 +249,41 @@ function Navbar() {
           gap: "1rem",
         }}
       >
-        <Link href="/" style={{ textDecoration: "none", flexShrink: 0 }}>
-          <span
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
+          <Link
+            href="/"
             style={{
-              fontWeight: 800,
-              fontSize: "1.2rem",
-              background: "linear-gradient(135deg, #7c3aed, #a78bfa)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "36px",
+              height: "36px",
+              borderRadius: "0.5rem",
+              background: "linear-gradient(135deg, #7c3aed, #6d28d9)",
+              color: "#fff",
+              textDecoration: "none",
+              flexShrink: 0,
+              transition: "all 0.15s",
             }}
+            title="Home"
           >
-            Calmatic Suite
-          </span>
-        </Link>
+            <Home size={18} />
+          </Link>
+          <Link href="/" style={{ textDecoration: "none", flexShrink: 0 }}>
+            <span
+              style={{
+                fontWeight: 800,
+                fontSize: "1.2rem",
+                background: "linear-gradient(135deg, #7c3aed, #a78bfa)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              Calmatic Suite
+            </span>
+          </Link>
+        </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <ThemeToggle />
