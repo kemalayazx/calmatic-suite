@@ -72,11 +72,15 @@ export function calcBMR(
   weightKg: number,
   activity: ActivityLevel
 ): BMRResult {
+  const safeAge = Math.max(1, age || 1);
+  const safeHeight = Math.max(1, heightCm || 1);
+  const safeWeight = Math.max(1, weightKg || 1);
+
   let bmr: number;
   if (gender === "male") {
-    bmr = 88.362 + 13.397 * weightKg + 4.799 * heightCm - 5.677 * age;
+    bmr = 88.362 + 13.397 * safeWeight + 4.799 * safeHeight - 5.677 * safeAge;
   } else {
-    bmr = 447.593 + 9.247 * weightKg + 3.098 * heightCm - 4.33 * age;
+    bmr = 447.593 + 9.247 * safeWeight + 3.098 * safeHeight - 4.33 * safeAge;
   }
   const tdee = bmr * ACTIVITY_MULTIPLIERS[activity];
   return { bmr: Math.round(bmr), tdee: Math.round(tdee) };

@@ -29,6 +29,8 @@ export function calcMarginMarkup(cost: number, sellingPrice: number): MarginMark
 
 export function calcSellingPriceFromMargin(cost: number, targetMargin: number): MarginMarkupResult {
   // margin = (price - cost) / price => price = cost / (1 - margin/100)
-  const sellingPrice = targetMargin >= 100 ? 0 : cost / (1 - targetMargin / 100);
+  // Clamp to [0, 99.99] to avoid division by zero or negative prices
+  const clampedMargin = Math.min(Math.max(targetMargin, 0), 99.99);
+  const sellingPrice = cost / (1 - clampedMargin / 100);
   return calcMarginMarkup(cost, sellingPrice);
 }
