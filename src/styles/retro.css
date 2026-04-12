@@ -1,0 +1,363 @@
+/* === Windows 95/98 Retro Theme === */
+
+[data-theme="retro"] {
+  --retro-bg: #008080;
+  --retro-taskbar: #c0c0c0;
+  --retro-window-bg: #c0c0c0;
+  --retro-window-title: #000080;
+  --retro-window-title-text: #ffffff;
+  --retro-button: #c0c0c0;
+  --retro-button-shadow: #808080;
+  --retro-button-highlight: #ffffff;
+  --retro-text: #000000;
+  --retro-input-bg: #ffffff;
+  --retro-border: #808080;
+  --retro-link: #0000ff;
+
+  /* Override existing vars */
+  --bg-primary: #008080;
+  --bg-secondary: #c0c0c0;
+  --bg-tertiary: #d4d0c8;
+  --bg-input: #ffffff;
+  --border-color: #808080;
+  --text-primary: #000000;
+  --text-secondary: #404040;
+  --text-muted: #808080;
+  --accent: #000080;
+  --card-bg: #c0c0c0;
+  --header-bg: #c0c0c0;
+}
+
+/* Retro 3D button effect */
+[data-theme="retro"] .retro-button,
+[data-theme="retro"] button {
+  background: #c0c0c0;
+  border: 2px outset #c0c0c0;
+  color: #000;
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', 'Segoe UI', Tahoma, sans-serif;
+  font-size: 11px;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+[data-theme="retro"] button:active {
+  border-style: inset;
+}
+
+/* Retro window */
+.retro-window {
+  background: #c0c0c0;
+  border: 2px outset #c0c0c0;
+  box-shadow: 1px 1px 0 #000;
+}
+
+.retro-title-bar {
+  background: linear-gradient(90deg, #000080, #1084d0);
+  color: white;
+  font-family: 'MS Sans Serif', Tahoma, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+  height: 20px;
+}
+
+.retro-title-bar-buttons {
+  display: flex;
+  gap: 2px;
+}
+
+.retro-title-bar-btn {
+  width: 16px;
+  height: 14px;
+  background: #c0c0c0;
+  border: 1px outset #c0c0c0;
+  font-size: 9px;
+  line-height: 12px;
+  text-align: center;
+  cursor: pointer;
+  padding: 0;
+  font-family: 'Marlett', sans-serif;
+  color: #000;
+}
+
+.retro-title-bar-btn:active {
+  border-style: inset;
+}
+
+/* Retro window content */
+.retro-window-content {
+  padding: 8px;
+  border: 2px inset #c0c0c0;
+  margin: 4px;
+  background: #ffffff;
+}
+
+/* Retro input */
+[data-theme="retro"] input,
+[data-theme="retro"] select,
+[data-theme="retro"] textarea {
+  background: #ffffff;
+  border: 2px inset #c0c0c0;
+  font-family: 'MS Sans Serif', Tahoma, sans-serif;
+  font-size: 11px;
+  padding: 2px 4px;
+  color: #000;
+}
+
+/* Retro taskbar */
+.retro-taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  background: #c0c0c0;
+  border-top: 2px outset #c0c0c0;
+  display: flex;
+  align-items: center;
+  padding: 2px 4px;
+  gap: 2px;
+  z-index: 9999;
+  font-family: 'MS Sans Serif', Tahoma, sans-serif;
+}
+
+.retro-start-btn {
+  background: #c0c0c0;
+  border: 2px outset #c0c0c0;
+  font-weight: bold;
+  font-size: 11px;
+  padding: 1px 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+}
+
+.retro-start-btn:active {
+  border-style: inset;
+}
+
+.retro-start-btn img,
+.retro-start-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Retro scrollbar */
+[data-theme="retro"] ::-webkit-scrollbar {
+  width: 16px;
+}
+
+[data-theme="retro"] ::-webkit-scrollbar-track {
+  background: #c0c0c0;
+  border: 1px inset #c0c0c0;
+}
+
+[data-theme="retro"] ::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border: 2px outset #c0c0c0;
+}
+
+/* Retro menu */
+.retro-menu {
+  background: #c0c0c0;
+  border: 2px outset #c0c0c0;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+  font-family: 'MS Sans Serif', Tahoma, sans-serif;
+  font-size: 11px;
+}
+
+.retro-menu-item {
+  padding: 4px 24px 4px 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.retro-menu-item:hover {
+  background: #000080;
+  color: #ffffff;
+}
+
+.retro-menu-divider {
+  height: 1px;
+  background: #808080;
+  margin: 2px 4px;
+  border-bottom: 1px solid #ffffff;
+}
+
+/* Desktop icons */
+.retro-desktop-icon {
+  width: 64px;
+  text-align: center;
+  cursor: pointer;
+  padding: 4px;
+  color: #ffffff;
+  text-shadow: 1px 1px 1px #000;
+  font-family: 'MS Sans Serif', Tahoma, sans-serif;
+  font-size: 10px;
+}
+
+.retro-desktop-icon:hover {
+  background: rgba(0,0,128,0.3);
+}
+
+.retro-desktop-icon svg {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 2px;
+  display: block;
+}
+
+/* Retro tab */
+[data-theme="retro"] .retro-tab {
+  background: #c0c0c0;
+  border: 1px solid #808080;
+  border-bottom: none;
+  padding: 2px 8px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+[data-theme="retro"] .retro-tab-active {
+  background: #d4d0c8;
+  border-bottom: 1px solid #d4d0c8;
+  margin-bottom: -1px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Pixel font option */
+.pixel-font {
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Retro specific overrides for calculator buttons */
+[data-theme="retro"] .calc-btn {
+  background: #c0c0c0 !important;
+  border: 2px outset #c0c0c0 !important;
+  color: #000 !important;
+  border-radius: 0 !important;
+  font-family: 'MS Sans Serif', Tahoma, sans-serif !important;
+}
+
+[data-theme="retro"] .calc-btn:active {
+  border-style: inset !important;
+}
+
+[data-theme="retro"] .calc-btn-operator {
+  background: #d4d0c8 !important;
+  color: #000080 !important;
+}
+
+[data-theme="retro"] .calc-btn-equals {
+  background: #000080 !important;
+  color: white !important;
+  border: 2px outset #000080 !important;
+}
+
+/* Card overrides for retro */
+[data-theme="retro"] [style*="borderRadius"] {
+  border-radius: 0 !important;
+}
+
+/* Folder window */
+.retro-folder-window {
+  position: absolute;
+  min-width: 350px;
+  max-width: 600px;
+  background: #c0c0c0;
+  border: 2px outset #c0c0c0;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+}
+
+.retro-folder-content {
+  padding: 8px;
+  border: 2px inset #c0c0c0;
+  margin: 2px 4px 4px;
+  background: #ffffff;
+  min-height: 150px;
+  max-height: 300px;
+  overflow: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 80px);
+  gap: 4px;
+}
+
+.retro-folder-item {
+  width: 72px;
+  text-align: center;
+  padding: 4px;
+  cursor: pointer;
+  font-size: 10px;
+  font-family: 'MS Sans Serif', Tahoma, sans-serif;
+  color: #000;
+  border: 1px solid transparent;
+}
+
+.retro-folder-item:hover {
+  background: #000080;
+  color: #fff;
+  border: 1px dotted #000;
+}
+
+.retro-folder-item svg {
+  display: block;
+  margin: 0 auto 4px;
+}
+
+/* Taskbar open window buttons */
+.retro-taskbar-window-btn {
+  background: #c0c0c0;
+  border: 2px outset #c0c0c0;
+  font-size: 11px;
+  padding: 1px 8px;
+  cursor: pointer;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  height: 22px;
+  font-family: 'MS Sans Serif', Tahoma, sans-serif;
+}
+
+.retro-taskbar-window-btn.active {
+  border-style: inset;
+  background: #d4d0c8;
+}
+
+/* System tray */
+.retro-systray {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+  height: 24px;
+  border: 1px inset #c0c0c0;
+  font-size: 11px;
+  font-family: 'MS Sans Serif', Tahoma, sans-serif;
+  color: #000;
+  margin-left: auto;
+}
+
+/* Shut down screen */
+.retro-shutdown {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #000080;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff8c00;
+  font-family: 'MS Sans Serif', Tahoma, sans-serif;
+  font-size: 22px;
+  text-align: center;
+  line-height: 1.8;
+}
