@@ -188,6 +188,144 @@ function FolderWindowComponent({
   );
 }
 
+// ── IE SVG icon ──────────────────────────────────────────────────────────────
+function IEIcon({ size = 48 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Blue "e" */}
+      <circle cx="24" cy="24" r="18" fill="#0078D4" />
+      <path d="M15 22h18c0-6-4-11-10-11s-10 5-10 11z" fill="#fff" />
+      <path d="M15 26c0 6 4.5 11 10.5 11 5 0 9-3 10-7H26c-1 2-3 3-5 3-4 0-6-3-6-7z" fill="#fff" />
+      <rect x="14" y="22" width="20" height="4" rx="1" fill="#0078D4" />
+      {/* Orbit ring */}
+      <ellipse cx="24" cy="24" rx="22" ry="8" stroke="#FFD700" strokeWidth="2.5" fill="none" transform="rotate(-30 24 24)" />
+    </svg>
+  );
+}
+
+// ── IEBrowserWindow ──────────────────────────────────────────────────────────
+function IEBrowserWindow({
+  zIndex,
+  onClose,
+  onFocus,
+}: {
+  zIndex: number;
+  onClose: () => void;
+  onFocus: () => void;
+}) {
+  const { pos, onMouseDown } = useDrag(40, 20);
+
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: pos.x,
+        top: pos.y,
+        zIndex,
+        width: "min(820px, calc(100vw - 40px))",
+        height: "min(560px, calc(100vh - 80px))",
+        background: "#c0c0c0",
+        border: "2px outset #ffffff",
+        boxShadow: "2px 2px 0 #000",
+        fontFamily: "'Segoe UI', Tahoma, sans-serif",
+        display: "flex",
+        flexDirection: "column",
+      }}
+      onMouseDown={onFocus}
+    >
+      {/* Title bar */}
+      <div className="retro-title-bar" onMouseDown={onMouseDown} style={{ cursor: "move" }}>
+        <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <IEIcon size={16} /> Internet Explorer
+        </span>
+        <div className="retro-title-bar-buttons">
+          <button className="retro-title-bar-btn" onClick={(e) => { e.stopPropagation(); }}>_</button>
+          <button className="retro-title-bar-btn" onClick={(e) => { e.stopPropagation(); }}>□</button>
+          <button className="retro-title-bar-btn" onClick={(e) => { e.stopPropagation(); onClose(); }}>✕</button>
+        </div>
+      </div>
+
+      {/* Menu bar */}
+      <div style={{
+        display: "flex",
+        gap: "2px",
+        padding: "2px 6px",
+        fontSize: "13px",
+        borderBottom: "1px solid #808080",
+      }}>
+        {["File", "Edit", "View", "Favorites", "Tools", "Help"].map((m) => (
+          <span key={m} style={{ padding: "1px 6px", cursor: "default" }}>{m}</span>
+        ))}
+      </div>
+
+      {/* Toolbar with nav buttons + address bar */}
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "2px",
+        padding: "3px 6px",
+        borderBottom: "1px solid #808080",
+      }}>
+        {["←", "→", "✕", "⟳", "🏠"].map((btn, i) => (
+          <button key={i} style={{
+            width: "24px", height: "22px",
+            background: "#c0c0c0", border: "1px outset #c0c0c0",
+            fontSize: "12px", cursor: "default", padding: 0,
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>{btn}</button>
+        ))}
+        <div style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          gap: "4px",
+          marginLeft: "6px",
+        }}>
+          <span style={{ fontSize: "12px", fontWeight: "bold", whiteSpace: "nowrap" }}>Address</span>
+          <div style={{
+            flex: 1,
+            background: "#fff",
+            border: "2px inset #808080",
+            padding: "2px 4px",
+            fontSize: "12px",
+            color: "#000",
+            overflow: "hidden",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+          }}>
+            https://archive.org/details/@rohankar
+          </div>
+          <button style={{
+            background: "#c0c0c0", border: "1px outset #c0c0c0",
+            fontSize: "11px", padding: "2px 8px", cursor: "default",
+          }}>Go</button>
+        </div>
+      </div>
+
+      {/* Browser content — iframe */}
+      <div style={{ flex: 1, border: "2px inset #808080", margin: "2px 4px 4px", overflow: "hidden" }}>
+        <iframe
+          src="https://archive.org/details/@rohankar"
+          title="Internet Explorer"
+          style={{ width: "100%", height: "100%", border: "none", background: "#fff" }}
+          sandbox="allow-scripts allow-same-origin allow-popups"
+        />
+      </div>
+
+      {/* Status bar */}
+      <div style={{
+        fontSize: "12px", padding: "2px 8px",
+        borderTop: "1px solid #808080", color: "#000",
+        display: "flex", alignItems: "center", gap: "8px",
+      }}>
+        <span>Done</span>
+        <div style={{ flex: 1 }} />
+        <span>Internet</span>
+      </div>
+    </div>
+  );
+}
+
 // ── RecycleBinWindow ──────────────────────────────────────────────────────────
 
 function RecycleBinWindow({
@@ -352,6 +490,8 @@ export default function RetroDesktop() {
   const [showRecycleBin, setShowRecycleBin] = useState(false);
   const [recycleBinZ, setRecycleBinZ] = useState(11);
   const [showRadio, setShowRadio] = useState(false);
+  const [showBrowser, setShowBrowser] = useState(false);
+  const [browserZ, setBrowserZ] = useState(11);
   const startRef = useRef<HTMLDivElement>(null);
   const nextOffset = useRef(0);
 
@@ -736,6 +876,26 @@ export default function RetroDesktop() {
             </div>
           </Link>
 
+          {/* Internet Explorer icon */}
+          <div
+            className="retro-desktop-icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!showBrowser) {
+                const newZ = maxZ + 1;
+                setMaxZ(newZ);
+                setBrowserZ(newZ);
+              }
+              setShowBrowser(true);
+            }}
+            style={{ cursor: "pointer" }}
+          >
+            <div className="retro-icon-box">
+              <IEIcon size={40} />
+            </div>
+            <span style={{ wordBreak: "break-word" }}>Internet Explorer</span>
+          </div>
+
           {/* Radio icon */}
           <div
             className="retro-desktop-icon"
@@ -782,6 +942,19 @@ export default function RetroDesktop() {
               const newZ = maxZ + 1;
               setMaxZ(newZ);
               setRecycleBinZ(newZ);
+            }}
+          />
+        )}
+
+        {/* IE Browser window */}
+        {showBrowser && (
+          <IEBrowserWindow
+            zIndex={browserZ}
+            onClose={() => setShowBrowser(false)}
+            onFocus={() => {
+              const newZ = maxZ + 1;
+              setMaxZ(newZ);
+              setBrowserZ(newZ);
             }}
           />
         )}
@@ -859,6 +1032,20 @@ export default function RetroDesktop() {
             📂 {win.title}
           </button>
         ))}
+
+        {/* IE taskbar button */}
+        {showBrowser && (
+          <button
+            className="retro-taskbar-window-btn"
+            onClick={() => {
+              const newZ = maxZ + 1;
+              setMaxZ(newZ);
+              setBrowserZ(newZ);
+            }}
+          >
+            🌐 Internet Explorer
+          </button>
+        )}
 
         {/* Radio taskbar button */}
         {showRadio && (
