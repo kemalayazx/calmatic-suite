@@ -491,7 +491,23 @@ export default function RetroNotepad({ onClose, onFocus, zIndex }: RetroNotepadP
     { label: "Open...", shortcut: "Ctrl+O", action: handleOpen },
     { separator: true },
     { label: "Save", shortcut: "Ctrl+S", action: handleSave },
-    { label: "Save As...", action: () => { setSavedKey(null); handleSave(); } },
+    {
+      label: "Save As...", action: () => {
+        const name = window.prompt("Save as:", title);
+        if (!name || !name.trim()) return;
+        const key = `calmatic-notepad-${Date.now()}`;
+        const note: SavedNote = {
+          key,
+          name: name.trim(),
+          content: text,
+          savedAt: new Date().toISOString(),
+        };
+        try { localStorage.setItem(key, JSON.stringify(note)); } catch { /* storage full */ }
+        setSavedKey(key);
+        setTitle(name.trim());
+        setDirty(false);
+      }
+    },
     { separator: true },
     { label: "Exit", action: onClose },
   ];

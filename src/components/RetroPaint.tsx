@@ -125,15 +125,6 @@ function floodFill(
   ctx.putImageData(imageData, 0, 0);
 }
 
-// ── hex → rgba string ────────────────────────────────────────────────────────
-
-function hexToRgba(hex: string, alpha = 1) {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r},${g},${b},${alpha})`;
-}
-
 // ── ToolIcon ─────────────────────────────────────────────────────────────────
 
 function ToolIcon({ tool }: { tool: Tool }) {
@@ -455,7 +446,7 @@ export default function RetroPaint({ onClose, onFocus, zIndex }: RetroPaintProps
   return (
     <div
       style={{
-        position: "absolute",
+        position: "fixed",
         left: pos.x,
         top: pos.y,
         zIndex,

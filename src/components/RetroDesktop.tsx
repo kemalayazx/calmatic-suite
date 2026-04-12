@@ -929,7 +929,7 @@ export default function RetroDesktop() {
           {/* Minesweeper icon */}
           <div
             className="retro-desktop-icon"
-            onDoubleClick={(e) => {
+            onClick={(e) => {
               e.stopPropagation();
               if (!showMinesweeper) {
                 const newZ = maxZ + 1;
@@ -938,7 +938,6 @@ export default function RetroDesktop() {
               }
               setShowMinesweeper(true);
             }}
-            onClick={(e) => e.stopPropagation()}
             style={{ cursor: "pointer" }}
           >
             <div className="retro-icon-box" style={{ background: "#c0c0c0", border: "1px solid #808080", fontSize: "28px", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -1239,11 +1238,10 @@ export default function RetroDesktop() {
           </button>
         )}
 
-        {/* Radio taskbar button */}
+        {/* Radio taskbar button — Radio manages its own z-index internally */}
         {showRadio && (
           <button
             className="retro-taskbar-window-btn"
-            onClick={() => setShowRadio(false)}
           >
             ♪ Radio
           </button>
