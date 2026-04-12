@@ -179,10 +179,11 @@ export default function RetroBoot() {
 
             {/* Username */}
             <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "10px" }}>
-              <label style={{ fontSize: "13px", color: "#000", width: "80px", textAlign: "right" }}>
+              <label htmlFor="retro-username" style={{ fontSize: "13px", color: "#000", width: "80px", textAlign: "right", flexShrink: 0 }}>
                 User name:
               </label>
               <input
+                id="retro-username"
                 type="text"
                 value={username}
                 onChange={(e) => { setUsername(e.target.value); setLoginError(false); }}
@@ -203,10 +204,11 @@ export default function RetroBoot() {
 
             {/* Password */}
             <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "6px" }}>
-              <label style={{ fontSize: "13px", color: "#000", width: "80px", textAlign: "right" }}>
+              <label htmlFor="retro-password" style={{ fontSize: "13px", color: "#000", width: "80px", textAlign: "right", flexShrink: 0 }}>
                 Password:
               </label>
               <input
+                id="retro-password"
                 ref={passwordRef}
                 type={showPassword ? "text" : "password"}
                 value={password}
@@ -226,7 +228,7 @@ export default function RetroBoot() {
             </div>
 
             {/* Show password checkbox */}
-            <div style={{ display: "flex", alignItems: "center", gap: "6px", marginLeft: "92px", marginBottom: "12px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px", paddingLeft: "92px", marginBottom: "12px", flexWrap: "wrap" }}>
               <input
                 type="checkbox"
                 id="showpw"
@@ -241,17 +243,20 @@ export default function RetroBoot() {
 
             {/* Error message */}
             {loginError && (
-              <div style={{
-                background: "#fff",
-                border: "2px inset #808080",
-                padding: "8px 12px",
-                marginBottom: "12px",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                fontSize: "12px",
-                color: "#800000",
-              }}>
+              <div
+                role="alert"
+                aria-live="assertive"
+                style={{
+                  background: "#fff",
+                  border: "2px inset #808080",
+                  padding: "8px 12px",
+                  marginBottom: "12px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  fontSize: "12px",
+                  color: "#800000",
+                }}>
                 <span style={{ fontSize: "16px" }}>⛔</span>
                 <span>The password is incorrect. Please retype your password.</span>
               </div>
@@ -260,7 +265,9 @@ export default function RetroBoot() {
             {/* Buttons */}
             <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
               <button
+                type="button"
                 onClick={handleLogin}
+                aria-label="Log on"
                 style={{
                   background: "#c0c0c0",
                   border: "2px outset #c0c0c0",
@@ -276,6 +283,7 @@ export default function RetroBoot() {
                 OK
               </button>
               <button
+                type="button"
                 onClick={() => {
                   setUsername("");
                   setPassword("");

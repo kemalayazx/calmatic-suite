@@ -46,8 +46,8 @@ function useDrag(initialX: number, initialY: number) {
     if (!dragging) return;
     const onMove = (e: MouseEvent) => {
       setPos({
-        x: e.clientX - dragOffset.current.x,
-        y: e.clientY - dragOffset.current.y,
+        x: Math.min(Math.max(0, e.clientX - dragOffset.current.x), window.innerWidth - 120),
+        y: Math.min(Math.max(0, e.clientY - dragOffset.current.y), window.innerHeight - 80),
       });
     };
     const onUp = () => setDragging(false);

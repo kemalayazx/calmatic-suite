@@ -28,7 +28,10 @@ function useDrag(ix: number, iy: number) {
 
   useEffect(() => {
     if (!drag) return;
-    const move = (e: MouseEvent) => setPos({ x: e.clientX - off.current.x, y: e.clientY - off.current.y });
+    const move = (e: MouseEvent) => setPos({
+      x: Math.min(Math.max(0, e.clientX - off.current.x), window.innerWidth - 120),
+      y: Math.min(Math.max(0, e.clientY - off.current.y), window.innerHeight - 80),
+    });
     const up = () => setDrag(false);
     window.addEventListener("mousemove", move);
     window.addEventListener("mouseup", up);

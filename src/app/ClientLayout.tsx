@@ -595,10 +595,18 @@ function LayoutInner({ children }: { children: React.ReactNode }) {
     const blockCtx = (e: MouseEvent) => e.preventDefault();
     document.addEventListener("contextmenu", blockCtx);
 
-    // Block Ctrl+U (view source) and Ctrl+S (save page)
+    // Block Ctrl+U (view source) and Ctrl+S (save page) — but not inside editable elements
+    // so Notepad Ctrl+S and similar shortcuts still fire their own handlers first.
     const blockKeys = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && (e.key === "u" || e.key === "U" || e.key === "s" || e.key === "S")) {
-        e.preventDefault();
+        const target = e.target as HTMLElement;
+        const isEditable =
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "INPUT" ||
+          target.isContentEditable;
+        if (!isEditable) {
+          e.preventDefault();
+        }
       }
     };
     document.addEventListener("keydown", blockKeys);
