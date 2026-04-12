@@ -91,3 +91,107 @@ input[type="number"] {
     margin: 1cm;
   }
 }
+
+/* ── Retro Window: Win95 appearance ─────────────────────────────────────────── */
+
+[data-retro-window] {
+  background: #d4d0c8 !important;
+  color: #000000 !important;
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif !important;
+}
+
+/* Dark card/panel backgrounds → Win95 gray */
+[data-retro-window] [style*="background: rgb(9, 9, 11)"],
+[data-retro-window] [style*="background: rgb(24, 24, 27)"],
+[data-retro-window] [style*="background: rgb(39, 39, 42)"],
+[data-retro-window] [style*="background: rgb(28, 28, 28)"],
+[data-retro-window] [style*="background: rgb(0, 0, 0)"],
+[data-retro-window] [style*="background-color: rgb(9, 9, 11)"],
+[data-retro-window] [style*="background-color: rgb(24, 24, 27)"],
+[data-retro-window] [style*="background-color: rgb(39, 39, 42)"] {
+  background: #c0c0c0 !important;
+  border-color: #808080 !important;
+}
+
+/* Very dark (near-black) backgrounds → lighter gray */
+[data-retro-window] [style*="background: rgb(15,"],
+[data-retro-window] [style*="background: rgb(10,"],
+[data-retro-window] [style*="background: rgb(18,"] {
+  background: #d4d0c8 !important;
+}
+
+/* Light/white text → black */
+[data-retro-window] [style*="color: rgb(250, 250, 250)"],
+[data-retro-window] [style*="color: rgb(255, 255, 255)"],
+[data-retro-window] [style*="color: rgb(248, 248, 248)"] {
+  color: #000000 !important;
+}
+
+/* Secondary/muted text → dark gray */
+[data-retro-window] [style*="color: rgb(161, 161, 170)"],
+[data-retro-window] [style*="color: rgb(113, 113, 122)"],
+[data-retro-window] [style*="color: rgb(82, 82, 91)"],
+[data-retro-window] [style*="color: rgb(63, 63, 70)"] {
+  color: #444444 !important;
+}
+
+/* Headings */
+[data-retro-window] h1,
+[data-retro-window] h2,
+[data-retro-window] h3,
+[data-retro-window] h4 {
+  color: #000080 !important;
+}
+
+/* Input fields → white with classic inset border */
+[data-retro-window] input[type="number"],
+[data-retro-window] input[type="text"],
+[data-retro-window] input[type="password"],
+[data-retro-window] input[type="email"],
+[data-retro-window] select,
+[data-retro-window] textarea {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 2px inset #808080 !important;
+  border-radius: 0 !important;
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif !important;
+}
+
+/* Buttons → Win95 style */
+[data-retro-window] button {
+  border-radius: 0 !important;
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif !important;
+}
+[data-retro-window] button:not([style*="background: rgb(124"]):not([style*="background: linear"]):not([style*="background: rgb(239"]):not([style*="background: rgb(220"]) {
+  background: #d4d0c8 !important;
+  color: #000000 !important;
+  border: 2px outset #ffffff !important;
+}
+
+/* Tables */
+[data-retro-window] table {
+  background: #ffffff !important;
+  border-collapse: collapse !important;
+}
+[data-retro-window] th {
+  background: #000080 !important;
+  color: #ffffff !important;
+  border: 1px solid #808080 !important;
+}
+[data-retro-window] td {
+  background: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #d0d0d0 !important;
+}
+[data-retro-window] tr:nth-child(even) td {
+  background: #f0f0f0 !important;
+}
+
+/* Scrollbars */
+[data-retro-window]::-webkit-scrollbar-thumb {
+  background: #a8a8a8;
+  border-radius: 0;
+}
+[data-retro-window]::-webkit-scrollbar-track {
+  background: #c0c0c0;
+}

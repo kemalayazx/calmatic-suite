@@ -2,6 +2,7 @@
 
 import "./globals.css";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { Sun, Moon, Monitor, Home } from "lucide-react";
 import { ThemeProvider, useTheme } from "@/context/ThemeContext";
@@ -417,8 +418,185 @@ function AppFooter() {
   );
 }
 
+const PATHNAME_TO_TITLE_KEY: Record<string, string> = {
+  "/basic": "calc.basic.title",
+  "/scientific": "calc.scientific.title",
+  "/percentage": "calc.percentage.title",
+  "/tip": "calc.tip.title",
+  "/discount": "calc.discount.title",
+  "/random": "calc.random.title",
+  "/financial": "calc.financial.title",
+  "/mortgage": "calc.mortgage.title",
+  "/investment": "calc.investment.title",
+  "/loans": "calc.loans.title",
+  "/currency": "calc.currency.title",
+  "/savings": "calc.savings.title",
+  "/auto-loan": "calc.autoLoan.title",
+  "/credit-card": "calc.creditCard.title",
+  "/rent-buy": "calc.rentBuy.title",
+  "/electricity": "calc.electricity.title",
+  "/us-payroll": "calc.usPayroll.title",
+  "/payroll": "calc.payroll.title",
+  "/taxes": "calc.taxes.title",
+  "/accounting": "calc.accounting.title",
+  "/math": "calc.math.title",
+  "/statistics": "calc.statistics.title",
+  "/converter": "calc.converter.title",
+  "/electronics": "calc.electronics.title",
+  "/geometry": "calc.geometry.title",
+  "/probability": "calc.probability.title",
+  "/units": "calc.units.title",
+  "/colors": "calc.colors.title",
+  "/dates": "calc.dates.title",
+  "/fuel": "calc.fuel.title",
+  "/timezone": "calc.timezone.title",
+  "/speed": "calc.speed.title",
+  "/health": "calc.health.title",
+  "/cooking": "calc.cooking.title",
+  "/gpa": "calc.gpa.title",
+  "/age": "calc.age.title",
+  "/password": "calc.password.title",
+  "/text": "calc.text.title",
+  "/calories": "calc.calories.title",
+};
+
+function RetroCalcWindow({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { t } = useLanguage();
+  const [pos, setPos] = useState({ x: 60, y: 30 });
+  const dragging = useRef(false);
+  const dragOffset = useRef({ x: 0, y: 0 });
+
+  const titleKey = PATHNAME_TO_TITLE_KEY[pathname ?? ""] ?? "calc.basic.title";
+  const title = t(titleKey);
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      if (!dragging.current) return;
+      setPos({
+        x: Math.max(0, e.clientX - dragOffset.current.x),
+        y: Math.max(0, e.clientY - dragOffset.current.y),
+      });
+    };
+    const onUp = () => { dragging.current = false; };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+  }, []);
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        left: pos.x,
+        top: pos.y,
+        zIndex: 20,
+        width: "min(900px, calc(100vw - 20px))",
+        maxHeight: "calc(100vh - 50px)",
+        background: "#c0c0c0",
+        border: "2px outset #fff",
+        boxShadow: "3px 3px 0 #000",
+        fontFamily: "'Segoe UI', Tahoma, sans-serif",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <style>{`
+        [data-retro-window] { background:#d4d0c8!important; color:#000!important; font-family:'Segoe UI',Tahoma,Arial,sans-serif!important; }
+        [data-retro-window] [style*="rgb(9, 9, 11)"],
+        [data-retro-window] [style*="rgb(24, 24, 27)"],
+        [data-retro-window] [style*="rgb(39, 39, 42)"],
+        [data-retro-window] [style*="rgb(28, 28, 28)"] { background:#c0c0c0!important; }
+        [data-retro-window] [style*="color: rgb(250, 250, 250)"],
+        [data-retro-window] [style*="color: rgb(255, 255, 255)"],
+        [data-retro-window] [style*="color: rgb(248, 248, 248)"] { color:#000!important; }
+        [data-retro-window] [style*="color: rgb(161, 161, 170)"],
+        [data-retro-window] [style*="color: rgb(113, 113, 122)"],
+        [data-retro-window] [style*="color: rgb(82, 82, 91)"] { color:#444!important; }
+        [data-retro-window] h1,[data-retro-window] h2,[data-retro-window] h3 { color:#000080!important; }
+        [data-retro-window] input,[data-retro-window] select,[data-retro-window] textarea { background:#fff!important; color:#000!important; border:2px inset #808080!important; border-radius:0!important; }
+        [data-retro-window] th { background:#000080!important; color:#fff!important; }
+        [data-retro-window] td { background:#fff!important; color:#000!important; border:1px solid #d0d0d0!important; }
+        [data-retro-window] tr:nth-child(even) td { background:#f0f0f0!important; }
+        [data-retro-window] p { color:#000!important; }
+      `}</style>
+      {/* Title bar */}
+      <div
+        style={{
+          background: "linear-gradient(90deg, #000080, #1084d0)",
+          color: "white",
+          fontWeight: "bold",
+          fontSize: "13px",
+          padding: "4px 8px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          height: "28px",
+          cursor: "move",
+          userSelect: "none",
+          flexShrink: 0,
+        }}
+        onMouseDown={(e) => {
+          dragging.current = true;
+          dragOffset.current = { x: e.clientX - pos.x, y: e.clientY - pos.y };
+        }}
+      >
+        <span>🧮 {title}</span>
+        <div style={{ display: "flex", gap: "2px" }}>
+          <button
+            title="Close"
+            onClick={() => router.push("/")}
+            style={{
+              width: "16px",
+              height: "14px",
+              background: "#c0c0c0",
+              border: "2px outset #fff",
+              cursor: "pointer",
+              fontSize: "9px",
+              lineHeight: 1,
+              padding: 0,
+              fontFamily: "monospace",
+              fontWeight: "bold",
+              color: "#000",
+            }}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
+      {/* Scrollable content — Win95 appearance */}
+      <div data-theme="light" data-retro-window style={{ overflowY: "auto", flex: 1, background: "#d4d0c8", color: "#000000" }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 function LayoutInner({ children }: { children: React.ReactNode }) {
   const { theme } = useTheme();
+  const pathname = usePathname();
+
+  const isRetroCalcPage =
+    theme === "retro" &&
+    pathname !== "/" &&
+    pathname !== "/disclaimer" &&
+    pathname != null;
+
+  if (isRetroCalcPage) {
+    return (
+      <>
+        <RetroBoot />
+        <RetroDesktop />
+        <RetroCalcWindow>{children}</RetroCalcWindow>
+      </>
+    );
+  }
 
   return (
     <>
