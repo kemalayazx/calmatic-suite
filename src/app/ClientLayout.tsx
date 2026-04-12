@@ -468,6 +468,7 @@ const PATHNAME_TO_TITLE_KEY: Record<string, string> = {
   "/password": "calc.password.title",
   "/text": "calc.text.title",
   "/calories": "calc.calories.title",
+  "/disclaimer": "calc.basic.title",
 };
 
 function RetroCalcWindow({ children }: { children: React.ReactNode }) {

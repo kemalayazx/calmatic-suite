@@ -9,6 +9,9 @@ export interface BMIResult {
 
 export function calcBMI(weightKg: number, heightCm: number): BMIResult {
   const h = heightCm / 100;
+  if (h <= 0 || weightKg <= 0) {
+    return { bmi: 0, category: "—", color: "#71717a", position: 0 };
+  }
   const bmi = weightKg / (h * h);
 
   let category: string;
